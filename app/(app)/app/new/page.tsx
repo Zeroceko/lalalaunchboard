@@ -36,7 +36,16 @@ const setupFlow = [
   }
 ];
 
-export default async function NewAppPage() {
+export default async function NewAppPage({
+  searchParams
+}: {
+  searchParams?: {
+    templateName?: string;
+    platform?: string;
+    mode?: string;
+    sourceAppId?: string;
+  };
+}) {
   const { supabase, user } = await requireSessionContext();
   let state;
 
@@ -76,12 +85,44 @@ export default async function NewAppPage() {
     );
   }
 
+  const initialPlatform =
+    searchParams?.platform === "ios" ||
+    searchParams?.platform === "android" ||
+    searchParams?.platform === "web"
+      ? (searchParams.platform as "ios" | "android" | "web")
+      : undefined;
+
+  const initialValues = {
+    name: searchParams?.templateName?.trim() || undefined,
+    platform: initialPlatform,
+    launchDate: undefined
+  };
+
+  const mode =
+    searchParams?.mode === "platform" || searchParams?.mode === "client"
+      ? searchParams.mode
+      : "default";
+
+  const sourceAppName = searchParams?.templateName?.trim() || null;
+
   return (
     <LaunchPage>
       <LaunchHero
         eyebrow="New launch workspace"
-        title="Yeni uygulaman icin board'u sifirdan kur."
-        description="Ilk uygulamani ekle ve pre-launch surecini baslat. Bu ekran isim, platform ve launch window gibi temel kararlari sabitler; hemen ardindan seni checklist workspace'ine tasir."
+        title={
+          mode === "platform"
+            ? "Mevcut projen icin yeni bir platform workspace'i kur."
+            : mode === "client"
+              ? "Mevcut projen icin yeni bir client workspace'i kur."
+              : "Yeni uygulaman icin board'u sifirdan kur."
+        }
+        description={
+          mode === "platform"
+            ? "Ayni projenin iOS, Android veya Web varyantlarini sonradan ekleyebilirsin. Bu ekran yeni platformu ayni operasyon mantigi icinde acmak icin kullanilir."
+            : mode === "client"
+              ? "Bir projeye sonradan baska client veya varyantlar eklemek icin ayni board yapisini yeni bir workspace olarak cikarabilirsin."
+              : "Ilk uygulamani ekle ve pre-launch surecini baslat. Bu ekran isim, platform ve launch window gibi temel kararlari sabitler; hemen ardindan seni checklist workspace'ine tasir."
+        }
         actions={
           <>
             <Link href="/dashboard" className={launchButtonStyles.secondary}>
@@ -103,7 +144,12 @@ export default async function NewAppPage() {
         }
       />
 
-      <NewAppForm limit={state.limit} />
+      <NewAppForm
+        limit={state.limit}
+        initialValues={initialValues}
+        mode={mode}
+        sourceAppName={sourceAppName}
+      />
     </LaunchPage>
   );
 }

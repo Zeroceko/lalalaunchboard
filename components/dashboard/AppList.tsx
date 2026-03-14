@@ -114,7 +114,7 @@ export function AppList({ apps, canCreateApp = true }: AppListProps) {
   return (
     <div className="grid gap-6">
       {apps.map((app) => (
-        <AppCard key={app.id} app={app} />
+        <AppCard key={app.id} app={app} canCreateApp={canCreateApp} />
       ))}
     </div>
   );
