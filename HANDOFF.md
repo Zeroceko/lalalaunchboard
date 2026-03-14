@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated: 2026-03-14
+Last updated: 2026-03-15
 
 ## Bu sprintte ne oldu?
 
@@ -23,6 +23,11 @@ Bu turda tamamlanan ana isler:
   - uygulama yoksa onboarding + `Simdi basla`
 - [x] Dashboard kart dili, yalnizca launch prep degil marketing + growth takibini de kapsayacak sekilde guncellendi
 - [x] Internal `ops` / control tower route'u ana repo icinde korunmaya devam etti
+- [x] Control tower'da tamamlanan lane'ler yer kaplamasin diye detaylar hover/focus ile acilir hale getirildi
+- [x] Dashboard AppCard uzerinden "platform / client varyanti ekle" aksiyonlari eklendi
+- [x] `/app/new` sayfasi query param ile prefill destekler hale getirildi (`templateName`, `platform`, `mode`, `sourceAppId`)
+- [x] Free plan kapasitesi dolu durumlarina "Planlari gor / Ust pakete gec" CTA'si eklendi
+- [x] `/pricing` sayfasi eklendi (Starter / Pro / Enterprise plan tanitimi, TR/EN uyumlu)
 
 ## Urun vizyonu su anda nasil kilitlendi?
 
@@ -50,7 +55,9 @@ Ana on yuzeyler:
 - `/` -> pazarlama odakli landing
 - `/auth?tab=login` -> sade giris ekrani
 - `/auth?tab=register` -> sade kayit ekrani
+- `/pricing` -> planlar (Starter / Pro / Enterprise)
 - `/dashboard` -> ana uygulama paneli
+- `/settings` -> hesap/plan/guvenlik/tema ayarlari (ilk yuzey)
 - `/ops` -> internal control tower
 - `/admin` -> portfoy / yonetim paneli
 
@@ -60,6 +67,7 @@ Dashboard davranisi:
   - en ustte mevcut urun ve launch ozeti gorunur
   - launch tarihi, platform, mevcut odak ve control desk bloklari gorunur
   - alt kisimda tum uygulamalar kartlar halinde listelenir
+  - her uygulama kartindan yeni platform/client varyanti icin `/app/new` prefill ile devam edilebilir
 - hic uygulama yoksa:
   - onboarding odakli bos durum gorunur
   - `Uygulamani ekle -> pazara hazirlik ritmini kur -> launch ve growth takibini baslat` akisi anlatilir
@@ -78,10 +86,13 @@ Bu sprintte en kritik degisen dosyalar:
 - `app/page.tsx`
 - `app/(auth)/auth/page.tsx`
 - `app/(app)/dashboard/page.tsx`
+- `app/pricing/page.tsx`
 - `components/auth/AuthTabs.tsx`
 - `components/auth/LoginForm.tsx`
 - `components/auth/RegisterForm.tsx`
 - `components/dashboard/AppCard.tsx`
+- `components/dashboard/AppList.tsx`
+- `components/dashboard/NewAppForm.tsx`
 - `components/i18n/LocaleSwitcher.tsx`
 - `lib/i18n/dictionaries.ts`
 - `lib/auth/messages.ts`
@@ -129,6 +140,21 @@ Acik product kararlar:
 - hangi growth KPI'lari ilk dashboard KPI bandina girecek?
 - hangi event'ler `Flow 0` ve onboarding olcumu icin zorunlu olacak?
 - free / pro ayrimi dashboard UX'inde ne kadar belirgin olacak?
+
+Plan karari (uygulama limiti politikasini sonraki developer uygulayacak):
+
+- Free plan: `1 urun`, `1 platform`
+- Ucretli plan: `2 urun`, `3 platform`
+- Daha buyuk paket: `3 urun`, `5 platform`
+- Enterprise: `talep kadar urun`, `x adet platform`
+
+Not: Bugun sistem sadece `free` vs `pro` ayrimini ve urun (board) limitini enforce ediyor.
+Yeni paket yapisi icin giris noktalar:
+
+- `types/index.ts` -> `export type Plan = ...`
+- `lib/apps/service.ts` -> `buildAppLimitState(...)`
+- Supabase `users.plan` + RLS/trigger'lar (migrations altinda)
+- UI vitrini: `/pricing` ve `lib/i18n/dictionaries.ts` (pricing metinleri)
 
 ### Design
 
