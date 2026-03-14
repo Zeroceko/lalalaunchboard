@@ -98,8 +98,8 @@ export default async function DashboardPage() {
         actions={
           <>
             {createAction}
-            <Link href="/admin" className={launchButtonStyles.secondary}>
-              Yonetim paneli
+            <Link href="/ops" className={launchButtonStyles.secondary}>
+              Control tower
             </Link>
             <span className="inline-flex rounded-full border border-[hsl(var(--border))/0.7] bg-[hsl(var(--card))/0.92] px-4 py-3 text-sm font-semibold text-[hsl(var(--muted-foreground))] shadow-[0_12px_30px_hsl(var(--shadow-color)/0.08)]">
               {snapshot.apps.length} active board

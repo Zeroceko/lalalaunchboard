@@ -95,8 +95,8 @@ const lifecycleLayers = [
 
 export default function HomePage() {
   return (
-    <LaunchPage className="min-h-screen py-8 sm:py-10">
-      <div className="space-y-8 sm:space-y-10">
+    <LaunchPage className="min-h-screen py-6 sm:py-8">
+      <div className="space-y-6 sm:space-y-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-xl font-semibold tracking-tight text-foreground">
@@ -106,27 +106,22 @@ export default function HomePage() {
             <LaunchBadge tone="info">Launch & grow</LaunchBadge>
             <LaunchBadge tone="warning">Tek ekranda takip</LaunchBadge>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/auth" className={launchButtonStyles.secondary}>
-              Giris / Kayit
-            </Link>
-            <Link href="/dashboard" className={launchButtonStyles.secondary}>
-              Dashboard
-            </Link>
-          </div>
+          <Link href="/dashboard" className={launchButtonStyles.secondary}>
+            Dashboard
+          </Link>
         </div>
 
         <LaunchHero
-          eyebrow="Lansmana Hazirlik Araci"
-          title="Ne yapacagini her gun net gor, lansmana paniksiz hazirlan."
-          description="Lalalaunchboard, teknik olmayan kullanicilarin bile kolayca anlayacagi bir sistem sunar. Yapilacaklar, teslim dosyalari ve geri sayim tek yerde oldugu icin sureci daha rahat yonetirsin."
+          eyebrow="Launch operating system"
+          title="App launch surecini tek board'da netlestir ve paniksiz ilerlet."
+          description="Lalalaunchboard, indie builder'lar icin checklist, deliverable, countdown ve routine akisini tek yerde toplar. Bugun ne satildigi net, sonra neyin eksik oldugu net, sonraki hamle de tek ekranda okunur."
           actions={
             <>
-              <Link href="/app/new" className={launchButtonStyles.primary}>
-                Ucretsiz basla
+              <Link href="/auth" className={launchButtonStyles.primary}>
+                Ilk boardunu kur
               </Link>
               <Link href="/dashboard" className={launchButtonStyles.secondary}>
-                Ornek dashboard
+                Ornek board&apos;u incele
               </Link>
             </>
           }
@@ -217,11 +212,11 @@ export default function HomePage() {
           />
         </div>
 
-        <section className="space-y-5">
+        <section className="space-y-4">
           <LaunchSectionHeader
             eyebrow="Lifecycle"
             title="Tek launch gunu degil, butun urun ritmi"
-            description="Product manager tarafindaki `launch -> operate -> grow` bakisini landing'e de tasidim. Boylece Lalalaunchboard yalnizca checklist araci gibi degil, daha uzun omurlu bir operasyon sistemi gibi okunur."
+            description="Board mantigi yalnizca checklist'i degil, launch sonrasi ritmi de tasir. Bu yuzden urun tek kullan-at ekran gibi degil, tekrar donulen bir operasyon duzeni gibi calisir."
           />
           <div className="grid gap-4 lg:grid-cols-3">
             {lifecycleLayers.map((layer) => (
@@ -285,7 +280,7 @@ export default function HomePage() {
           />
         </section>
 
-        <section className="space-y-5">
+        <section className="space-y-4">
           <LaunchSectionHeader
             eyebrow="Ozellikler"
             title="Tek tek arac degil, tek bir sistem"
@@ -315,21 +310,21 @@ export default function HomePage() {
                 tone="warning"
                 className="bg-[hsl(var(--card))/0.12] text-[hsl(var(--surface-dark-foreground))]"
               >
-                Simdi basla
+                Start here
               </LaunchBadge>
               <h2 className="max-w-3xl text-4xl font-semibold tracking-tight text-[hsl(var(--surface-dark-foreground))]">
-                2 dakikada hesabini ac, ilk lansman planini kur, sonra buyumeyi takip et.
+                Ilk boardunu kur, lansmanini calistir, buyumeni takip et.
               </h2>
               <p className="max-w-2xl text-sm leading-7 text-[hsl(var(--surface-dark-muted))]">
-                Teknik bilgin olmasa bile bu akisi rahatca yonetebilirsin. Sistem sana yalnizca ne yapman gerektigini degil, sonrasinda nasil ritim koruyacagini da gosterir.
+                Su an launch odakli. Ileride ayni duzeni daha genis app operasyonuna tasiyacaksin. Bu yuzden bugunku mesaj net, gelecek vizyon da gorunur kalir.
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              <Link href="/app/new" className={launchButtonStyles.primary}>
-                Ilk workspace&apos;i olustur
+              <Link href="/auth" className={launchButtonStyles.primary}>
+                Ilk workspace&apos;i ac
               </Link>
-              <Link href="/auth" className={launchButtonStyles.secondary}>
-                Giris ve kayit
+              <Link href="/dashboard" className={launchButtonStyles.secondary}>
+                Ornek board&apos;u incele
               </Link>
             </div>
           </div>

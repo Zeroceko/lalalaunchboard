@@ -8,7 +8,8 @@ function isProtectedRoute(pathname: string) {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/app") ||
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/admin")
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/ops")
   );
 }
 
