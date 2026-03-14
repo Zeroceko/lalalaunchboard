@@ -409,7 +409,7 @@ export default async function DashboardPage() {
         {/* ════════════════════════════════════
             SECTION 3: Retention + Funnel
         ════════════════════════════════════ */}
-        <section className="grid gap-4 lg:grid-cols-2">
+        <section className="grid items-start gap-4 lg:grid-cols-2">
 
           {/* Retention */}
           <div className="rounded-[1rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-5 backdrop-blur-sm">
@@ -489,7 +489,7 @@ export default async function DashboardPage() {
         {/* ════════════════════════════════════
             SECTION 4: Revenue + Launch timeline
         ════════════════════════════════════ */}
-        <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <section className="grid items-start gap-4 lg:grid-cols-[1fr_320px]">
 
           {/* Revenue & unit economics */}
           <div className="rounded-[1rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-5 backdrop-blur-sm">
@@ -636,7 +636,7 @@ export default async function DashboardPage() {
         {/* ════════════════════════════════════
             SECTION 5: Launch Timeline & All Boards
         ════════════════════════════════════ */}
-        <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <section className="grid items-start gap-4 lg:grid-cols-[1fr_320px]">
 
           {/* Gantt-style launch phases */}
           <div className="rounded-[1rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-5 backdrop-blur-sm">
