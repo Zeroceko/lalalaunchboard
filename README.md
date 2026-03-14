@@ -47,8 +47,10 @@ Operasyonel durum ozeti icin:
 - `/` -> landing
 - `/auth?tab=login` -> giris
 - `/auth?tab=register` -> kayit
+- `/pricing` -> planlar (Starter / Pro / Enterprise)
 - `/dashboard` -> ana panel
 - `/app/new` -> yeni uygulama / board olusturma
+- `/settings` -> hesap/plan/guvenlik/tema ayarlari (ilk yuzey)
 - `/ops` -> internal control tower
 - `/admin` -> portfoy / yonetim paneli
 
@@ -73,6 +75,25 @@ Dashboard:
   - launch + marketing + growth control desk mantigi kullanilir
 - uygulama yoksa:
   - onboarding adimlari ve `Simdi basla` gorunur
+- free plan kapasitesi doluysa:
+  - ilgili yerlerde `Planlari gor / Ust pakete gec` CTA'si gorunur ve `/pricing`'e gider
+
+## Planlar (Karar + Uygulama Notu)
+
+Urun karari (sonraki developer enforce edecek):
+
+- Free plan: `1 urun`, `1 platform`
+- Ucretli plan: `2 urun`, `3 platform`
+- Daha buyuk paket: `3 urun`, `5 platform`
+- Enterprise: `talep kadar urun`, `x adet platform`
+
+Bugun codebase sadece `free` vs `pro` ayrimini ve urun (board) limitini enforce ediyor.
+Yeni paket yapisi icin giris noktalar:
+
+- `types/index.ts` -> `export type Plan = ...`
+- `lib/apps/service.ts` -> `buildAppLimitState(...)`
+- Supabase `users.plan` + migrations/RLS/trigger'lar
+- UI vitrini: `/pricing` ve `lib/i18n/dictionaries.ts` (pricing metinleri)
 
 ## Proje yapisi
 
