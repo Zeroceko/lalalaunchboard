@@ -9,8 +9,34 @@ import {
   LaunchRailList,
   launchButtonStyles
 } from "@/components/ui/LaunchKit";
-import { getAppCreationState } from "@/lib/apps/service";
+import { getAppByIdForUser, getAppCreationState } from "@/lib/apps/service";
 import { requireSessionContext } from "@/lib/auth/session";
+
+type SearchParams = Record<string, string | string[] | undefined>;
+
+function firstParam(value: SearchParams[string] | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function parsePlatform(value: string | undefined) {
+  if (value === "ios" || value === "android" || value === "web") {
+    return value;
+  }
+
+  return undefined;
+}
+
+function parseMode(value: string | undefined) {
+  if (value === "platform" || value === "client") {
+    return value;
+  }
+
+  return "default" as const;
+}
 
 const setupFlow = [
   {
@@ -39,15 +65,41 @@ const setupFlow = [
 export default async function NewAppPage({
   searchParams
 }: {
-  searchParams?: {
-    templateName?: string;
-    platform?: string;
-    mode?: string;
-    sourceAppId?: string;
-  };
+  searchParams?: SearchParams;
 }) {
   const { supabase, user } = await requireSessionContext();
   let state;
+
+  const templateName = firstParam(searchParams?.templateName);
+  const mode = parseMode(firstParam(searchParams?.mode));
+  const requestedPlatform = parsePlatform(firstParam(searchParams?.platform));
+  const sourceAppId = firstParam(searchParams?.sourceAppId);
+  const sourceApp = sourceAppId
+    ? await getAppByIdForUser(supabase, user.id, sourceAppId)
+    : null;
+
+  const initialValues: {
+    name?: string;
+    platform?: "ios" | "android" | "web";
+    launchDate?: string;
+  } = {};
+
+  const resolvedName = templateName ?? sourceApp?.name ?? undefined;
+  const resolvedPlatform = requestedPlatform ?? sourceApp?.platform ?? undefined;
+
+  if (resolvedName) {
+    initialValues.name = resolvedName;
+  }
+
+  if (resolvedPlatform) {
+    initialValues.platform = resolvedPlatform;
+  }
+
+  if (sourceApp?.launch_date) {
+    initialValues.launchDate = sourceApp.launch_date;
+  }
+
+  const hasInitialValues = Object.keys(initialValues).length > 0;
 
   try {
     state = await getAppCreationState(supabase, user.id);
@@ -85,44 +137,34 @@ export default async function NewAppPage({
     );
   }
 
-  const initialPlatform =
-    searchParams?.platform === "ios" ||
-    searchParams?.platform === "android" ||
-    searchParams?.platform === "web"
-      ? (searchParams.platform as "ios" | "android" | "web")
-      : undefined;
-
-  const initialValues = {
-    name: searchParams?.templateName?.trim() || undefined,
-    platform: initialPlatform,
-    launchDate: undefined
-  };
-
-  const mode =
-    searchParams?.mode === "platform" || searchParams?.mode === "client"
-      ? searchParams.mode
-      : "default";
-
-  const sourceAppName = searchParams?.templateName?.trim() || null;
+  const hero =
+    mode === "platform"
+      ? {
+          eyebrow: "Platform expansion",
+          title: "Mevcut proje icin yeni bir platform workspace'i ac.",
+          description:
+            "Bu varyant mevcut isimle gelir, yeni platformu secip devam edersin. Ardindan checklist workspace'i otomatik olusur."
+        }
+      : mode === "client"
+        ? {
+            eyebrow: "Client variant",
+            title: "Mevcut proje icin yeni bir client workspace'i ac.",
+            description:
+              "Bu varyant mevcut isimle gelir; client adina gore duzenleyip yeni board'u olusturabilirsin."
+          }
+        : {
+            eyebrow: "New launch workspace",
+            title: "Yeni uygulaman icin board'u sifirdan kur.",
+            description:
+              "Ilk uygulamani ekle ve pre-launch surecini baslat. Bu ekran isim, platform ve launch window gibi temel kararlari sabitler; hemen ardindan seni checklist workspace'ine tasir."
+          };
 
   return (
     <LaunchPage>
       <LaunchHero
-        eyebrow="New launch workspace"
-        title={
-          mode === "platform"
-            ? "Mevcut projen icin yeni bir platform workspace'i kur."
-            : mode === "client"
-              ? "Mevcut projen icin yeni bir client workspace'i kur."
-              : "Yeni uygulaman icin board'u sifirdan kur."
-        }
-        description={
-          mode === "platform"
-            ? "Ayni projenin iOS, Android veya Web varyantlarini sonradan ekleyebilirsin. Bu ekran yeni platformu ayni operasyon mantigi icinde acmak icin kullanilir."
-            : mode === "client"
-              ? "Bir projeye sonradan baska client veya varyantlar eklemek icin ayni board yapisini yeni bir workspace olarak cikarabilirsin."
-              : "Ilk uygulamani ekle ve pre-launch surecini baslat. Bu ekran isim, platform ve launch window gibi temel kararlari sabitler; hemen ardindan seni checklist workspace'ine tasir."
-        }
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        description={hero.description}
         actions={
           <>
             <Link href="/dashboard" className={launchButtonStyles.secondary}>
@@ -146,9 +188,9 @@ export default async function NewAppPage({
 
       <NewAppForm
         limit={state.limit}
-        initialValues={initialValues}
+        initialValues={hasInitialValues ? initialValues : undefined}
         mode={mode}
-        sourceAppName={sourceAppName}
+        sourceAppName={sourceApp?.name ?? null}
       />
     </LaunchPage>
   );

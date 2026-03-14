@@ -1,7 +1,15 @@
-import { authMessages } from "@/lib/auth/messages";
+import { getAuthMessages } from "@/lib/auth/messages";
 import { getHcaptchaSecretKey } from "@/lib/env";
+import {
+  DEFAULT_LOCALE,
+  type Locale
+} from "@/lib/i18n/config";
 
-export async function verifyCaptchaToken(token: string) {
+export async function verifyCaptchaToken(
+  token: string,
+  locale: Locale = DEFAULT_LOCALE
+) {
+  const authMessages = getAuthMessages(locale);
   const secret = getHcaptchaSecretKey();
 
   if (!token) {

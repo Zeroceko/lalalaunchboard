@@ -203,54 +203,55 @@ export default async function OpsPage() {
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
           <LaunchPanel tone="default" className="space-y-5">
             <div className="grid gap-4 md:grid-cols-2">
-              {overview.sections.map((section) => (
-                <div
-                  key={section.id}
-                  tabIndex={section.completionRate === 100 ? 0 : undefined}
-                  className={`group rounded-[1.35rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--card))/0.92] shadow-[0_14px_34px_hsl(var(--shadow-color)/0.05)] outline-none focus-visible:ring-4 focus-visible:ring-[hsl(var(--primary))/0.14] ${
-                    section.completionRate === 100 ? "p-3" : "p-4"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-2">
-                      <LaunchBadge tone={getToneForLevel(section.level)}>
-                        {section.level}
-                      </LaunchBadge>
-                      <h3 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
-                        {section.id}. {section.title}
-                      </h3>
-                    </div>
-                    <div className="rounded-[0.95rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--surface-inset))/0.82] px-3 py-2 text-right">
-                      <p className="text-lg font-semibold text-foreground">
-                        %{section.completionRate}
-                      </p>
-                      <p className="text-[11px] uppercase tracking-[0.14em] text-[hsl(var(--muted-foreground))]">
-                        {section.completed}/{section.total}
-                      </p>
-                    </div>
-                  </div>
+              {overview.sections.map((section) => {
+                const isComplete = section.completionRate === 100;
+                const detailsClassName = isComplete
+                  ? "mt-4 space-y-2 max-h-0 overflow-hidden opacity-0 transition-[max-height,opacity] duration-200 ease-out group-hover:max-h-48 group-hover:opacity-100 group-focus-within:max-h-48 group-focus-within:opacity-100"
+                  : "mt-4 space-y-2";
 
+                return (
                   <div
-                    className={`mt-3 overflow-hidden rounded-full bg-[hsl(var(--surface-inset))/0.92] transition-all duration-200 ${
-                      section.completionRate === 100
-                        ? "h-0 opacity-0 group-hover:h-2 group-hover:opacity-100 group-focus-within:h-2 group-focus-within:opacity-100"
-                        : "h-2 opacity-100"
+                    key={section.id}
+                    tabIndex={isComplete ? 0 : undefined}
+                    className={`group rounded-[1.35rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--card))/0.92] p-4 shadow-[0_14px_34px_hsl(var(--shadow-color)/0.05)] ${
+                      isComplete
+                        ? "cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))/0.32] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+                        : ""
                     }`}
                   >
-                    <div
-                      className={`h-full rounded-full ${getBarTone(section.completionRate)}`}
-                      style={{ width: `${section.completionRate}%` }}
-                    />
-                  </div>
-
-                  {section.completionRate === 100 ? (
-                    <div className="mt-3 max-h-0 space-y-2 overflow-hidden opacity-0 transition-all duration-200 group-hover:max-h-40 group-hover:opacity-100 group-focus-within:max-h-40 group-focus-within:opacity-100">
-                      <div className="rounded-[0.95rem] border border-[hsl(var(--success))/0.18] bg-[hsl(var(--success-soft))/0.92] px-3 py-2 text-sm text-foreground">
-                        Bu bolum tamamlandi. Uzerine gelince detaylar gorunur.
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-2">
+                        <LaunchBadge tone={getToneForLevel(section.level)}>
+                          {section.level}
+                        </LaunchBadge>
+                        <h3 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
+                          {section.id}. {section.title}
+                        </h3>
+                      </div>
+                      <div className="rounded-[0.95rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--surface-inset))/0.82] px-3 py-2 text-right">
+                        <p className="text-lg font-semibold text-foreground">
+                          %{section.completionRate}
+                        </p>
+                        <p className="text-[11px] uppercase tracking-[0.14em] text-[hsl(var(--muted-foreground))]">
+                          {section.completed}/{section.total}
+                        </p>
                       </div>
                     </div>
-                  ) : (
-                    <div className="mt-4 space-y-2">
+
+                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-[hsl(var(--surface-inset))/0.92]">
+                      <div
+                        className={`h-full rounded-full ${getBarTone(section.completionRate)}`}
+                        style={{ width: `${section.completionRate}%` }}
+                      />
+                    </div>
+
+                    {isComplete ? (
+                      <p className="mt-3 text-xs leading-5 text-[hsl(var(--muted-foreground))]">
+                        Tamamlandi. Detaylari gormek icin uzerine gel veya odakla.
+                      </p>
+                    ) : null}
+
+                    <div className={detailsClassName}>
                       {section.openTasks.length > 0 ? (
                         section.openTasks.slice(0, 2).map((task) => (
                           <div
@@ -269,9 +270,9 @@ export default async function OpsPage() {
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
           </LaunchPanel>
 

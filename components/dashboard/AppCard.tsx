@@ -38,26 +38,26 @@ const platformSurface: Record<App["platform"], string> = {
 };
 
 const platformFocus: Record<App["platform"], string> = {
-  ios: "Store sayfasi ve yayin paketi",
-  android: "Play rollout ve duyuru akisi",
-  web: "Landing, funnel ve signup akisi"
+  ios: "Store sayfası ve yayın paketi",
+  android: "Play rollout ve duyuru akışı",
+  web: "Landing, funnel ve signup akışı"
 };
 
 const nextMoves: Record<App["platform"], string[]> = {
   ios: [
-    "Store sayfasi, gorseller ve ASO metinleri son okumaya alinmali.",
-    "Launch gunu duyuru akisi ve paylasim plani tek siraya baglanmali.",
-    "Ilk hafta yorum, donusum ve retention sinyalleri izlenmeli."
+    "Store sayfası, görseller ve ASO metinleri son okumaya alınmalı.",
+    "Launch günü duyuru akışı ve paylaşım planı tek sıraya bağlanmalı.",
+    "İlk hafta yorum, dönüşüm ve retention sinyalleri izlenmeli."
   ],
   android: [
-    "Play listing, gorseller ve rollout plani ayni yuzeyde netlesmeli.",
-    "Topluluk paylasimi, changelog ve release note akisi hazirlanmali.",
-    "Ilk hafta acquisition, rating ve retention verisi takip edilmeli."
+    "Play listing, görseller ve rollout planı aynı yüzeyde netleşmeli.",
+    "Topluluk paylaşımı, changelog ve release note akışı hazırlanmalı.",
+    "İlk hafta acquisition, rating ve retention verisi takip edilmeli."
   ],
   web: [
-    "Landing, pricing ve CTA'lar yayina hazir hale getirilmeli.",
-    "E-posta, sosyal duyuru ve changelog paketi ayni ritimde hazirlanmali.",
-    "Signup funnel ve ilk growth deneyi sonuclari izlenmeli."
+    "Landing, pricing ve CTA'lar yayına hazır hale getirilmeli.",
+    "E-posta, sosyal duyuru ve changelog paketi aynı ritimde hazırlanmalı.",
+    "Signup funnel ve ilk growth deneyi sonuçları izlenmeli."
   ]
 };
 
@@ -78,9 +78,37 @@ function resolveCountdownTone(countdown: string) {
 export function AppCard({ app, canCreateApp = true }: AppCardProps) {
   const countdown = getLaunchCountdown(app.launch_date);
   const tone = platformTone[app.platform];
-  const missingPlatforms = (["ios", "android", "web"] as const).filter(
+  const expansionPlatforms = (["ios", "android", "web"] as const).filter(
     (platform) => platform !== app.platform
   );
+
+  function buildNewWorkspaceHref(params: {
+    templateName?: string;
+    platform?: App["platform"];
+    mode?: "default" | "platform" | "client";
+    sourceAppId?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+
+    if (params.templateName) {
+      searchParams.set("templateName", params.templateName);
+    }
+
+    if (params.platform) {
+      searchParams.set("platform", params.platform);
+    }
+
+    if (params.mode && params.mode !== "default") {
+      searchParams.set("mode", params.mode);
+    }
+
+    if (params.sourceAppId) {
+      searchParams.set("sourceAppId", params.sourceAppId);
+    }
+
+    const query = searchParams.toString();
+    return query.length > 0 ? `/app/new?${query}` : "/app/new";
+  }
 
   return (
     <LaunchPanel className="overflow-hidden p-0">
@@ -98,9 +126,9 @@ export function AppCard({ app, canCreateApp = true }: AppCardProps) {
                 {app.name}
               </h3>
               <p className="max-w-3xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
-                Launch plani, pazarlama akisi ve growth tarafindaki siradaki is
-                ayni workspace icinde kalir. Bu kart bir liste satiri degil;
-                aktif urunun operasyon ozetidir.
+                Launch planı, pazarlama akışı ve growth tarafındaki sıradaki iş aynı
+                workspace içinde kalır. Bu kart bir liste satırı değil; aktif
+                ürünün operasyon özetidir.
               </p>
             </div>
           </div>
@@ -117,19 +145,19 @@ export function AppCard({ app, canCreateApp = true }: AppCardProps) {
             <LaunchMiniStat
               label="Launch date"
               value={formatLaunchDate(app.launch_date)}
-              detail="Geri sayim ve hazirlik ritmi bu tarihe gore calisir."
+              detail="Geri sayım ve hazırlık ritmi bu tarihe göre çalışır."
               tone="warning"
             />
             <LaunchMiniStat
               label="Primary focus"
               value={platformFocus[app.platform]}
-              detail="Platform secimi bugunun ana dikkat alanini netlestirir."
+              detail="Platform seçimi bugünün ana dikkat alanını netleştirir."
               tone={tone}
             />
             <LaunchMiniStat
               label="Board state"
-              value="Calisiyor"
-              detail="Hazirlik, pazarlama ve growth katmanlari bu yuzeyde birlesir."
+              value="Çalışıyor"
+              detail="Hazırlık, pazarlama ve growth katmanları bu yüzeyde birleşir."
               tone="success"
             />
           </div>
@@ -141,10 +169,10 @@ export function AppCard({ app, canCreateApp = true }: AppCardProps) {
                   Stack
                 </p>
                 <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
-                  Bu urun icin birlikte takip edilen ana operasyon katmanlari.
+                  Bu ürün için birlikte takip edilen ana operasyon katmanları.
                 </p>
               </div>
-              <LaunchBadge tone={tone}>Urun ozeti</LaunchBadge>
+              <LaunchBadge tone={tone}>Ürün özeti</LaunchBadge>
             </div>
 
             <LaunchPillList items={workflowLayers} />
@@ -156,11 +184,11 @@ export function AppCard({ app, canCreateApp = true }: AppCardProps) {
             <div className="space-y-2">
               <LaunchBadge tone={tone}>Next move</LaunchBadge>
               <h4 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
-                Kontrol masasi
+                Kontrol masası
               </h4>
               <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                Bu urun icin siradaki isler; hazirlik, launch iletisimi ve growth
-                tarafina gore burada okunur.
+                Bu ürün için sıradaki işler; hazırlık, launch iletişimi ve growth
+                tarafına göre burada okunur.
               </p>
             </div>
 
@@ -181,92 +209,92 @@ export function AppCard({ app, canCreateApp = true }: AppCardProps) {
               ))}
             </div>
           </LaunchPanel>
+
+          <LaunchPanel tone="inset" className="space-y-5 p-5">
+            <div className="space-y-2">
+              <LaunchBadge tone={tone}>Genislet</LaunchBadge>
+              <h4 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
+                Platform veya client ekle
+              </h4>
+              <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                Mevcut board uzerine yeni bir platform workspace&apos;i ya da yeni bir
+                client varyanti ac. Isim ve platform bilgisi hazir gelir.
+              </p>
+            </div>
+
+            {canCreateApp ? (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
+                    Platform ekle
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {expansionPlatforms.map((platform) => (
+                      <Link
+                        key={platform}
+                        href={buildNewWorkspaceHref({
+                          templateName: app.name,
+                          platform,
+                          mode: "platform",
+                          sourceAppId: app.id
+                        })}
+                        className={launchButtonStyles.secondary}
+                      >
+                        + {formatPlatformLabel(platform)}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
+                    Client / varyant
+                  </p>
+                  <Link
+                    href={buildNewWorkspaceHref({
+                      templateName: `${app.name} - Yeni client`,
+                      platform: app.platform,
+                      mode: "client",
+                      sourceAppId: app.id
+                    })}
+                    className={launchButtonStyles.secondary}
+                  >
+                    Client ekle
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-[1.1rem] border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.92] px-4 py-3 text-sm text-[hsl(var(--warning-foreground))]">
+                Free plan limiti dolu. Yeni platform veya client varyanti acmak icin
+                Pro plana gecmen gerekir.
+              </div>
+            )}
+          </LaunchPanel>
         </div>
       </div>
 
       <div className="border-t border-[hsl(var(--border))/0.48] px-6 py-5 sm:px-7">
-        <div className="space-y-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-              Checklist, growth ve export yuzeylerine bu kart uzerinden gecis
-              yapabilirsin.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link href={`/app/${app.id}`} className={launchButtonStyles.primary}>
-                Checklist
-              </Link>
-              <Link
-                href={`/app/${app.id}/post-launch`}
-                className={launchButtonStyles.secondary}
-              >
-                Growth
-              </Link>
-              <Link
-                href={`/app/${app.id}/export`}
-                className={launchButtonStyles.secondary}
-              >
-                Export
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 rounded-[1.5rem] border border-[hsl(var(--border))/0.52] bg-[hsl(var(--surface-inset))/0.58] px-4 py-4">
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <LaunchBadge tone="clay">Genislet</LaunchBadge>
-                <LaunchBadge tone="neutral">Client ve platform varyantlari</LaunchBadge>
-              </div>
-              <p className="text-sm font-semibold text-foreground">
-                Bu projeye sonradan yeni platform veya client ekleyebilirsin.
-              </p>
-              <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                iOS ile basladiysan sonradan Android ve Web workspace&apos;leri de
-                acilabilir. Ayni mantikla farkli client varyantlarini da yeni bir
-                workspace olarak ekleyebilirsin.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-2.5">
-              {missingPlatforms.map((platform) => (
-                <Link
-                  key={platform}
-                  href={{
-                    pathname: "/app/new",
-                    query: {
-                      templateName: app.name,
-                      platform,
-                      mode: "platform",
-                      sourceAppId: app.id
-                    }
-                  }}
-                  className={canCreateApp ? launchButtonStyles.secondary : launchButtonStyles.subtle}
-                >
-                  {`${formatPlatformLabel(platform)} ekle`}
-                </Link>
-              ))}
-
-              <Link
-                href={{
-                  pathname: "/app/new",
-                  query: {
-                    templateName: `${app.name} - Yeni client`,
-                    platform: app.platform,
-                    mode: "client",
-                    sourceAppId: app.id
-                  }
-                }}
-                className={canCreateApp ? launchButtonStyles.secondary : launchButtonStyles.subtle}
-              >
-                Yeni client ekle
-              </Link>
-            </div>
-
-            {!canCreateApp ? (
-              <p className="text-xs leading-5 text-[hsl(var(--warning-foreground))]">
-                Mevcut plan yeni varyant acmaya izin vermiyor. Once paketi
-                yukselterek birden fazla workspace kullanman gerekir.
-              </p>
-            ) : null}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+            Checklist, growth ve export yüzeylerine bu kart üzerinden geçiş
+            yapabilirsin.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href={`/app/${app.id}`} className={launchButtonStyles.primary}>
+              Checklist
+            </Link>
+            <Link
+              href={`/app/${app.id}/post-launch`}
+              className={launchButtonStyles.secondary}
+            >
+              Growth
+            </Link>
+            <Link
+              href={`/app/${app.id}/export`}
+              className={launchButtonStyles.secondary}
+            >
+              Export
+            </Link>
           </div>
         </div>
       </div>

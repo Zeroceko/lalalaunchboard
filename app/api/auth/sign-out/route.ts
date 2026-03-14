@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { authMessages } from "@/lib/auth/messages";
+import { getAuthMessages } from "@/lib/auth/messages";
 import { hasSupabaseEnv } from "@/lib/env";
+import { resolveRequestLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import type { AuthActionResult } from "@/types";
 
@@ -10,6 +11,9 @@ function json(body: AuthActionResult, status: number) {
 }
 
 export async function POST() {
+  const locale = resolveRequestLocale();
+  const authMessages = getAuthMessages(locale);
+
   if (!hasSupabaseEnv()) {
     return json(
       {

@@ -81,6 +81,8 @@ Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboar
     - `components/dashboard/AppCard.tsx` — app adı, platform, lansman tarihi, silme butonu
     - `components/dashboard/AppList.tsx` — app kartlarını listele
     - Silme onay diyaloğu
+    - Dashboard artık iki moda ayrıldı: mevcut uygulama varsa `control desk`, hiç uygulama yoksa onboarding + `Şimdi başla`
+    - Dashboard copy'si launch prep yanında marketing ve growth takibini de kapsayacak şekilde güncellendi
     - _Gereksinimler: 3.5, 3.6_
   - [x] 5.5 Yeni app oluşturma sayfasını oluştur (`app/(app)/app/new/page.tsx`)
     - Uygulama adı, platform seçimi (iOS/Android/Web), hedef lansman tarihi alanları
@@ -213,6 +215,9 @@ Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboar
   - [x] 14.1 Ilk gorunen frontend pass'ini tamamla
     - Landing, auth, dashboard, new app ve workspace ust alanlarini daha urun hissi veren bir arayuze tasarla
     - Ortak workspace hero / section-nav dili kur
+    - Landing pazarlama sayfasi gibi sadeleştirildi; auth sayfasi yalnizca form odakli hale getirildi
+    - TR / EN dil secici landing ve auth akisina eklendi
+    - Dashboard ust alani control-desk mantigina yaklastirildi
     - _Gereksinimler: 4.1, 6.2, 7.1, 9.1_
   - [ ] 14.2 Checklist interaction polish'i derinlestir
     - `ChecklistItem`, `ItemDetailPanel`, `DeliverableForm` ve ilgili bos/hata durumlarini gelistir
@@ -244,7 +249,10 @@ Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboar
     - loading/empty/error/success state tamligi, mobile viability ve 3-click rule kontrollerini QA akisina ekle
     - _Gereksinimler: 12.2, 12.3_
   - [ ] 15.5 Landing -> Auth baslangic hunisini urunlestir (`Flow 0`)
-    - Landing sayfasinda net deger onermesi, sade 3-adim anlatim ve birincil CTA hiyerarsisini kesinlestir
+    - [x] Landing sayfasinda net deger onermesi, sade anlatim ve birincil CTA hiyerarsisi buyuk olcude netlestirildi
+    - [x] Login olmayan kullanici icin dashboard aksiyonlari landing'den kaldirildi
+    - [x] Login olan kullanici icin `/` -> `/dashboard` yonlendirmesi eklendi
+    - [ ] Landing sayfasinda net deger onermesi, sade 3-adim anlatim ve birincil CTA hiyerarsisini analytics ile dogrula
     - Landing'den auth'a gecis olcumlerini event olarak takip et (`landing_to_auth_click_rate`, `auth_start_rate`)
     - _Gereksinimler: 1.3, 2.1, 12.3_
   - [ ] 15.6 Teknik olmayan kullanici anlama testi (smoke UX)
