@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { ItemDetailPanel } from "@/components/checklist/ItemDetailPanel";
 import { useToast } from "@/components/shared/ToastProvider";
+import { LaunchBadge, launchButtonStyles } from "@/components/ui/LaunchKit";
 import { cn } from "@/lib/utils";
 import type { ChecklistActionResult, ChecklistItemWithStatus } from "@/types";
 
@@ -65,7 +66,7 @@ export function ChecklistItem({ appId, item }: ChecklistItemProps) {
 
   return (
     <>
-      <div className="rounded-[1.65rem] border border-foreground/10 bg-white/95 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
+      <div className="launch-glass-widget rounded-[1.65rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--card))/0.95] p-5 shadow-[0_16px_36px_hsl(var(--shadow-color)/0.06)]">
         <div className="flex items-start gap-4">
           <button
             type="button"
@@ -73,10 +74,10 @@ export function ChecklistItem({ appId, item }: ChecklistItemProps) {
             onClick={handleToggle}
             disabled={isPending}
             className={cn(
-              "mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm transition",
+              "mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm transition duration-200",
               isCompleted
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-foreground/20 bg-background text-transparent",
+                ? "border-[hsl(var(--success))/0.28] bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]"
+                : "border-[hsl(var(--border))/0.75] bg-[hsl(var(--surface-inset))/0.85] text-transparent",
               isPending && "cursor-not-allowed opacity-60"
             )}
           >
@@ -88,35 +89,28 @@ export function ChecklistItem({ appId, item }: ChecklistItemProps) {
               <button
                 type="button"
                 onClick={() => setIsDetailOpen(true)}
-                className="min-w-0 flex-1 rounded-[1.1rem] text-left transition hover:bg-secondary/30"
+                className="min-w-0 flex-1 rounded-[1.1rem] text-left transition duration-200 hover:bg-[hsl(var(--surface-inset))/0.7]"
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <h4
                     className={cn(
-                      "text-base font-semibold tracking-tight",
+                      "text-base font-semibold tracking-[-0.02em] text-foreground",
                       isCompleted && "text-muted-foreground line-through"
                     )}
                   >
                     {item.title}
                   </h4>
-                  <span
-                    className={cn(
-                      "rounded-full px-2.5 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em]",
-                      isCompleted
-                        ? "bg-emerald-100 text-emerald-900"
-                        : "bg-secondary text-foreground/70"
-                    )}
-                  >
+                  <LaunchBadge tone={isCompleted ? "success" : "neutral"}>
                     {isCompleted ? "Done" : "Open"}
-                  </span>
+                  </LaunchBadge>
                   {item.deliverables.length > 0 ? (
-                    <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-primary">
+                    <span className="rounded-full border border-[hsl(var(--primary))/0.18] bg-[hsl(var(--brand-soft))/0.96] px-2.5 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary))]">
                       {item.deliverables.length} deliverable
                     </span>
                   ) : null}
                 </div>
 
-                <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
                   {item.description}
                 </p>
               </button>
@@ -124,20 +118,20 @@ export function ChecklistItem({ appId, item }: ChecklistItemProps) {
               <button
                 type="button"
                 onClick={() => setIsDetailOpen(true)}
-                className="inline-flex rounded-full border border-primary/20 px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary/5"
+                className={cn(launchButtonStyles.secondary, "px-4 py-2.5 text-sm")}
               >
                 Detail paneli ac
               </button>
             </div>
 
             <div className="flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full border border-foreground/10 px-2.5 py-1 text-muted-foreground">
+              <span className="rounded-full border border-[hsl(var(--border))/0.58] bg-[hsl(var(--surface-inset))/0.7] px-2.5 py-1 text-[hsl(var(--muted-foreground))]">
                 {item.toolLinks.length} kaynak link
               </span>
-              <span className="rounded-full border border-foreground/10 px-2.5 py-1 text-muted-foreground">
+              <span className="rounded-full border border-[hsl(var(--border))/0.58] bg-[hsl(var(--surface-inset))/0.7] px-2.5 py-1 text-[hsl(var(--muted-foreground))]">
                 {item.guideText ? "Guide hazir" : "Guide bekleniyor"}
               </span>
-              <span className="rounded-full border border-foreground/10 px-2.5 py-1 text-muted-foreground">
+              <span className="rounded-full border border-[hsl(var(--border))/0.58] bg-[hsl(var(--surface-inset))/0.7] px-2.5 py-1 text-[hsl(var(--muted-foreground))]">
                 {item.deliverables.length > 0
                   ? "Evidence attached"
                   : "No deliverable yet"}

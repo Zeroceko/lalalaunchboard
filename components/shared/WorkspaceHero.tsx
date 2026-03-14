@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { CountdownBadge } from "@/components/shared/CountdownBadge";
+import { LaunchBadge, launchButtonStyles } from "@/components/ui/LaunchKit";
 import { cn } from "@/lib/utils";
 
 interface WorkspaceHeroAction {
@@ -48,15 +49,14 @@ export function WorkspaceHero({
   panelBody
 }: WorkspaceHeroProps) {
   return (
-    <section className="grid gap-6 rounded-[2rem] border border-foreground/10 bg-white/88 p-6 shadow-[0_30px_80px_rgba(15,23,42,0.08)] backdrop-blur lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,0.95fr)] lg:p-8">
+    <section className="launch-hero relative overflow-hidden rounded-[2.2rem] border border-[hsl(var(--border))/0.5] bg-[linear-gradient(135deg,hsl(var(--hero-start)/0.98),hsl(var(--hero-mid)/0.96)_38%,hsl(var(--hero-end)/0.96)_70%,hsl(var(--hero-start)/0.98))] p-6 shadow-[0_34px_100px_hsl(var(--shadow-color)/0.12)] sm:p-8 lg:grid lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,0.95fr)] lg:gap-8 lg:p-9">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_8%_8%,hsl(var(--bg-glow-brand)/0.16),transparent_30%),radial-gradient(circle_at_88%_10%,hsl(var(--bg-glow-accent)/0.18),transparent_26%),radial-gradient(circle_at_72%_78%,hsl(var(--bg-glow-clay)/0.1),transparent_24%)]" />
       <div className="space-y-6">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/70">
-            {platformLabel}
-          </span>
+          <LaunchBadge tone="brand">{platformLabel}</LaunchBadge>
           <CountdownBadge launchDate={launchDate} />
           {contentSource === "fallback" ? (
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900">
+            <span className="rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.98] px-3 py-1 text-xs font-semibold text-[hsl(var(--warning-foreground))]">
               Local CMS fallback
             </span>
           ) : null}
@@ -64,14 +64,14 @@ export function WorkspaceHero({
 
         <div className="space-y-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary/80">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[hsl(var(--primary))]">
               {eyebrow}
             </p>
-            <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-balance md:text-5xl">
+            <h1 className="mt-3 max-w-3xl text-balance text-4xl font-semibold tracking-[-0.04em] text-foreground md:text-5xl">
               {title}
             </h1>
           </div>
-          <p className="max-w-3xl text-base leading-8 text-muted-foreground md:text-[1.02rem]">
+          <p className="max-w-3xl text-base leading-8 text-[hsl(var(--muted-foreground))] md:text-[1.02rem]">
             {description}
           </p>
         </div>
@@ -83,10 +83,10 @@ export function WorkspaceHero({
                 key={action.href}
                 href={action.href}
                 className={cn(
-                  "inline-flex rounded-full px-5 py-3 text-sm font-semibold transition",
+                  "px-5 py-3 text-sm",
                   action.variant === "primary"
-                    ? "bg-primary text-primary-foreground shadow-[0_18px_30px_rgba(30,64,175,0.18)] hover:opacity-95"
-                    : "border border-foreground/10 bg-white text-foreground hover:bg-secondary/40"
+                    ? launchButtonStyles.primary
+                    : launchButtonStyles.secondary
                 )}
               >
                 {action.label}
@@ -100,15 +100,15 @@ export function WorkspaceHero({
             {stats.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-[1.5rem] border border-foreground/10 bg-secondary/45 px-4 py-4"
+                className="launch-glass-widget rounded-[1.45rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--card))/0.9] px-4 py-4 shadow-[0_10px_26px_hsl(var(--shadow-color)/0.07)]"
               >
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-foreground/55">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
                   {stat.label}
                 </p>
-                <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
+                <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-foreground">
                   {stat.value}
                 </p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
                   {stat.detail}
                 </p>
               </div>
@@ -117,16 +117,16 @@ export function WorkspaceHero({
         ) : null}
       </div>
 
-      <div className="rounded-[1.85rem] bg-slate-950 p-6 text-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+      <div className="rounded-[1.9rem] border border-[hsl(var(--border))/0.6] bg-[linear-gradient(180deg,hsl(var(--surface-dark-start)/0.98),hsl(var(--surface-dark-mid)/0.96)_55%,hsl(var(--surface-dark-end)/0.96))] p-6 text-[hsl(var(--surface-dark-foreground))] shadow-[0_30px_90px_hsl(var(--shadow-color)/0.22)]">
         <div className="space-y-5">
           <div>
-            <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-white/55">
+            <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-[hsl(var(--surface-dark-muted))]">
               {panelEyebrow}
             </p>
-            <p className="mt-4 text-4xl font-semibold tracking-tight text-balance">
+            <p className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-balance">
               {panelTitle}
             </p>
-            <p className="mt-3 text-sm leading-7 text-white/72">
+            <p className="mt-3 text-sm leading-7 text-[hsl(var(--surface-dark-muted))]">
               {panelDescription}
             </p>
           </div>
@@ -138,7 +138,7 @@ export function WorkspaceHero({
           ) : null}
 
           {panelFootnote ? (
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/48">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[hsl(var(--surface-dark-muted))]">
               {panelFootnote}
             </p>
           ) : null}

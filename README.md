@@ -11,6 +11,7 @@ The official project specs live in [`specs/`](./specs):
 - `specs/requirements.md`
 - `specs/design.md`
 - `specs/tasks.md`
+- `specs/roadmap.md`
 
 These files are the source of truth for product scope, architecture, and implementation order.
 

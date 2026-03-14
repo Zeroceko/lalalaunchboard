@@ -8,100 +8,203 @@ import {
 import type { App } from "@/types";
 
 import { DeleteAppButton } from "@/components/dashboard/DeleteAppButton";
+import {
+  LaunchBadge,
+  LaunchMiniStat,
+  LaunchPanel,
+  LaunchPillList,
+  launchButtonStyles
+} from "@/components/ui/LaunchKit";
+import { cn } from "@/lib/utils";
 
 interface AppCardProps {
   app: App;
 }
 
+const platformTone: Record<App["platform"], "brand" | "success" | "clay"> = {
+  ios: "clay",
+  android: "success",
+  web: "brand"
+};
+
+const platformSurface: Record<App["platform"], string> = {
+  ios:
+    "border-b border-[hsl(var(--clay))/0.18] bg-[linear-gradient(180deg,hsl(var(--clay-soft))/0.98,hsl(var(--card))/0.9)]",
+  android:
+    "border-b border-[hsl(var(--success))/0.18] bg-[linear-gradient(180deg,hsl(var(--success-soft))/0.98,hsl(var(--card))/0.9)]",
+  web:
+    "border-b border-[hsl(var(--primary))/0.18] bg-[linear-gradient(180deg,hsl(var(--brand-soft))/0.98,hsl(var(--card))/0.9)]"
+};
+
+const platformFocus: Record<App["platform"], string> = {
+  ios: "App Store release pack",
+  android: "Play rollout prep",
+  web: "Landing and funnel prep"
+};
+
+const nextMoves: Record<App["platform"], string[]> = {
+  ios: [
+    "Store metadata ve subtitle son kontrolu",
+    "Screenshot ve creative set final duzeni",
+    "Launch-day changelog ve share copy"
+  ],
+  android: [
+    "Play listing copy ve visual set son hali",
+    "Release note ve phased rollout plani",
+    "Launch-day announcement sequence"
+  ],
+  web: [
+    "Landing headline ve CTA final kontrolu",
+    "Onboarding funnel ve waitlist akisi",
+    "Launch-day post, email ve changelog paketi"
+  ]
+};
+
+const workflowLayers = ["Checklist", "Countdown", "Progress", "Routine"];
+
+function resolveCountdownTone(countdown: string) {
+  if (countdown === "Lansman günü") {
+    return "warning" as const;
+  }
+
+  if (countdown === "Lansman tarihi geçti") {
+    return "danger" as const;
+  }
+
+  return "brand" as const;
+}
+
 export function AppCard({ app }: AppCardProps) {
+  const countdown = getLaunchCountdown(app.launch_date);
+  const tone = platformTone[app.platform];
+
   return (
-    <article className="rounded-[1.9rem] border border-foreground/10 bg-white/88 p-6 shadow-[0_25px_70px_rgba(15,23,42,0.08)] backdrop-blur">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1 space-y-5">
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.2rem] bg-primary text-lg font-semibold text-primary-foreground">
-              {app.name.slice(0, 1).toUpperCase()}
+    <LaunchPanel className="overflow-hidden p-0">
+      <div className={cn("px-6 py-5 sm:px-7", platformSurface[app.platform])}>
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <LaunchBadge tone={tone}>{formatPlatformLabel(app.platform)}</LaunchBadge>
+              <LaunchBadge tone={resolveCountdownTone(countdown)}>{countdown}</LaunchBadge>
+              <LaunchBadge tone="success">Board active</LaunchBadge>
             </div>
 
-            <div className="min-w-0 flex-1 space-y-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                  {getLaunchCountdown(app.launch_date)}
-                </span>
-                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/70">
-                  {formatPlatformLabel(app.platform)}
-                </span>
-              </div>
+            <div className="space-y-2">
+              <h3 className="text-[2rem] font-semibold tracking-[-0.05em] text-foreground">
+                {app.name}
+              </h3>
+              <p className="max-w-3xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+                Launch plan, zaman ritmi ve siradaki hareket ayni workspace icinde
+                kalir. Bu kart liste satiri degil; aktif board&apos;un operasyon
+                ozetidir.
+              </p>
+            </div>
+          </div>
 
+          <div className="lg:pt-1">
+            <DeleteAppButton appId={app.id} appName={app.name} />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-7 px-6 py-7 sm:px-7 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <LaunchMiniStat
+              label="Launch date"
+              value={formatLaunchDate(app.launch_date)}
+              detail="Countdown ve prep ritmi bu tarihe gore calisir."
+              tone="warning"
+            />
+            <LaunchMiniStat
+              label="Primary focus"
+              value={platformFocus[app.platform]}
+              detail="Platform secimi ilk dikkat alanini netlestirir."
+              tone={tone}
+            />
+            <LaunchMiniStat
+              label="Board state"
+              value="Ready to run"
+              detail="Checklist ve progress katmanlari bu yuzeye genisler."
+              tone="success"
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="truncate text-2xl font-semibold tracking-tight">
-                  {app.name}
-                </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                  Hedef lansman tarihi {formatLaunchDate(app.launch_date)}. Bu board
-                  checklist, deliverable, routine ve export akislarini tek yerde tutar.
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
+                  Stack
+                </p>
+                <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
+                  Bu boardun tasidigi ana workflow katmanlari.
                 </p>
               </div>
+              <LaunchBadge tone={tone}>Workspace summary</LaunchBadge>
             </div>
-          </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-[1.25rem] bg-secondary/60 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/55">
-                Prep
-              </p>
-              <p className="mt-2 text-sm text-foreground/80">
-                Checklist ve deliverable akisi
-              </p>
-            </div>
-            <div className="rounded-[1.25rem] bg-secondary/60 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/55">
-                Launch
-              </p>
-              <p className="mt-2 text-sm text-foreground/80">
-                Countdown ve release odagi
-              </p>
-            </div>
-            <div className="rounded-[1.25rem] bg-secondary/60 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/55">
-                Grow
-              </p>
-              <p className="mt-2 text-sm text-foreground/80">
-                Routine ve export ciktilari
-              </p>
-            </div>
+            <LaunchPillList items={workflowLayers} />
           </div>
         </div>
 
-        <DeleteAppButton appId={app.id} appName={app.name} />
-      </div>
+        <div className="space-y-4">
+          <LaunchPanel tone="inset" className="space-y-5 p-5">
+            <div className="space-y-2">
+              <LaunchBadge tone={tone}>Next move</LaunchBadge>
+              <h4 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
+                Simdi netlestirilecek alanlar
+              </h4>
+              <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                Bu app icin sonraki hareketler, platform tipine gore farkli bir
+                hazirlik sirasina oturur.
+              </p>
+            </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-foreground/8 pt-4">
-        <p className="text-sm text-muted-foreground">
-          Bu workspace uzerinden launch&apos;in tum ritmini yonetebilirsin.
-        </p>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href={`/app/${app.id}`}
-            className="inline-flex rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:opacity-95"
-          >
-            Checklist
-          </Link>
-          <Link
-            href={`/app/${app.id}/post-launch`}
-            className="inline-flex rounded-full border border-foreground/10 bg-white px-4 py-2 text-sm font-medium transition hover:bg-secondary/40"
-          >
-            Post-Launch
-          </Link>
-          <Link
-            href={`/app/${app.id}/export`}
-            className="inline-flex rounded-full border border-foreground/10 bg-white px-4 py-2 text-sm font-medium transition hover:bg-secondary/40"
-          >
-            Export
-          </Link>
+            <div className="space-y-3">
+              {nextMoves[app.platform].map((item, index) => (
+                <div
+                  key={item}
+                  data-tone={tone}
+                  className="launch-glass-widget flex items-center gap-3 rounded-[1.2rem] border border-[hsl(var(--border))/0.56] bg-[hsl(var(--card))/0.9] px-4 py-3.5"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-[0.95rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--surface-inset))/0.82] text-sm font-semibold text-[hsl(var(--muted-foreground))]">
+                    {index + 1}
+                  </span>
+                  <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">
+                    {item}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </LaunchPanel>
         </div>
       </div>
-    </article>
+
+      <div className="border-t border-[hsl(var(--border))/0.48] px-6 py-5 sm:px-7">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+            Checklist, post-launch ve export yuzeylerine bu kart uzerinden gecis
+            yapabilirsin.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href={`/app/${app.id}`} className={launchButtonStyles.primary}>
+              Checklist
+            </Link>
+            <Link
+              href={`/app/${app.id}/post-launch`}
+              className={launchButtonStyles.secondary}
+            >
+              Post-launch
+            </Link>
+            <Link
+              href={`/app/${app.id}/export`}
+              className={launchButtonStyles.secondary}
+            >
+              Export
+            </Link>
+          </div>
+        </div>
+      </div>
+    </LaunchPanel>
   );
 }

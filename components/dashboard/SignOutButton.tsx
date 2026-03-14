@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { useToast } from "@/components/shared/ToastProvider";
+import { LaunchButton } from "@/components/ui/LaunchKit";
 import { authMessages } from "@/lib/auth/messages";
 import type { AuthActionResult } from "@/types";
 
@@ -55,14 +56,15 @@ export function SignOutButton() {
 
   return (
     <div className="flex flex-col items-end gap-2">
-      <button
+      <LaunchButton
         type="button"
+        tone="secondary"
         onClick={handleSignOut}
         disabled={isSubmitting || isPending}
-        className="rounded-full border border-foreground/10 bg-white/70 px-4 py-2 text-sm font-medium transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+        className="px-4 py-2.5 text-sm"
       >
-        {isSubmitting || isPending ? "Çıkış yapılıyor..." : "Çıkış Yap"}
-      </button>
+        {isSubmitting || isPending ? "Cikis yapiliyor..." : "Cikis Yap"}
+      </LaunchButton>
       {statusMessage ? (
         <p className="max-w-48 text-right text-xs text-destructive">
           {statusMessage}

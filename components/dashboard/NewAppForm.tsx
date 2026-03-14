@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
@@ -8,16 +9,21 @@ import { appMessages } from "@/lib/apps/messages";
 import { createAppSchema } from "@/lib/apps/validation";
 import { flattenFieldErrors } from "@/lib/auth/validation";
 import type { AppActionResult, AppLimitState, Plan } from "@/types";
+import {
+  LaunchActionBar,
+  LaunchBadge,
+  LaunchButton,
+  LaunchChoiceCard,
+  LaunchFieldShell,
+  LaunchInput,
+  LaunchMiniStat,
+  LaunchNotice,
+  LaunchPanel,
+  LaunchRailList
+} from "@/components/ui/LaunchKit";
 
 interface NewAppFormProps {
   limit: AppLimitState;
-}
-
-function getDefaultLaunchDate() {
-  const nextTwoWeeks = new Date();
-  nextTwoWeeks.setDate(nextTwoWeeks.getDate() + 14);
-
-  return nextTwoWeeks.toISOString().slice(0, 10);
 }
 
 type NewAppFormState = {
@@ -25,6 +31,58 @@ type NewAppFormState = {
   platform: "ios" | "android" | "web";
   launchDate: string;
 };
+
+const platformOptions = [
+  {
+    value: "web",
+    label: "Web app",
+    hint: "Landing, onboarding ve launch funnel tarafini one al.",
+    tone: "brand" as const
+  },
+  {
+    value: "ios",
+    label: "iOS app",
+    hint: "App Store creative seti ve publish paketiyle basla.",
+    tone: "clay" as const
+  },
+  {
+    value: "android",
+    label: "Android app",
+    hint: "Play Store teslimleri ve rollout ritmini sabitle.",
+    tone: "success" as const
+  }
+] as const;
+
+const activationFlow = [
+  {
+    title: "Identity locked",
+    description:
+      "Isim ve platform secimi board kartinin tonu ile ilk odak alanini belirler.",
+    badge: "Step 01",
+    tone: "brand" as const
+  },
+  {
+    title: "Launch window set",
+    description:
+      "Tarih netlestiginde countdown, prep ritmi ve oncelik sirasi ayni planin ustune oturur.",
+    badge: "Step 02",
+    tone: "warning" as const
+  },
+  {
+    title: "Board goes live",
+    description:
+      "Dashboard, checklist ve sonraki routine katmanlari ayni workspace mantigiyla acilir.",
+    badge: "Step 03",
+    tone: "success" as const
+  }
+];
+
+function getDefaultLaunchDate() {
+  const nextTwoWeeks = new Date();
+  nextTwoWeeks.setDate(nextTwoWeeks.getDate() + 14);
+
+  return nextTwoWeeks.toISOString().slice(0, 10);
+}
 
 const initialState: NewAppFormState = {
   name: "",
@@ -36,23 +94,40 @@ function getPlanLabel(plan: Plan) {
   return plan === "pro" ? "Pro" : "Free";
 }
 
-const platformOptions = [
-  {
-    value: "ios",
-    label: "iOS",
-    detail: "App Store odagi"
-  },
-  {
-    value: "android",
-    label: "Android",
-    detail: "Google Play odagi"
-  },
-  {
-    value: "web",
-    label: "Web",
-    detail: "Landing-first flow"
-  }
-] as const;
+interface FormSectionProps {
+  eyebrow: string;
+  title: string;
+  description: string;
+  children: ReactNode;
+  tone?: "default" | "tint" | "brand" | "clay";
+}
+
+function FormSection({
+  eyebrow,
+  title,
+  description,
+  children,
+  tone = "default"
+}: FormSectionProps) {
+  return (
+    <LaunchPanel tone={tone} className="space-y-7">
+      <div className="space-y-3">
+        <LaunchBadge tone={tone === "brand" ? "brand" : tone === "clay" ? "clay" : "neutral"}>
+          {eyebrow}
+        </LaunchBadge>
+        <div className="space-y-2">
+          <h3 className="text-[1.9rem] font-semibold tracking-[-0.04em] text-foreground">
+            {title}
+          </h3>
+          <p className="max-w-2xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+            {description}
+          </p>
+        </div>
+      </div>
+      {children}
+    </LaunchPanel>
+  );
+}
 
 export function NewAppForm({ limit }: NewAppFormProps) {
   const router = useRouter();
@@ -128,6 +203,7 @@ export function NewAppForm({ limit }: NewAppFormProps) {
         description: "Yeni app workspace'i dashboard'a eklendi.",
         variant: "success"
       });
+
       startTransition(() => {
         router.push(result.redirectTo ?? "/dashboard");
         router.refresh();
@@ -145,125 +221,199 @@ export function NewAppForm({ limit }: NewAppFormProps) {
   }
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
-      <div className="rounded-[1.75rem] bg-secondary/55 p-5">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/60">
-              Plan
-            </p>
-            <p className="mt-2 text-lg font-semibold">{getPlanLabel(limit.plan)}</p>
+    <div className="grid gap-7 xl:grid-cols-[minmax(0,1.06fr)_360px]">
+      <form className="space-y-7" onSubmit={handleSubmit}>
+        <LaunchPanel tone="tint" className="space-y-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-3">
+              <LaunchBadge tone="brand">Board activation</LaunchBadge>
+              <div className="space-y-2">
+                <h2 className="text-[2.3rem] font-semibold tracking-[-0.05em] text-foreground">
+                  Yeni uygulaman icin launch workspace kur.
+                </h2>
+                <p className="max-w-2xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+                  Once kimligi sabitle, sonra launch window&apos;u belirle.
+                  Dashboard karti, checklist akisi ve countdown ayni planin
+                  ustune kurulsun.
+                </p>
+              </div>
+            </div>
+            <LaunchBadge tone="warning">About 1 minute</LaunchBadge>
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/60">
-              Mevcut App
-            </p>
-            <p className="mt-2 text-lg font-semibold">{limit.appCount}</p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/60">
-              Kalan Slot
-            </p>
-            <p className="mt-2 text-lg font-semibold">
-              {limit.remainingSlots === null ? "Sinirsiz" : limit.remainingSlots}
-            </p>
-          </div>
-        </div>
-        <p className="mt-4 text-sm leading-6 text-muted-foreground">
-          Bu form tamamlandiginda direkt checklist ekranina gecmeye hazir bir workspace olusacak.
-        </p>
-      </div>
 
-      <label className="block space-y-2">
-        <span className="text-sm font-medium">Uygulama Adi</span>
-        <input
-          type="text"
-          value={form.name}
-          onChange={(event) => updateField("name", event.target.value)}
-          placeholder="Orn. FocusFlow"
-          className="w-full rounded-2xl border border-foreground/10 bg-background px-4 py-3 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
-        />
-        {fieldErrors?.name ? (
-          <p className="text-sm text-destructive">{fieldErrors.name}</p>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <LaunchMiniStat
+              label="Plan"
+              value={getPlanLabel(limit.plan)}
+              detail="Board kapasitesi bu plana gore acilir."
+              tone="brand"
+            />
+            <LaunchMiniStat
+              label="Active boards"
+              value={limit.appCount}
+              detail="Su anda acik olan launch workspace sayisi."
+              tone="clay"
+            />
+            <LaunchMiniStat
+              label="Open slots"
+              value={limit.remainingSlots === null ? "Unlimited" : limit.remainingSlots}
+              detail="Yeni board olusturmak icin kalan alan."
+              tone={limit.remainingSlots === 0 ? "warning" : "success"}
+            />
+          </div>
+        </LaunchPanel>
+
+        <FormSection
+          eyebrow="Identity"
+          title="Board kimligini tanimla"
+          description="Bu secimler dashboard kartinin ilk hissini, checklist odagini ve boardun genel ritmini belirler."
+        >
+          <div className="space-y-7">
+            <LaunchFieldShell
+              label="Uygulama adi"
+              hint="Workspace basliginda, export ekraninda ve checklist tarafinda ana isim olarak kullanilacak."
+              error={fieldErrors?.name}
+              fieldId="app-name"
+            >
+              <LaunchInput
+                id="app-name"
+                type="text"
+                value={form.name}
+                onChange={(event) => updateField("name", event.target.value)}
+                placeholder="Orn. FocusFlow"
+              />
+            </LaunchFieldShell>
+
+            <LaunchFieldShell
+              label="Platform"
+              hint="Platform secimi boardun ilk odagini dogru yone ceker."
+              error={fieldErrors?.platform}
+            >
+              <div className="grid gap-4 sm:grid-cols-3">
+                {platformOptions.map((option) => (
+                  <LaunchChoiceCard
+                    key={option.value}
+                    label={option.label}
+                    hint={option.hint}
+                    selected={form.platform === option.value}
+                    tone={option.tone}
+                    onSelect={() => updateField("platform", option.value)}
+                  />
+                ))}
+              </div>
+            </LaunchFieldShell>
+          </div>
+        </FormSection>
+
+        <FormSection
+          eyebrow="Launch window"
+          title="Go-live tarihini sabitle"
+          description="Launch date sadece takvim bilgisi degildir. Countdown, prep ritmi ve sonraki hareket bu tarihin etrafinda sekillenir."
+          tone="brand"
+        >
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <LaunchFieldShell
+              label="Launch date"
+              hint="Bu tarih dashboard kartinda countdown, checklist tarafinda ise ana ritim noktasi olur."
+              error={fieldErrors?.launchDate}
+              fieldId="launch-date"
+            >
+              <LaunchInput
+                id="launch-date"
+                type="date"
+                value={form.launchDate}
+                onChange={(event) => updateField("launchDate", event.target.value)}
+              />
+            </LaunchFieldShell>
+
+            <LaunchPanel tone="clay" className="space-y-4 p-5">
+              <LaunchBadge tone="clay">Planning note</LaunchBadge>
+              <h4 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
+                Nefes alan bir launch window sec
+              </h4>
+              <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                Cogu indie launch icin iki haftalik hazirlik araligi; store
+                teslimleri, gorseller ve launch-day iletisimini rahat toplar.
+              </p>
+            </LaunchPanel>
+          </div>
+        </FormSection>
+
+        {isBlocked ? (
+          <LaunchNotice tone="warning">
+            Free plan kapasitesi dolu. Yeni board acmadan once mevcut bir
+            workspace&apos;i silmen veya daha sonra Pro plana gecmen gerekir.
+          </LaunchNotice>
         ) : null}
-      </label>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div className="space-y-2">
-          <span className="text-sm font-medium">Platform</span>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {platformOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => updateField("platform", option.value)}
-                className={`rounded-[1.35rem] border px-4 py-4 text-left transition ${
-                  form.platform === option.value
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-foreground/10 bg-background hover:bg-secondary/40"
-                }`}
-              >
-                <p className="text-sm font-semibold">{option.label}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{option.detail}</p>
-              </button>
-            ))}
+        {statusMessage ? <LaunchNotice tone="danger">{statusMessage}</LaunchNotice> : null}
+
+        <LaunchActionBar
+          eyebrow="Create workspace"
+          title="Boardu ac ve launch operasyonunu baslat"
+          description="Workspace olustugunda dashboard karti, launch timing ve sonraki checklist akisi ayni urun dili icinde hazir olacak."
+        >
+          <LaunchButton type="submit" disabled={isSubmitting || isPending || isBlocked}>
+            {isSubmitting || isPending
+              ? "Workspace olusturuluyor..."
+              : "Workspace olustur"}
+          </LaunchButton>
+        </LaunchActionBar>
+      </form>
+
+      <div className="space-y-6">
+        <LaunchRailList
+          eyebrow="What opens next"
+          title="Bu kurulum bir formdan fazlasi"
+          description="Kaydi bitirdiginde board yalnizca olusmaz. Dashboard ve checklist tarafinda kullanilan tum ilk yapi birlikte acilir."
+          items={activationFlow}
+        />
+
+        <LaunchPanel tone={isBlocked ? "warning" : "success"} className="space-y-4">
+          <LaunchBadge tone={isBlocked ? "warning" : "success"}>
+            {isBlocked ? "Capacity check" : "Board promise"}
+          </LaunchBadge>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
+              {isBlocked
+                ? "Yeni board icin once alan ac"
+                : "Olusan ilk sey sadece bir kayit olmayacak"}
+            </h3>
+            <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+              {isBlocked
+                ? "Su anki plan limiti doluysa yeni workspace acmadan once bir slot bosaltman gerekir."
+                : "Platform, launch date ve next move sinyali dashboardta ilk andan itibaren gorunur olacak."}
+            </p>
           </div>
-          {fieldErrors?.platform ? (
-            <p className="text-sm text-destructive">{fieldErrors.platform}</p>
-          ) : null}
-        </div>
+        </LaunchPanel>
 
-        <div className="space-y-2">
-          <span className="text-sm font-medium">Hedef Lansman Tarihi</span>
-          <input
-            type="date"
-            value={form.launchDate}
-            onChange={(event) => updateField("launchDate", event.target.value)}
-            className="w-full rounded-2xl border border-foreground/10 bg-background px-4 py-3 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
-          />
-          <p className="text-xs text-muted-foreground">
-            Countdown, checklist ritmi ve workspace odagi bu tarihe gore sekillenecek.
-          </p>
-          {fieldErrors?.launchDate ? (
-            <p className="text-sm text-destructive">{fieldErrors.launchDate}</p>
-          ) : null}
-        </div>
+        <LaunchPanel tone="default" className="space-y-4">
+          <LaunchBadge tone="neutral">Default stack</LaunchBadge>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
+              Ilk gun acilacak katmanlar
+            </h3>
+            <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+              Bu ekran bittiginde su alanlar ayni board mantigiyla birlikte
+              dusunulur.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {["Dashboard card", "Launch countdown", "Prep checklist", "Post-launch routine"].map(
+              (item) => (
+                <LaunchBadge
+                  key={item}
+                  tone="neutral"
+                  className="bg-[hsl(var(--card))/0.96]"
+                >
+                  {item}
+                </LaunchBadge>
+              )
+            )}
+          </div>
+        </LaunchPanel>
       </div>
-
-      {isBlocked ? (
-        <div className="rounded-2xl border border-amber-300/60 bg-amber-50 px-4 py-4 text-sm text-amber-900">
-          Free plan limitine ulastin. Mevcut workspace&apos;ini silebilir ya da
-          ileride Pro Plan&apos;a gecerek sinirsiz uygulama ekleyebilirsin.
-        </div>
-      ) : null}
-
-      {statusMessage ? (
-        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-          {statusMessage}
-        </div>
-      ) : null}
-
-      <button
-        type="submit"
-        disabled={isSubmitting || isPending || isBlocked}
-        className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {isSubmitting || isPending
-          ? "Workspace olusturuluyor..."
-          : "Workspace Olustur"}
-      </button>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-[1.25rem] border border-foreground/10 bg-background/70 p-4 text-sm text-muted-foreground">
-          Checklist ekrani hemen hazir olur.
-        </div>
-        <div className="rounded-[1.25rem] border border-foreground/10 bg-background/70 p-4 text-sm text-muted-foreground">
-          Deliverable toplama akisi ayni board&apos;a baglanir.
-        </div>
-        <div className="rounded-[1.25rem] border border-foreground/10 bg-background/70 p-4 text-sm text-muted-foreground">
-          Sonraki adim post-launch routine ve export olur.
-        </div>
-      </div>
-    </form>
+    </div>
   );
 }

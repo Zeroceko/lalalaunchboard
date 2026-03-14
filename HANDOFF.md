@@ -28,6 +28,7 @@ We have a clean project foundation with:
 - Property-based test foundation with `vitest` + `fast-check`
 - First visible frontend pass across landing, auth, dashboard, new-app, and workspace screens
 - Checklist interaction polish started: item cards, detail panel, deliverable form, and app-shell header now follow the new visual language
+- Checklist workspace surfaces now align further with the LaunchKit design language (`WorkspaceHero`, lane summary cards, category wrappers, and checklist item row styling)
 - Property coverage now also includes deliverable validation/merge, routine merge, and export content integrity
 - Shared blocker/empty states now use a common `WorkspaceNotice` pattern across dashboard and workspace pages
 - Docker test flow that passes lint, typecheck, and build
@@ -64,11 +65,8 @@ The following also passed in Docker:
 Latest visual/frontend pass also re-verified:
 
 - `npm run lint`
-- `npm run test:properties`
 - `npm run build`
 - `npm run typecheck`
-- `docker compose build web-test`
-- `docker compose run --rm web-test`
 
 Note:
 

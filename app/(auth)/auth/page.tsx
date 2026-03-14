@@ -1,10 +1,39 @@
+import Link from "next/link";
+
 import { AuthTabs } from "@/components/auth/AuthTabs";
 import { ToastTrigger } from "@/components/shared/ToastTrigger";
+import {
+  LaunchBadge,
+  LaunchHero,
+  LaunchPage,
+  LaunchPanel,
+  LaunchRailList,
+  LaunchSectionHeader,
+  launchButtonStyles
+} from "@/components/ui/LaunchKit";
 
-const authHighlights = [
-  "One secure entry point for every app workspace",
-  "Supabase auth, dashboard routing and session protection are already wired",
-  "hCaptcha slot is ready for real sign-up protection"
+const authFlow = [
+  {
+    title: "Hesabi ac",
+    description:
+      "Ilk boardunu kurmak icin gerekli guvenli giris katmani burada baslar.",
+    badge: "Step 1",
+    tone: "info" as const
+  },
+  {
+    title: "Boarda baglan",
+    description:
+      "Auth tamamlandiginda urun seni dogrudan dashboard ve setup akisina tasir.",
+    badge: "Step 2",
+    tone: "brand" as const
+  },
+  {
+    title: "Ritmi koru",
+    description:
+      "Sonraki girislerde urun seni launch akisinin kaldigi yere geri goturur.",
+    badge: "Step 3",
+    tone: "success" as const
+  }
 ];
 
 export default function AuthPage({
@@ -18,7 +47,7 @@ export default function AuthPage({
     searchParams.next.startsWith("/");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl items-center px-6 py-16">
+    <LaunchPage className="min-h-screen py-8 sm:py-10">
       {redirectedToProtectedRoute ? (
         <ToastTrigger
           toastKey={`auth-redirect-${searchParams?.next}`}
@@ -27,65 +56,80 @@ export default function AuthPage({
           variant="info"
         />
       ) : null}
-      <div className="grid w-full gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
-        <div className="space-y-6">
-          <div className="inline-flex items-center rounded-full border border-foreground/10 bg-white/70 px-4 py-2 text-sm font-medium shadow-sm backdrop-blur">
-            Access layer
-          </div>
-          <div className="space-y-4">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary/80">
-              Lalalaunchboard Access
-            </p>
-            <h1 className="text-balance text-5xl font-semibold tracking-tight">
-              Her app workspace&apos;i icin tek ve net giris kapisi.
-            </h1>
-            <p className="max-w-xl text-base leading-8 text-muted-foreground">
-              Auth akisi MVP seviyesinde hazir. Buradan ekibe acik olmayan ama
-              sana hiz kazandiran launch workspace&apos;lerini yonetecegiz.
-            </p>
-          </div>
 
-          <div className="rounded-[2rem] border border-foreground/10 bg-white/80 p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
-            <div className="space-y-5">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/70">
-                  What opens after login
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                  A launch workspace that already understands your flow
-                </h2>
-              </div>
+      <div className="space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/" className="text-xl font-semibold tracking-tight text-foreground">
+              Lalalaunchboard
+            </Link>
+            <LaunchBadge tone="brand">Launch access</LaunchBadge>
+          </div>
+          <Link href="/dashboard" className={launchButtonStyles.secondary}>
+            Dashboard onizlemesi
+          </Link>
+        </div>
 
-              <div className="grid gap-3">
-                {authHighlights.map((highlight, index) => (
-                  <div
-                    key={highlight}
-                    className="flex items-start gap-4 rounded-[1.4rem] border border-foreground/10 bg-background/80 p-4"
-                  >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-                      {index + 1}
-                    </span>
-                    <p className="text-sm leading-6 text-muted-foreground">
-                      {highlight}
+        <LaunchHero
+          eyebrow="Authentication"
+          title="Launch operating systeme guvenli ve net bir giris katmani."
+          description="Bu ekran yalnizca auth formu degil. Kullanici burada hesabini acar, board sistemine baglanir ve sonraki gelislerde ayni ritme geri doner."
+          actions={
+            <>
+              <LaunchBadge tone="info">Email auth</LaunchBadge>
+              <LaunchBadge tone="warning">CAPTCHA protected</LaunchBadge>
+              <LaunchBadge tone="success">Board connected</LaunchBadge>
+            </>
+          }
+          aside={
+            <LaunchRailList
+              eyebrow="Access flow"
+              title="Formdan fazlasi"
+              description="Auth yuzeyi, urunun geri kalanindaki board yapisina giris kapisi gibi davranmali."
+              items={authFlow}
+            />
+          }
+        />
+
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_540px]">
+          <div className="space-y-6">
+            <section className="space-y-5">
+              <LaunchSectionHeader
+                eyebrow="Why this matters"
+                title="Daginik launch araclarini tek hesaba bagla"
+                description="Indie ekiplerin en buyuk problemi tek bir dashboarda degil, tek bir ritme sahip olmamaktir. Auth yuzeyi de bu butunlugun ilk parcasi olmali."
+              />
+
+              <div className="grid gap-4 md:grid-cols-2">
+                {[
+                  {
+                    title: "Tek hesap, tek sistem",
+                    description:
+                      "Dashboard, setup ve checklist ekranlari ayni kullanici akisinda baglanir."
+                  },
+                  {
+                    title: "Giriste bile urun hissi",
+                    description:
+                      "Kullanici daha ilk saniyede siradan bir form degil, rafine bir launch urunu kullandigini hissetmelidir."
+                  }
+                ].map((item) => (
+                  <LaunchPanel key={item.title} tone="default" className="space-y-3">
+                    <LaunchBadge tone="neutral">Signal</LaunchBadge>
+                    <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                      {item.description}
                     </p>
-                  </div>
+                  </LaunchPanel>
                 ))}
               </div>
-
-              <div className="rounded-[1.4rem] bg-[linear-gradient(135deg,rgba(15,23,42,0.98),rgba(30,41,59,0.92))] p-5 text-slate-50">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                  Ready now
-                </p>
-                <p className="mt-3 text-lg font-semibold">
-                  Sign in, create a workspace, and move directly into checklist,
-                  routine, and export flows.
-                </p>
-              </div>
-            </div>
+            </section>
           </div>
+
+          <AuthTabs />
         </div>
-        <AuthTabs />
       </div>
-    </main>
+    </LaunchPage>
   );
 }

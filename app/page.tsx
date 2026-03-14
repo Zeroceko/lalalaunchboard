@@ -1,164 +1,296 @@
-const pillars = [
+import Link from "next/link";
+
+import { ChecklistPreview } from "@/components/checklist/ChecklistPreview";
+import {
+  LaunchBadge,
+  LaunchHero,
+  LaunchMetricCard,
+  LaunchPage,
+  LaunchPanel,
+  LaunchRailList,
+  LaunchSectionHeader,
+  launchButtonStyles
+} from "@/components/ui/LaunchKit";
+
+const productModules = [
   {
-    title: "Prep lane",
-    description: "Checklist, progress ve deliverable akisini tek workspace icinde toplar."
+    title: "Dashboard",
+    description:
+      "Tum launch boardlarini, tarihlerini ve odak alanlarini tek bakista gorursun."
   },
   {
-    title: "Launch lane",
-    description: "Countdown, release tarihi ve launch onceki kritik adimlari netlestirir."
+    title: "New App Setup",
+    description:
+      "Yeni bir uygulama icin isim, platform ve tarih kararlarini hizlica sabitlersin."
   },
   {
-    title: "Grow lane",
-    description: "Post-launch ritmi ve export ciktilariyla momentumun kaybolmasini engeller."
+    title: "Pre-launch Checklist",
+    description:
+      "Store prep, kreatif teslimler ve yayin hazirliklari board mantiginda ilerler."
+  },
+  {
+    title: "Progress",
+    description:
+      "Tamamlanan isler ile acik riskler ayni sistem icinde gorunur olur."
+  },
+  {
+    title: "Countdown",
+    description:
+      "Launch tarihi uzak bir hedef degil, gunluk karar ritmini belirleyen merkez olur."
+  },
+  {
+    title: "Post-launch Routine",
+    description:
+      "Lansman sonrasi buyume gorevleri urunun devam eden akisina baglanir."
   }
 ];
 
-const previewCards = [
+const flowItems = [
   {
-    label: "Checklist",
-    title: "Store Prep 78%",
-    detail: "Screenshots, listing copy ve legal hazirlik ayni board'da."
+    title: "Boardu kur",
+    description:
+      "Isim, platform ve lansman tarihiyle operasyon yuzeyini baslat.",
+    badge: "01",
+    tone: "info" as const
   },
   {
-    label: "Routine",
-    title: "Week 12 cadence",
-    detail: "Analytics, feedback review ve growth deneyi her hafta tekrar eder."
+    title: "Lansmani calistir",
+    description:
+      "Checklist, progress ve countdown ile uygulamayi kontrollu bicimde hazirla.",
+    badge: "02",
+    tone: "warning" as const
   },
   {
-    label: "Export",
-    title: "Investor-ready report",
-    detail: "PDF ve Markdown raporlari tek tikla paylasilabilir."
+    title: "Buyumeyi surdur",
+    description:
+      "Post-launch rutinleri ve export ile boardu yasayan bir sisteme donustur.",
+    badge: "03",
+    tone: "success" as const
   }
 ];
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
-      <section className="mx-auto max-w-6xl px-6 py-10">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-full border border-foreground/10 bg-white/75 px-5 py-3 shadow-sm backdrop-blur">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              LB
-            </span>
-            <div>
-              <p className="text-sm font-semibold tracking-tight">Lalalaunchboard</p>
-              <p className="text-xs text-muted-foreground">
-                Prep, launch, and grow - all on one board.
-              </p>
-            </div>
-          </div>
-
+    <LaunchPage className="min-h-screen py-8 sm:py-10">
+      <div className="space-y-8 sm:space-y-10">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="/auth"
-              className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:opacity-95"
-            >
-              Get inside
-            </a>
-            <a
-              href="/dashboard"
-              className="rounded-full border border-foreground/10 bg-white px-4 py-2 text-sm font-medium transition hover:bg-secondary/40"
-            >
-              View workspace
-            </a>
+            <span className="text-xl font-semibold tracking-tight text-foreground">
+              Lalalaunchboard
+            </span>
+            <LaunchBadge tone="brand">Prep, launch, grow</LaunchBadge>
+            <LaunchBadge tone="warning">Board-first product</LaunchBadge>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/auth" className={launchButtonStyles.secondary}>
+              Auth
+            </Link>
+            <Link href="/dashboard" className={launchButtonStyles.secondary}>
+              Dashboard
+            </Link>
           </div>
         </div>
-      </section>
 
-      <section className="mx-auto flex max-w-6xl items-center px-6 pb-10 pt-8">
-        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="space-y-8">
-            <div className="inline-flex items-center rounded-full border border-foreground/10 bg-white/70 px-4 py-2 text-sm font-medium shadow-sm backdrop-blur">
-              Source of truth: <code className="ml-2 rounded bg-foreground/5 px-2 py-0.5">/specs</code>
-            </div>
-            <div className="space-y-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary/80">
-                Launch Operating System
-              </p>
-              <h1 className="max-w-4xl text-balance text-5xl font-semibold tracking-tight sm:text-6xl">
-                Your launch plan should feel like a system, not a scattered checklist.
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                Lalalaunchboard turns launch prep into a visible operating rhythm:
-                one workspace per app, one flow from prep to post-launch, one place
-                for the outputs you actually need to share.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="/auth"
-                className="rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:translate-y-[-1px] hover:shadow-lg"
-              >
-                Start building your board
-              </a>
-              <a
-                href="/dashboard"
-                className="rounded-full border border-foreground/10 bg-white/70 px-5 py-3 text-sm font-medium transition hover:bg-white"
-              >
-                Open product shell
-              </a>
-            </div>
+        <LaunchHero
+          eyebrow="Launch Operating System"
+          title="App lansmanini daginik notlardan cikar, tek board uzerinde yonet."
+          description="Lalalaunchboard, indie gelistiriciler icin setup, checklist, countdown, progress ve post-launch rutinlerini tek bir urun ritmi icinde toplar. Amac daha cok kart degil, daha net karar almak."
+          actions={
+            <>
+              <Link href="/app/new" className={launchButtonStyles.primary}>
+                Yeni workspace baslat
+              </Link>
+              <Link href="/dashboard" className={launchButtonStyles.secondary}>
+                Dashboardu gor
+              </Link>
+            </>
+          }
+          aside={
+            <LaunchPanel tone="default" className="space-y-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-2">
+                  <LaunchBadge tone="info">Live board preview</LaunchBadge>
+                  <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                    FocusFlow
+                  </h2>
+                </div>
+                <LaunchBadge tone="warning">14 gun kaldi</LaunchBadge>
+              </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
-              {pillars.map((pillar) => (
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div
-                  key={pillar.title}
-                  className="rounded-[1.5rem] border border-foreground/10 bg-white/75 p-5 shadow-sm backdrop-blur"
+                  data-tone="brand"
+                  className="launch-glass-widget rounded-[1.45rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--brand-soft))/0.56] p-5"
                 >
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/70">
-                    {pillar.title}
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
+                    Ilerleme
                   </p>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                    {pillar.description}
+                  <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
+                    %68
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                    Hazirlik islerinin cogu tamamlandi, kritik kalanlar gorunur
+                    durumda.
                   </p>
                 </div>
+                <div
+                  data-tone="warning"
+                  className="launch-glass-widget rounded-[1.45rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--amber-soft))/0.64] p-5"
+                >
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
+                    Siradaki hamle
+                  </p>
+                  <p className="mt-3 text-lg font-semibold tracking-tight text-foreground">
+                    App Store kreatif paketi
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                    Son teslim listesi ve ekran goruntuleri bu asamada netlesir.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-3">
+                {["Checklist", "Countdown", "Routine"].map((item, index) => (
+                  <div
+                    key={item}
+                    data-tone="neutral"
+                    className="launch-glass-widget flex items-center gap-3 rounded-[1.2rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--card))/0.92] px-4 py-3.5"
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[hsl(var(--primary))/0.12] text-sm font-semibold text-[hsl(var(--primary))]">
+                      {index + 1}
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{item}</p>
+                      <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                        Ayni board sisteminin parcasi olarak calisir.
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </LaunchPanel>
+          }
+        />
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          <LaunchMetricCard
+            label="Urun yaklasimi"
+            value="Board-first"
+            detail="Her app tekil kart degil, kendi operasyon yuzeyi gibi ele alinir."
+            tone="brand"
+          />
+          <LaunchMetricCard
+            label="Hedef kullanici"
+            value="Indie makers"
+            detail="Daginik araclar yerine tek akis isteyen gelistiriciler icin tasarlanir."
+            tone="warning"
+          />
+          <LaunchMetricCard
+            label="Ana fayda"
+            value="Daha net karar"
+            detail="Hazirlik, tarih ve siradaki hamle ayni anda gorunur olur."
+            tone="success"
+          />
+        </div>
+
+        <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="space-y-5">
+            <LaunchSectionHeader
+              eyebrow="Problem"
+              title="Launch sureci genelde araclar arasinda parcalanir"
+              description="Notlar bir yerde, tarih baska yerde, yapilacaklar baska yerde kalinca ekipler degil solo gelistiriciler bile ritmi kaybeder. Lalalaunchboard bunu tek board mantigina indirger."
+            />
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  title: "Tek gorunur ritim",
+                  description:
+                    "Tarih, ilerleme ve odak alani ayni ekranda gorunur kalir."
+                },
+                {
+                  title: "Daha az context switch",
+                  description:
+                    "Farkli notlar ve tablar arasinda gezinmek yerine ayni board uzerinde kalirsin."
+                },
+                {
+                  title: "Daha guclu hafiza",
+                  description:
+                    "Her app kendi boardu ile tekrar kullanilabilir bir launch hafizasi birakir."
+                }
+              ].map((item) => (
+                <LaunchPanel key={item.title} tone="default" className="space-y-3">
+                  <LaunchBadge tone="neutral">Value</LaunchBadge>
+                  <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                    {item.description}
+                  </p>
+                </LaunchPanel>
               ))}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-foreground/10 bg-white/80 p-6 shadow-[0_30px_80px_rgba(15,23,42,0.12)] backdrop-blur">
-            <div className="rounded-[1.75rem] bg-[linear-gradient(135deg,rgba(15,23,42,0.98),rgba(30,41,59,0.9))] p-6 text-slate-50">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.2em] text-slate-400">
-                    Product preview
-                  </p>
-                  <h2 className="mt-2 text-3xl font-semibold tracking-tight">
-                    One board. Three rhythms.
-                  </h2>
-                </div>
-                <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-300">
-                  MVP active
-                </span>
-              </div>
+          <LaunchRailList
+            eyebrow="Flow"
+            title="Urun nasil calisir?"
+            description="Lalalaunchboard'un kullanim amaci tek launch gununu degil, tum hazirlik ve sonrasi sureci ayni board uzerinde isletmektir."
+            items={flowItems}
+          />
+        </section>
 
-              <div className="mt-6 grid gap-3">
-                {previewCards.map((card, index) => (
-                  <div
-                    key={card.label}
-                    className="rounded-[1.4rem] border border-white/10 bg-white/5 p-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-sm font-semibold">
-                        {index + 1}
-                      </span>
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                          {card.label}
-                        </p>
-                        <p className="mt-1 text-lg font-semibold">{card.title}</p>
-                      </div>
-                    </div>
-                    <p className="mt-3 text-sm leading-6 text-slate-300">
-                      {card.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
+        <section className="space-y-5">
+          <LaunchSectionHeader
+            eyebrow="Modules"
+            title="Birbirine bagli launch modulleri"
+            description="Her modul tek basina feature gibi gorunse de aslinda ayni board mantiginin farkli asamalaridir."
+          />
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {productModules.map((module) => (
+              <LaunchPanel key={module.title} tone="default" className="space-y-3 p-5">
+                <LaunchBadge tone="info">Module</LaunchBadge>
+                <h3 className="text-xl font-semibold tracking-tight text-foreground">
+                  {module.title}
+                </h3>
+                <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                  {module.description}
+                </p>
+              </LaunchPanel>
+            ))}
+          </div>
+        </section>
+
+        <ChecklistPreview />
+
+        <LaunchPanel tone="dark" className="space-y-5 overflow-hidden">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_220px] xl:items-end">
+            <div className="space-y-3">
+              <LaunchBadge
+                tone="warning"
+                className="bg-[hsl(var(--card))/0.12] text-[hsl(var(--surface-dark-foreground))]"
+              >
+                Start here
+              </LaunchBadge>
+              <h2 className="max-w-3xl text-4xl font-semibold tracking-tight text-[hsl(var(--surface-dark-foreground))]">
+                Ilk uygulaman icin boardu kur ve tum launch akisini ayni yerden yonet.
+              </h2>
+              <p className="max-w-2xl text-sm leading-7 text-[hsl(var(--surface-dark-muted))]">
+                Dashboard, setup, checklist ve growth yuzeyleri artik ortak bir UI kit
+                ve daha net urun dili ile sekilleniyor.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Link href="/app/new" className={launchButtonStyles.primary}>
+                Workspace olustur
+              </Link>
+              <Link href="/auth" className={launchButtonStyles.secondary}>
+                Auth akisina bak
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </LaunchPanel>
+      </div>
+    </LaunchPage>
   );
 }

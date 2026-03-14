@@ -4,6 +4,14 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useToast } from "@/components/shared/ToastProvider";
+import {
+  LaunchActionBar,
+  LaunchBadge,
+  LaunchButton,
+  LaunchFieldShell,
+  LaunchInput,
+  LaunchNotice
+} from "@/components/ui/LaunchKit";
 import { authMessages } from "@/lib/auth/messages";
 import { flattenFieldErrors, loginSchema } from "@/lib/auth/validation";
 import type { AuthActionResult } from "@/types";
@@ -87,34 +95,49 @@ export function LoginForm() {
   }
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
-      <div className="space-y-1">
-        <h2 className="text-2xl font-semibold tracking-tight">Hos geldin</h2>
-        <p className="text-sm text-muted-foreground">
-          Gecmis workspace&apos;lerine geri donmek icin giris yap.
-        </p>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <LaunchBadge tone="info">Return to board</LaunchBadge>
+          <LaunchBadge tone="neutral">Email sign-in</LaunchBadge>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-3xl font-semibold tracking-tight text-foreground">
+            Kaldigin yerden devam et
+          </h3>
+          <p className="max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+            Giris yaptiktan sonra dashboard ekraninda aktif launch boardlarini,
+            tarihlerini ve siradaki hamlelerini ayni yerden gormeye devam edersin.
+          </p>
+        </div>
       </div>
 
-      <label className="block space-y-2">
-        <span className="text-sm font-medium">Email</span>
-        <input
+      <LaunchFieldShell
+        label="Email"
+        hint="Workspace ve launch boardlarina bagli ana hesap bilgisi."
+        error={fieldErrors?.email}
+        fieldId="login-email"
+      >
+        <LaunchInput
+          id="login-email"
           type="email"
           autoComplete="email"
           value={form.email}
           onChange={(event) =>
             setForm((current) => ({ ...current, email: event.target.value }))
           }
-          className="w-full rounded-2xl border border-foreground/10 bg-background px-4 py-3 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
           placeholder="ornek@mail.com"
         />
-        {fieldErrors?.email ? (
-          <p className="text-sm text-destructive">{fieldErrors.email}</p>
-        ) : null}
-      </label>
+      </LaunchFieldShell>
 
-      <label className="block space-y-2">
-        <span className="text-sm font-medium">Sifre</span>
-        <input
+      <LaunchFieldShell
+        label="Sifre"
+        hint="Bu hesapla iliskili boardlara guvenli sekilde erismek icin kullanilir."
+        error={fieldErrors?.password}
+        fieldId="login-password"
+      >
+        <LaunchInput
+          id="login-password"
           type="password"
           autoComplete="current-password"
           value={form.password}
@@ -124,34 +147,28 @@ export function LoginForm() {
               password: event.target.value
             }))
           }
-          className="w-full rounded-2xl border border-foreground/10 bg-background px-4 py-3 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
           placeholder="En az 8 karakter"
         />
-        {fieldErrors?.password ? (
-          <p className="text-sm text-destructive">{fieldErrors.password}</p>
-        ) : null}
-      </label>
+      </LaunchFieldShell>
 
       {!isConfigured ? (
-        <div className="rounded-2xl border border-dashed border-foreground/15 bg-secondary/40 px-4 py-4 text-sm text-muted-foreground">
+        <LaunchNotice tone="warning">
           Giris akisini calistirmak icin once <code>NEXT_PUBLIC_SUPABASE_URL</code>{" "}
-          ve bir Supabase public key tanimlamamiz gerekiyor.
-        </div>
+          ve bir Supabase public key tanimlanmali.
+        </LaunchNotice>
       ) : null}
 
-      {statusMessage ? (
-        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-          {statusMessage}
-        </div>
-      ) : null}
+      {statusMessage ? <LaunchNotice tone="danger">{statusMessage}</LaunchNotice> : null}
 
-      <button
-        type="submit"
-        disabled={isSubmitting || !isConfigured}
-        className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+      <LaunchActionBar
+        eyebrow="Resume launch"
+        title="Boarduna guvenli sekilde don"
+        description="Giris tamamlandiginda urun seni dogrudan dashboard akisina geri tasir."
       >
-        {isSubmitting ? "Giris yapiliyor..." : "Giris Yap"}
-      </button>
+        <LaunchButton type="submit" disabled={isSubmitting || !isConfigured}>
+          {isSubmitting ? "Giris yapiliyor..." : "Giris yap"}
+        </LaunchButton>
+      </LaunchActionBar>
     </form>
   );
 }
