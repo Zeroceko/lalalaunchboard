@@ -122,9 +122,9 @@ function renderCreateAction(canCreateApp: boolean) {
       Şimdi başla
     </Link>
   ) : (
-    <span className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-4 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))] shadow-[0_12px_30px_hsl(var(--shadow-color)/0.08)]">
-      Yeni alan için Pro plan gerekecek
-    </span>
+    <Link href="/pricing" className={launchButtonStyles.secondary}>
+      Planları gör
+    </Link>
   );
 }
 
@@ -434,8 +434,15 @@ export default async function DashboardPage() {
 
       {!snapshot.limit.canCreateApp ? (
         <LaunchNotice tone="warning">
-          Mevcut free plan kapasitesi dolu. Yeni uygulama eklemek için önce bir
-          alan silmen veya daha sonra Pro plana geçmen gerekir.
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              Mevcut free plan kapasitesi dolu. Yeni uygulama eklemek için önce bir
+              alan silmen veya Pro plana geçmen gerekir.
+            </p>
+            <Link href="/pricing" className={launchButtonStyles.secondary}>
+              Planları gör
+            </Link>
+          </div>
         </LaunchNotice>
       ) : null}
 
@@ -450,9 +457,9 @@ export default async function DashboardPage() {
                 Yeni uygulama
               </Link>
             ) : (
-              <span className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-4 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
-                Slot dolu
-              </span>
+              <Link href="/pricing" className={launchButtonStyles.secondary}>
+                Üst pakete geç
+              </Link>
             )
           }
         />

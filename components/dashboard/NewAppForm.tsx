@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -19,7 +20,8 @@ import {
   LaunchMiniStat,
   LaunchNotice,
   LaunchPanel,
-  LaunchRailList
+  LaunchRailList,
+  launchButtonStyles
 } from "@/components/ui/LaunchKit";
 
 interface NewAppFormProps {
@@ -360,8 +362,15 @@ export function NewAppForm({
 
         {isBlocked ? (
           <LaunchNotice tone="warning">
-            Free plan kapasitesi dolu. Yeni board acmadan once mevcut bir
-            workspace&apos;i silmen veya daha sonra Pro plana gecmen gerekir.
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p>
+                Free plan kapasitesi dolu. Yeni board açmadan önce mevcut bir
+                workspace&apos;i silmen veya Pro plana geçmen gerekir.
+              </p>
+              <Link href="/pricing" className={launchButtonStyles.secondary}>
+                Planları gör
+              </Link>
+            </div>
           </LaunchNotice>
         ) : null}
 

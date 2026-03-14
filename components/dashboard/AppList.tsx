@@ -52,8 +52,13 @@ export function AppList({ apps, canCreateApp = true }: AppListProps) {
                   Ilk workspace&apos;i olustur
                 </Link>
               ) : (
-                <div className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-5 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
-                  Free plan limiti dolu
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-5 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
+                    Free plan limiti dolu
+                  </div>
+                  <Link href="/pricing" className={launchButtonStyles.secondary}>
+                    Planlari gor
+                  </Link>
                 </div>
               )}
             </div>
@@ -102,9 +107,9 @@ export function AppList({ apps, canCreateApp = true }: AppListProps) {
               Yeni board baslat
             </Link>
           ) : (
-            <div className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-5 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
-              Yeni board icin Pro plan gerekecek
-            </div>
+            <Link href="/pricing" className={launchButtonStyles.secondary}>
+              Ust pakete gec
+            </Link>
           )}
         </LaunchActionBar>
       </div>

@@ -17,6 +17,17 @@ interface LandingShowcaseStat {
   detail: string;
 }
 
+interface PricingPlan {
+  badge: string;
+  name: string;
+  price: string;
+  priceDetail: string;
+  description: string;
+  features: string[];
+  ctaLabel: string;
+  secondaryCtaLabel?: string;
+}
+
 export interface AppDictionary {
   common: {
     languageLabel: string;
@@ -52,6 +63,18 @@ export interface AppDictionary {
     ctaEyebrow: string;
     ctaTitle: string;
     ctaDescription: string;
+  };
+  pricing: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    recommendedLabel: string;
+    footnote: string;
+    plans: {
+      starter: PricingPlan;
+      pro: PricingPlan;
+      enterprise: PricingPlan;
+    };
   };
   authPage: {
     topBadge: string;
@@ -193,6 +216,66 @@ const tr: AppDictionary = {
     ctaTitle: "İlk board'unu aç, dağınıklığı değil ritmi büyüt.",
     ctaDescription:
       "Kayıt olduğunda doğrudan giriş ekranına geçer, ardından board'unu kurup işe başlarsın."
+  },
+  pricing: {
+    eyebrow: "Planlar",
+    title: "İhtiyacına göre seç: Starter, Pro, Enterprise",
+    description:
+      "Starter ile tek board'da başlayıp ritmi kurarsın. Pro ile birden fazla ürün, platform ve client varyantını aynı sistemde takip edersin. Enterprise ile ekip, güvenlik ve entegrasyon katmanı açılır.",
+    recommendedLabel: "Önerilen",
+    footnote:
+      "Not: Faturalama ve üyelik yönetimi yüzeyi kademeli olarak açılıyor. Şimdilik planlar ürün yönünü ve limitleri anlatan bir vitrin gibi çalışıyor.",
+    plans: {
+      starter: {
+        badge: "Starter",
+        name: "Başlamak için yeterli",
+        price: "Ücretsiz",
+        priceDetail: "Tek board ile",
+        description:
+          "Tek ürün için lansman ritmini kur: checklist, teslimler ve geri sayım aynı yerde kalsın.",
+        features: [
+          "1 aktif board (Free plan limiti)",
+          "Checklist + geri sayım + temel notlar",
+          "Markdown export",
+          "Temel şablonlar ve öneriler",
+          "Topluluk desteği"
+        ],
+        ctaLabel: "Starter ile başla"
+      },
+      pro: {
+        badge: "Pro",
+        name: "Birden fazla ürün ve varyant",
+        price: "Yakında",
+        priceDetail: "Erken erişim",
+        description:
+          "Ürünlerini, platformlarını ve client varyantlarını çoğalt; dashboard aynı netlikle büyüsün.",
+        features: [
+          "Sınırsız board",
+          "Platform ve client varyantları (aynı projeden yeni board aç)",
+          "PDF + Markdown export",
+          "Growth iş akışı ve deney notları",
+          "Öncelikli destek"
+        ],
+        ctaLabel: "Pro'yu gör",
+        secondaryCtaLabel: "Planı yönet"
+      },
+      enterprise: {
+        badge: "Enterprise",
+        name: "Ekip + güvenlik + entegrasyon",
+        price: "Teklif",
+        priceDetail: "İletişime geç",
+        description:
+          "RBAC, SSO ve audit log gibi katmanlarla Lalalaunchboard'u ekip standardına taşı.",
+        features: [
+          "Pro'daki her şey",
+          "SSO (SAML) + SCIM",
+          "Roller ve yetkiler (RBAC)",
+          "Audit log ve güvenlik politikaları",
+          "Özel entegrasyonlar + SLA"
+        ],
+        ctaLabel: "Demo iste"
+      }
+    }
   },
   authPage: {
     topBadge: "Güvenli erişim",
@@ -338,6 +421,66 @@ const en: AppDictionary = {
     ctaTitle: "Open your first board and grow rhythm instead of chaos.",
     ctaDescription:
       "Once you sign up, you move straight into access and then into your first board setup."
+  },
+  pricing: {
+    eyebrow: "Pricing",
+    title: "Pick what fits: Starter, Pro, Enterprise",
+    description:
+      "Start on Starter with a single board. Move to Pro to track multiple products, platforms, and client variants in the same system. Choose Enterprise for team, security, and integrations.",
+    recommendedLabel: "Recommended",
+    footnote:
+      "Note: Billing and subscription management are rolling out gradually. For now, this page explains direction and limits.",
+    plans: {
+      starter: {
+        badge: "Starter",
+        name: "Enough to get moving",
+        price: "Free",
+        priceDetail: "Single board",
+        description:
+          "Set your launch rhythm: checklist, deliverables, and countdown stay together.",
+        features: [
+          "1 active board (Free limit)",
+          "Checklist + countdown + basic notes",
+          "Markdown export",
+          "Core templates and suggestions",
+          "Community support"
+        ],
+        ctaLabel: "Start on Starter"
+      },
+      pro: {
+        badge: "Pro",
+        name: "Multiple products and variants",
+        price: "Soon",
+        priceDetail: "Early access",
+        description:
+          "Expand products, platforms, and client variants while keeping the dashboard clear.",
+        features: [
+          "Unlimited boards",
+          "Platform and client variants (spawn new boards)",
+          "PDF + Markdown export",
+          "Growth workflow + experiment notes",
+          "Priority support"
+        ],
+        ctaLabel: "See Pro",
+        secondaryCtaLabel: "Manage plan"
+      },
+      enterprise: {
+        badge: "Enterprise",
+        name: "Team, security, integrations",
+        price: "Custom",
+        priceDetail: "Contact",
+        description:
+          "Bring Lalalaunchboard to team standard with RBAC, SSO, and audit logs.",
+        features: [
+          "Everything in Pro",
+          "SSO (SAML) + SCIM",
+          "Roles and permissions (RBAC)",
+          "Audit logs + security policies",
+          "Custom integrations + SLA"
+        ],
+        ctaLabel: "Request a demo"
+      }
+    }
   },
   authPage: {
     topBadge: "Secure access",
