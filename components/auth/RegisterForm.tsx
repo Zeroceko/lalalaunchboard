@@ -5,6 +5,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { HCaptchaField } from "@/components/auth/HCaptchaField";
 import { useToast } from "@/components/shared/ToastProvider";
+import {
+  LaunchActionBar,
+  LaunchBadge,
+  LaunchButton,
+  LaunchFieldShell,
+  LaunchInput,
+  LaunchMiniStat,
+  LaunchNotice
+} from "@/components/ui/LaunchKit";
 import { authMessages } from "@/lib/auth/messages";
 import { flattenFieldErrors, registerSchema } from "@/lib/auth/validation";
 import type { AuthActionResult } from "@/types";
@@ -102,98 +111,127 @@ export function RegisterForm() {
   }
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
-      <div className="space-y-1">
-        <h2 className="text-2xl font-semibold tracking-tight">Yeni hesap olustur</h2>
-        <p className="text-sm text-muted-foreground">
-          Checklist workspace&apos;lerini saklamak icin email ve sifreni kullan.
-        </p>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <LaunchBadge tone="brand">Create account</LaunchBadge>
+          <LaunchBadge tone="success">Start your first board</LaunchBadge>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-3xl font-semibold tracking-tight text-foreground">
+            Ilk launch boardunu ac
+          </h3>
+          <p className="max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+            Kayit tamamlandiginda yeni app setup ekrani, dashboard kartlari ve
+            gelecekteki checklist akisi ayni sistem icinde calismaya baslar.
+          </p>
+        </div>
       </div>
 
-      <label className="block space-y-2">
-        <span className="text-sm font-medium">Email</span>
-        <input
+      <div className="grid gap-3 sm:grid-cols-3">
+        <LaunchMiniStat
+          label="Baslangic"
+          value="Free"
+          detail="Ilk board ile sisteme gir."
+          tone="brand"
+        />
+        <LaunchMiniStat
+          label="Yapi"
+          value="Guided"
+          detail="Kurulum ekrani seni yonlendirir."
+          tone="warning"
+        />
+        <LaunchMiniStat
+          label="Guvenlik"
+          value="Protected"
+          detail="CAPTCHA ile korunur."
+          tone="success"
+        />
+      </div>
+
+      <LaunchFieldShell
+        label="Email"
+        hint="Tum launch boardlarin bu hesabin altinda toplanir."
+        error={fieldErrors?.email}
+        fieldId="register-email"
+      >
+        <LaunchInput
+          id="register-email"
           type="email"
           autoComplete="email"
           value={form.email}
           onChange={(event) => updateField("email", event.target.value)}
-          className="w-full rounded-2xl border border-foreground/10 bg-background px-4 py-3 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
           placeholder="ornek@mail.com"
         />
-        {fieldErrors?.email ? (
-          <p className="text-sm text-destructive">{fieldErrors.email}</p>
-        ) : null}
-      </label>
+      </LaunchFieldShell>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <label className="block space-y-2">
-          <span className="text-sm font-medium">Sifre</span>
-          <input
+        <LaunchFieldShell
+          label="Sifre"
+          hint="Hesabina guvenli sekilde geri donmek icin kullanilir."
+          error={fieldErrors?.password}
+          fieldId="register-password"
+        >
+          <LaunchInput
+            id="register-password"
             type="password"
             autoComplete="new-password"
             value={form.password}
             onChange={(event) => updateField("password", event.target.value)}
-            className="w-full rounded-2xl border border-foreground/10 bg-background px-4 py-3 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
             placeholder="En az 8 karakter"
           />
-          {fieldErrors?.password ? (
-            <p className="text-sm text-destructive">{fieldErrors.password}</p>
-          ) : null}
-        </label>
+        </LaunchFieldShell>
 
-        <label className="block space-y-2">
-          <span className="text-sm font-medium">Sifre Tekrari</span>
-          <input
+        <LaunchFieldShell
+          label="Sifre tekrari"
+          hint="Hesap kurulmadan once sifrenin dogrulugunu netlestir."
+          error={fieldErrors?.confirmPassword}
+          fieldId="register-confirm-password"
+        >
+          <LaunchInput
+            id="register-confirm-password"
             type="password"
             autoComplete="new-password"
             value={form.confirmPassword}
             onChange={(event) =>
               updateField("confirmPassword", event.target.value)
             }
-            className="w-full rounded-2xl border border-foreground/10 bg-background px-4 py-3 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
             placeholder="Sifreyi tekrar yaz"
           />
-          {fieldErrors?.confirmPassword ? (
-            <p className="text-sm text-destructive">
-              {fieldErrors.confirmPassword}
-            </p>
-          ) : null}
-        </label>
+        </LaunchFieldShell>
       </div>
 
-      <div className="space-y-2">
-        <span className="text-sm font-medium">CAPTCHA</span>
+      <LaunchFieldShell
+        label="CAPTCHA"
+        hint="Kayit akisini korumak icin dogrulama gerekir."
+        error={fieldErrors?.captchaToken}
+      >
         <HCaptchaField
           disabled={isSubmitting}
           siteKey={hcaptchaSiteKey}
           value={form.captchaToken}
           onChange={(token) => updateField("captchaToken", token)}
         />
-        {fieldErrors?.captchaToken ? (
-          <p className="text-sm text-destructive">{fieldErrors.captchaToken}</p>
-        ) : null}
-      </div>
+      </LaunchFieldShell>
 
       {!authConfigured ? (
-        <div className="rounded-2xl border border-dashed border-foreground/15 bg-secondary/40 px-4 py-4 text-sm text-muted-foreground">
-          Kayıt akisini acmak icin once <code>NEXT_PUBLIC_SUPABASE_URL</code> ve
-          bir Supabase public key tanimlamamiz gerekiyor.
-        </div>
+        <LaunchNotice tone="warning">
+          Kayit akisini acmak icin once <code>NEXT_PUBLIC_SUPABASE_URL</code> ve
+          bir Supabase public key tanimlanmali.
+        </LaunchNotice>
       ) : null}
 
-      {statusMessage ? (
-        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-          {statusMessage}
-        </div>
-      ) : null}
+      {statusMessage ? <LaunchNotice tone="danger">{statusMessage}</LaunchNotice> : null}
 
-      <button
-        type="submit"
-        disabled={isSubmitting || !signupEnabled}
-        className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+      <LaunchActionBar
+        eyebrow="Start launch OS"
+        title="Hesabini olustur ve boardunu baslat"
+        description="Kaydi tamamladiginda urun seni dogrudan dashboard ve kurulum akisina tasiyacak."
       >
-        {isSubmitting ? "Hesap olusturuluyor..." : "Kayit Ol"}
-      </button>
+        <LaunchButton type="submit" disabled={isSubmitting || !signupEnabled}>
+          {isSubmitting ? "Hesap olusturuluyor..." : "Kayit ol"}
+        </LaunchButton>
+      </LaunchActionBar>
     </form>
   );
 }

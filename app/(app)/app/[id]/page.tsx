@@ -6,6 +6,7 @@ import { ToastTrigger } from "@/components/shared/ToastTrigger";
 import { WorkspaceHero } from "@/components/shared/WorkspaceHero";
 import { WorkspaceNotice } from "@/components/shared/WorkspaceNotice";
 import { WorkspaceSectionNav } from "@/components/shared/WorkspaceSectionNav";
+import { LaunchMetricCard } from "@/components/ui/LaunchKit";
 import { formatLaunchDate, formatPlatformLabel } from "@/lib/apps/service";
 import { requireSessionContext } from "@/lib/auth/session";
 import { getChecklistWorkspace } from "@/lib/checklist/service";
@@ -151,25 +152,23 @@ export default async function AppChecklistPage({
 
           <section className="grid gap-4 xl:grid-cols-4">
             {groupedItems.map((group) => (
-              <div
+              <LaunchMetricCard
                 key={group.category}
-                className="rounded-[1.6rem] border border-foreground/10 bg-white/80 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.05)]"
-              >
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-foreground/48">
-                  {group.label}
-                </p>
-                <p className="mt-3 text-3xl font-semibold tracking-tight">
-                  %{group.progress}
-                </p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {group.completedCount}/{group.totalCount} item tamamlandi
-                </p>
-                <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                  {group.progress === 100
+                label={group.label}
+                value={`%${group.progress}`}
+                detail={
+                  group.progress === 100
                     ? "Bu lane tamamen hazir. Sonraki akisa gecmek icin iyi durumdasin."
-                    : "Bu lane icinde hala kapanmasi gereken acik item'lar var."}
-                </p>
-              </div>
+                    : `${group.completedCount}/${group.totalCount} tamamlandi ve lane icinde hala kapanmasi gereken acik item'lar var.`
+                }
+                tone={
+                  group.progress === 100
+                    ? "success"
+                    : group.progress >= 60
+                      ? "brand"
+                      : "warning"
+                }
+              />
             ))}
           </section>
 

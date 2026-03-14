@@ -1,0 +1,357 @@
+:root,
+html[data-visual-theme="warm-premium"][data-color-mode="light"] {
+  --background: 34 54% 97%;
+  --foreground: 223 31% 14%;
+  --card: 0 0% 100%;
+  --card-foreground: 223 31% 14%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 223 31% 14%;
+  --primary: 221 82% 56%;
+  --primary-strong: 224 76% 49%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 34 37% 93%;
+  --secondary-foreground: 223 31% 14%;
+  --muted: 35 34% 94%;
+  --muted-foreground: 220 12% 38%;
+  --accent: 40 96% 58%;
+  --accent-foreground: 24 18% 14%;
+  --clay: 18 79% 67%;
+  --clay-foreground: 14 31% 18%;
+  --success: 151 55% 38%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 54%;
+  --warning-foreground: 26 20% 14%;
+  --info: 199 89% 48%;
+  --destructive: 0 72% 52%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 220 18% 86%;
+  --input: 220 18% 86%;
+  --ring: 221 82% 56%;
+  --surface-inset: 36 31% 95%;
+  --brand-soft: 214 100% 97%;
+  --amber-soft: 42 100% 95%;
+  --success-soft: 148 55% 95%;
+  --info-soft: 198 100% 96%;
+  --danger-soft: 0 100% 97%;
+  --clay-soft: 18 100% 96%;
+  --panel-highlight: 0 0% 100%;
+  --shadow-color: 223 31% 14%;
+  --surface-default-start: 0 0% 100%;
+  --surface-default-end: 36 22% 98%;
+  --surface-tint-start: 0 0% 100%;
+  --surface-tint-mid: 35 34% 95%;
+  --surface-tint-end: 214 100% 97%;
+  --surface-brand-start: 214 100% 98%;
+  --surface-brand-mid: 212 100% 96%;
+  --surface-brand-end: 0 0% 100%;
+  --surface-success-start: 148 60% 98%;
+  --surface-success-mid: 146 53% 95%;
+  --surface-success-end: 0 0% 100%;
+  --surface-warning-start: 48 100% 97%;
+  --surface-warning-mid: 39 100% 93%;
+  --surface-warning-end: 0 0% 100%;
+  --surface-clay-start: 18 100% 98%;
+  --surface-clay-mid: 19 100% 94%;
+  --surface-clay-end: 0 0% 100%;
+  --surface-dark-start: 222 34% 12%;
+  --surface-dark-mid: 221 33% 10%;
+  --surface-dark-end: 217 32% 17%;
+  --surface-dark-foreground: 210 40% 98%;
+  --surface-dark-muted: 218 18% 78%;
+  --hero-start: 0 0% 100%;
+  --hero-mid: 216 58% 97%;
+  --hero-end: 24 100% 97%;
+  --bg-glow-brand: 221 82% 56%;
+  --bg-glow-accent: 38 92% 54%;
+  --bg-glow-clay: 18 79% 67%;
+  --bg-glow-success: 151 55% 38%;
+  --bg-overlay-start: 0 0% 100%;
+  --bg-overlay-end: 34 54% 96%;
+  --bg-grid-line: 223 31% 14%;
+  --glass-blur: 0px;
+}
+
+html[data-visual-theme="warm-premium"][data-color-mode="dark"] {
+  --background: 222 29% 10%;
+  --foreground: 32 38% 95%;
+  --card: 223 24% 14%;
+  --card-foreground: 32 38% 95%;
+  --popover: 223 24% 14%;
+  --popover-foreground: 32 38% 95%;
+  --primary: 217 88% 66%;
+  --primary-strong: 221 86% 60%;
+  --primary-foreground: 223 31% 12%;
+  --secondary: 223 20% 17%;
+  --secondary-foreground: 32 38% 95%;
+  --muted: 223 18% 17%;
+  --muted-foreground: 219 15% 72%;
+  --accent: 40 94% 62%;
+  --accent-foreground: 24 18% 12%;
+  --clay: 18 82% 70%;
+  --clay-foreground: 24 32% 12%;
+  --success: 152 56% 52%;
+  --success-foreground: 144 48% 10%;
+  --warning: 40 95% 63%;
+  --warning-foreground: 30 34% 12%;
+  --info: 199 90% 62%;
+  --destructive: 0 80% 67%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 17% 24%;
+  --input: 220 17% 24%;
+  --ring: 217 88% 66%;
+  --surface-inset: 223 20% 18%;
+  --brand-soft: 220 45% 19%;
+  --amber-soft: 36 44% 18%;
+  --success-soft: 149 35% 18%;
+  --info-soft: 201 47% 18%;
+  --danger-soft: 0 42% 19%;
+  --clay-soft: 18 36% 20%;
+  --panel-highlight: 0 0% 100%;
+  --shadow-color: 224 38% 4%;
+  --surface-default-start: 223 24% 16%;
+  --surface-default-end: 223 22% 13%;
+  --surface-tint-start: 223 23% 17%;
+  --surface-tint-mid: 223 21% 15%;
+  --surface-tint-end: 222 27% 16%;
+  --surface-brand-start: 221 38% 20%;
+  --surface-brand-mid: 219 36% 17%;
+  --surface-brand-end: 223 22% 13%;
+  --surface-success-start: 151 28% 18%;
+  --surface-success-mid: 150 24% 16%;
+  --surface-success-end: 223 22% 13%;
+  --surface-warning-start: 36 38% 18%;
+  --surface-warning-mid: 34 33% 16%;
+  --surface-warning-end: 223 22% 13%;
+  --surface-clay-start: 18 34% 20%;
+  --surface-clay-mid: 18 28% 17%;
+  --surface-clay-end: 223 22% 13%;
+  --surface-dark-start: 223 30% 9%;
+  --surface-dark-mid: 222 30% 11%;
+  --surface-dark-end: 223 25% 14%;
+  --surface-dark-foreground: 32 38% 95%;
+  --surface-dark-muted: 219 15% 72%;
+  --hero-start: 223 24% 16%;
+  --hero-mid: 221 29% 17%;
+  --hero-end: 18 28% 16%;
+  --bg-glow-brand: 217 88% 66%;
+  --bg-glow-accent: 40 95% 63%;
+  --bg-glow-clay: 18 82% 70%;
+  --bg-glow-success: 152 56% 52%;
+  --bg-overlay-start: 222 29% 10%;
+  --bg-overlay-end: 222 29% 11%;
+  --bg-grid-line: 32 38% 95%;
+  --glass-blur: 0px;
+}
+
+html[data-visual-theme="liquid-glass"][data-color-mode="light"] {
+  --background: 214 58% 97%;
+  --foreground: 223 33% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 223 33% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 223 33% 13%;
+  --primary: 213 92% 58%;
+  --primary-strong: 218 87% 52%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 212 40% 93%;
+  --secondary-foreground: 223 33% 13%;
+  --muted: 210 30% 94%;
+  --muted-foreground: 217 15% 38%;
+  --accent: 43 95% 60%;
+  --accent-foreground: 26 20% 14%;
+  --clay: 191 86% 59%;
+  --clay-foreground: 200 58% 15%;
+  --success: 154 58% 42%;
+  --success-foreground: 0 0% 100%;
+  --warning: 41 93% 56%;
+  --warning-foreground: 30 22% 14%;
+  --info: 195 92% 50%;
+  --destructive: 0 74% 53%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214 28% 84%;
+  --input: 214 28% 84%;
+  --ring: 213 92% 58%;
+  --surface-inset: 210 42% 95%;
+  --brand-soft: 210 100% 97%;
+  --amber-soft: 44 100% 95%;
+  --success-soft: 156 69% 95%;
+  --info-soft: 197 100% 96%;
+  --danger-soft: 0 100% 97%;
+  --clay-soft: 193 100% 96%;
+  --panel-highlight: 0 0% 100%;
+  --shadow-color: 219 46% 14%;
+  --surface-default-start: 0 0% 100%;
+  --surface-default-end: 212 60% 98%;
+  --surface-tint-start: 0 0% 100%;
+  --surface-tint-mid: 212 50% 96%;
+  --surface-tint-end: 197 100% 96%;
+  --surface-brand-start: 210 100% 98%;
+  --surface-brand-mid: 204 100% 96%;
+  --surface-brand-end: 0 0% 100%;
+  --surface-success-start: 157 100% 97%;
+  --surface-success-mid: 156 72% 95%;
+  --surface-success-end: 0 0% 100%;
+  --surface-warning-start: 48 100% 97%;
+  --surface-warning-mid: 44 100% 94%;
+  --surface-warning-end: 0 0% 100%;
+  --surface-clay-start: 195 100% 98%;
+  --surface-clay-mid: 195 90% 95%;
+  --surface-clay-end: 0 0% 100%;
+  --surface-dark-start: 214 39% 16%;
+  --surface-dark-mid: 217 38% 14%;
+  --surface-dark-end: 221 34% 18%;
+  --surface-dark-foreground: 210 40% 98%;
+  --surface-dark-muted: 213 24% 80%;
+  --hero-start: 0 0% 100%;
+  --hero-mid: 211 72% 97%;
+  --hero-end: 193 72% 95%;
+  --bg-glow-brand: 213 92% 58%;
+  --bg-glow-accent: 41 93% 56%;
+  --bg-glow-clay: 191 86% 59%;
+  --bg-glow-success: 154 58% 42%;
+  --bg-overlay-start: 216 78% 98%;
+  --bg-overlay-end: 209 64% 95%;
+  --bg-grid-line: 218 26% 16%;
+  --glass-wave-a: 8 94% 72%;
+  --glass-wave-b: 33 100% 71%;
+  --glass-wave-c: 194 90% 68%;
+  --glass-wave-highlight: 0 0% 100%;
+  --glass-blur: 14px;
+}
+
+html[data-visual-theme="liquid-glass"][data-color-mode="dark"] {
+  --background: 220 40% 10%;
+  --foreground: 210 40% 96%;
+  --card: 220 32% 14%;
+  --card-foreground: 210 40% 96%;
+  --popover: 220 32% 14%;
+  --popover-foreground: 210 40% 96%;
+  --primary: 210 94% 67%;
+  --primary-strong: 214 88% 61%;
+  --primary-foreground: 222 39% 12%;
+  --secondary: 220 24% 18%;
+  --secondary-foreground: 210 40% 96%;
+  --muted: 219 22% 18%;
+  --muted-foreground: 214 18% 73%;
+  --accent: 43 95% 63%;
+  --accent-foreground: 24 22% 12%;
+  --clay: 192 92% 66%;
+  --clay-foreground: 197 55% 14%;
+  --success: 157 63% 53%;
+  --success-foreground: 155 50% 11%;
+  --warning: 42 95% 64%;
+  --warning-foreground: 30 34% 12%;
+  --info: 195 94% 62%;
+  --destructive: 0 82% 68%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 216 21% 26%;
+  --input: 216 21% 26%;
+  --ring: 210 94% 67%;
+  --surface-inset: 218 28% 18%;
+  --brand-soft: 214 48% 20%;
+  --amber-soft: 40 42% 19%;
+  --success-soft: 158 38% 19%;
+  --info-soft: 197 44% 19%;
+  --danger-soft: 0 41% 20%;
+  --clay-soft: 195 38% 19%;
+  --panel-highlight: 210 40% 98%;
+  --shadow-color: 225 50% 3%;
+  --surface-default-start: 219 30% 16%;
+  --surface-default-end: 220 28% 12%;
+  --surface-tint-start: 220 32% 18%;
+  --surface-tint-mid: 218 30% 15%;
+  --surface-tint-end: 221 28% 14%;
+  --surface-brand-start: 214 42% 21%;
+  --surface-brand-mid: 215 38% 17%;
+  --surface-brand-end: 220 28% 12%;
+  --surface-success-start: 156 30% 19%;
+  --surface-success-mid: 156 24% 16%;
+  --surface-success-end: 220 28% 12%;
+  --surface-warning-start: 40 35% 20%;
+  --surface-warning-mid: 37 29% 17%;
+  --surface-warning-end: 220 28% 12%;
+  --surface-clay-start: 195 38% 20%;
+  --surface-clay-mid: 194 31% 17%;
+  --surface-clay-end: 220 28% 12%;
+  --surface-dark-start: 221 39% 10%;
+  --surface-dark-mid: 222 37% 12%;
+  --surface-dark-end: 219 33% 16%;
+  --surface-dark-foreground: 210 40% 96%;
+  --surface-dark-muted: 214 18% 73%;
+  --hero-start: 220 30% 16%;
+  --hero-mid: 214 36% 18%;
+  --hero-end: 197 30% 18%;
+  --bg-glow-brand: 210 94% 67%;
+  --bg-glow-accent: 42 95% 64%;
+  --bg-glow-clay: 192 92% 66%;
+  --bg-glow-success: 157 63% 53%;
+  --bg-overlay-start: 220 40% 10%;
+  --bg-overlay-end: 218 36% 12%;
+  --bg-grid-line: 210 40% 96%;
+  --glass-wave-a: 220 84% 64%;
+  --glass-wave-b: 188 88% 63%;
+  --glass-wave-c: 38 94% 66%;
+  --glass-wave-highlight: 210 40% 96%;
+  --glass-blur: 16px;
+}
+
+html[data-color-mode="dark"] {
+  color-scheme: dark;
+}
+
+html[data-color-mode="light"] {
+  color-scheme: light;
+}
+
+.launch-panel,
+.launch-hero,
+.launch-metric-card,
+.launch-mini-stat,
+.launch-action-bar,
+.launch-input,
+.launch-choice-card {
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+html[data-visual-theme="liquid-glass"] .launch-panel,
+html[data-visual-theme="liquid-glass"] .launch-hero,
+html[data-visual-theme="liquid-glass"] .launch-metric-card,
+html[data-visual-theme="liquid-glass"] .launch-mini-stat,
+html[data-visual-theme="liquid-glass"] .launch-action-bar,
+html[data-visual-theme="liquid-glass"] .launch-input,
+html[data-visual-theme="liquid-glass"] .launch-choice-card,
+html[data-visual-theme="liquid-glass"] .launch-glass-widget {
+  --glass-accent: var(--primary);
+  --glass-accent-soft: var(--info);
+}
+
+html[data-visual-theme="liquid-glass"] [data-tone="brand"] {
+  --glass-accent: var(--primary);
+  --glass-accent-soft: var(--info);
+}
+
+html[data-visual-theme="liquid-glass"] [data-tone="info"] {
+  --glass-accent: var(--info);
+  --glass-accent-soft: var(--primary);
+}
+
+html[data-visual-theme="liquid-glass"] [data-tone="success"] {
+  --glass-accent: var(--success);
+  --glass-accent-soft: var(--info);
+}
+
+html[data-visual-theme="liquid-glass"] [data-tone="warning"] {
+  --glass-accent: var(--warning);
+  --glass-accent-soft: var(--accent);
+}
+
+html[data-visual-theme="liquid-glass"] [data-tone="danger"] {
+  --glass-accent: var(--destructive);
+  --glass-accent-soft: var(--clay);
+}
+
+html[data-visual-theme="liquid-glass"] [data-tone="clay"] {
+  --glass-accent: var(--clay);
+  --glass-accent-soft: var(--accent);
+}
