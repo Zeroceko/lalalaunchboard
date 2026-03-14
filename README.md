@@ -1,194 +1,49 @@
-# Lalalaunchboard
+# Lalalaunchboard: B2B SaaS Büyüme & Operasyon Masası
 
-Lalalaunchboard, bir yazilim gelistiricisinin urununu pazara hazirlarken ve
-pazara ciktiktan sonraki ilk growth islerini takip ederken kullanacagi operasyon
-yuzeyidir.
+Lalalaunchboard, bir uygulamanın pazara çıkışından (launch) büyümesine (growth) kadarki tüm safhalarını yönettiğiniz, **Y-Combinator kalite standartlarında** (Vercel, Linear esintili) kodlanmış premium bir **Control Desk** (Kontrol Masası) projesidir.
 
-Calisan urun mesaji su anda su eksende kilitli:
+## Projenin Amacı ve Mimari Vizyon
 
-- pazardan once ve pazarda tek yardimcin
-- launch prep, marketing ve growth tek board mantigi icinde
-- bugun launch odakli, yarin daha genis app operations tarafina genisleyebilir
+Bu repo, basit bir veri listeleme (CRUD) uygulamasından çıkıp, **gerçek bir B2B SaaS** deneyimine yükseltilmiştir:
+- **Pazardan önce ve pazarda tek yardımcın** (Launch prep, marketing, growth tek board)
+- Verilerin, startup standartlarına göre "insights" oluşturacak şekilde sunulması (DAU, MAU, Retention, Funnel, MRR).
+- B2B güveni aşılayan, aurora, shine, dot-grid ve glow card bazlı "Trust" odaklı önyüz.
 
-## Bu repo ne durumda?
+## Güncel UI / UX Durumu
 
-Ana akisin ilk urunlestirilmis versiyonu hazir:
+**Ürün "Productized MVP" ve "World-class Redesign" evrelerini tamamlamıştır:**
+1. **Landing Page (`/`)**: Büyüleyici bir hero section, feature grid, social proof ve dark CTA ile donatılmış harika bir vitrin sayfası.
+2. **Auth (`/auth`)**: Premium split-screen (sol tarafta değer önerisi, sağ tarafta form) giriş / kayıt akışı.
+3. **Pricing (`/pricing`)**: 3 paketli (Starter, Pro, Enterprise), 28 satırlık detaylı özellik karşılaştırma tablolu, dark hero "Pro" kartlı Fiyatlandırma sayfası.
+4. **Dashboard (`/dashboard`)**: Veri dolu bir komuta merkezi. İçinde **inline SVG sparkline grafikler**, mini barlar, Retention Heatmap, Aktivasyon Funnel'ı, Mrr dalga grafiği ve 100 günlük Gantt stili Launch Timeline mevcuttur.
 
-- pazarlama odakli landing sayfasi
-- sade login / register deneyimi
-- signed-in user icin dogrudan dashboard yonlendirmesi
-- uygulama varsa ozet gosteren dashboard
-- uygulama yoksa onboarding gosteren dashboard
-- internal `ops` route'u ve yonetim yuzeyleri
-- checklist, routine ve export omurgasi
+## Dosya Yapısı ve Kaynak Göstergeleri
 
-Kisacasi:
+- **`app/`**: Tüm ana sayfa rotaları (auth, dashboard, pricing, vb).
+- **`app/globals.css` & `app/themes.css`**: Aurora spotlight, glass-panel, glow-card ve renk token matematiğinin olduğu kritik tasarım dosyaları.
+- **`components/ui/LaunchKit.tsx`**: Projenin buton, panel (card) ve badge varyasyonlarının bulunduğu UI kiti.
+- **`lib/`**: Auth Session (Supabase) ve i18n sistem servisleri.
+- **`HANDOFF.md`**: Projeyi devralan kişi için detaylı "nerede kaldık, nereye gidiyoruz" dokümanı.
 
-- landing artik bir marketing page
-- auth artik yalnizca giris / kayit deneyimi
-- dashboard artik yalnizca app listesi degil, bir control desk
+## Lokal Kurulum & Çalıştırma
 
-## Source of truth
+1. `.env.local.example` kopyalanıp `.env.local` oluşturulmalı (Supabase URL ve Anon Key vb. girilerek).
+2. Bağımlılıklar yüklenir:
+   ```bash
+   npm install
+   ```
+3. Uygulama başlatılır:
+   ```bash
+   npm run dev
+   ```
 
-Resmi urun ve teknik kapsam `specs/` altindadir:
+## Kalite Güvencesi
 
-- `specs/requirements.md`
-- `specs/design.md`
-- `specs/tasks.md`
-- `specs/roadmap.md`
-- `specs/flows.md`
+Projenin mevcut commit'i itibarıyla:
+- `npm run lint` -> **0 Hata**
+- `npm run typecheck` -> **0 Hata**
+tasarımsal ve fonksiyonel kırık bileşen bulunmamaktadır.
 
-Operasyonel durum ozeti icin:
+## Sonraki Adımlar (Roadmap Kısa Özeti)
 
-- `HANDOFF.md`
-
-## Onemli rotalar
-
-- `/` -> landing
-- `/auth?tab=login` -> giris
-- `/auth?tab=register` -> kayit
-- `/pricing` -> planlar (Starter / Pro / Enterprise)
-- `/dashboard` -> ana panel
-- `/app/new` -> yeni uygulama / board olusturma
-- `/settings` -> hesap/plan/guvenlik/tema ayarlari (ilk yuzey)
-- `/ops` -> internal control tower
-- `/admin` -> portfoy / yonetim paneli
-
-## Guncel urun davranisi
-
-Landing:
-
-- login olmayan kullanici dashboard butonu gormez
-- ustte TR / EN secici vardir
-- primary CTA auth akisina gider
-
-Auth:
-
-- yalnizca form gorunur
-- login altinda `Uye degil misin? Uye ol`
-- register altinda `Zaten uye misin? Giris yap`
-
-Dashboard:
-
-- uygulama varsa:
-  - en ustte mevcut uygulama ve operasyon ozeti gorunur
-  - launch + marketing + growth control desk mantigi kullanilir
-- uygulama yoksa:
-  - onboarding adimlari ve `Simdi basla` gorunur
-- free plan kapasitesi doluysa:
-  - ilgili yerlerde `Planlari gor / Ust pakete gec` CTA'si gorunur ve `/pricing`'e gider
-
-## Planlar (Karar + Uygulama Notu)
-
-Urun karari (sonraki developer enforce edecek):
-
-- Free plan: `1 urun`, `1 platform`
-- Ucretli plan: `2 urun`, `3 platform`
-- Daha buyuk paket: `3 urun`, `5 platform`
-- Enterprise: `talep kadar urun`, `x adet platform`
-
-Bugun codebase sadece `free` vs `pro` ayrimini ve urun (board) limitini enforce ediyor.
-Yeni paket yapisi icin giris noktalar:
-
-- `types/index.ts` -> `export type Plan = ...`
-- `lib/apps/service.ts` -> `buildAppLimitState(...)`
-- Supabase `users.plan` + migrations/RLS/trigger'lar
-- UI vitrini: `/pricing` ve `lib/i18n/dictionaries.ts` (pricing metinleri)
-
-## Proje yapisi
-
-- `app/` -> route'lar ve API handler'lari
-- `components/` -> UI ve ekran bileşenleri
-- `lib/` -> servisler, validation, auth ve entegrasyon yardimcilari
-- `types/` -> paylasilan TypeScript tipleri
-- `specs/` -> resmi plan ve kapsam
-- `vault/` -> notlar ve calisma hafizasi
-
-Workspace seviyesi:
-
-- `LALALaunchBoard/Development` -> aktif uygulama kodu
-- `LALALaunchBoard/Product` -> urun calismalari icin ayrilan alan
-- `LALALaunchBoard/Design - UI:UX` -> tasarim sandbox / handoff alani
-
-## Lokal kurulum
-
-1. `.env.local.example` dosyasini `.env.local` olarak kopyala
-2. gerekli env degiskenlerini doldur
-3. dependency kur
-
-```bash
-npm install
-```
-
-4. uygulamayi calistir
-
-```bash
-npm run dev
-```
-
-## Gerekli env degiskenleri
-
-Gercek auth akisi icin:
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` veya publishable key
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` veya `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
-- `NEXT_PUBLIC_HCAPTCHA_SITE_KEY`
-- `HCAPTCHA_SECRET_KEY`
-
-Canli CMS icin opsiyonel:
-
-- `CONTENTFUL_SPACE_ID`
-- `CONTENTFUL_DELIVERY_TOKEN`
-- `CONTENTFUL_PREVIEW_TOKEN`
-- `CONTENTFUL_ENVIRONMENT`
-- `CONTENTFUL_REVALIDATE_SECRET`
-
-## Dogrulama
-
-Son guncel kod turlarinda dogrulananlar:
-
-- `npm run lint`
-- `npm run typecheck`
-
-Bu repo gecmisinde ayrica asagidaki akislari gecen turlar oldu:
-
-- `npm run build`
-- `npm run test:properties`
-- `npm run smoke:db:local`
-- Docker tabanli `web-test` akisi
-
-## Simdi neredeyiz?
-
-Urun, `ilk UI pass` asamasindan cikti ve su an `productized MVP` evresine girdi.
-
-Bu ne demek:
-
-- bilgi mimarisi daha net
-- copy daha bilincli
-- dashboard daha operasyonel
-- onboarding daha gorunur
-
-Ama sunlar hala acik:
-
-- dashboard filtre bandi ve KPI sistemi
-- tum app shell'de TR / EN yayilimi
-- analytics / event tracking
-- mobile + desktop UI QA
-- hosted env cutover
-
-## Ekip devir notu
-
-Bu repo su anda baska bir developer, tasarimci veya urun ekibine devredilebilir durumdadir.
-
-Baslangic noktasi olarak sirasi:
-
-1. `HANDOFF.md` oku
-2. `specs/tasks.md` icindeki isaretli durumlari kontrol et
-3. `specs/flows.md` ile ana urun akislarini hizala
-4. ilgili route'u lokal calistir ve UI / davranisi dogrula
-
-## Not
-
-- Aktif branch son calismalarda `feat/workspace-surfaces-flow-docs` idi
-- `main` korumali olabilir; push ve release akisinda branch / PR mantigi korunmali
+Dashboard üzerindeki tüm karmaşık startup verileri (Cohort, Funnel, SVG charts) şu an harika bir UI ile kodlandı ancak hardcoded "sample data" ile render edilmektedir. Bir sonraki fazda PostHog / Stripe api bağlantılarının yazılıp bu veri yapısına beslenmesi gereklidir. İletişim, roadmap detayları ve teknik spec vizyonu için `HANDOFF.md` dosyasını inceleyin.
