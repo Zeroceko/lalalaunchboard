@@ -32,38 +32,54 @@ export default async function AppLayout({
   const { user } = await requireSessionContext();
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-30 border-b border-[hsl(var(--border))/0.56] bg-[hsl(var(--background))/0.82] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1480px] flex-col gap-5 px-4 py-4 sm:px-6 xl:flex-row xl:items-center xl:justify-between xl:px-8">
-          <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/dashboard"
-                className="text-xl font-semibold tracking-[-0.04em] text-foreground"
-              >
-                Lalalaunchboard
-              </Link>
-              <LaunchBadge tone="brand">Launch OS</LaunchBadge>
-              <LaunchBadge tone="clay">Prep, launch, grow</LaunchBadge>
-            </div>
+    <div className="flex h-screen overflow-hidden bg-background">
 
-            <AppShellNav />
-          </div>
+      {/* ── Premium Left Sidebar ── */}
+      <aside className="flex h-full w-[220px] shrink-0 flex-col border-r border-[hsl(var(--sidebar-border)/0.7)] bg-[hsl(var(--sidebar-bg))]">
 
-          <div className="flex flex-col items-start gap-3 sm:items-end">
-            <div className="space-y-1 text-left sm:text-right">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
-                Signed in
-              </p>
-              <p className="rounded-full border border-[hsl(var(--border))/0.52] bg-[hsl(var(--card))/0.94] px-4 py-2 text-sm font-medium text-[hsl(var(--muted-foreground))] shadow-[0_10px_24px_hsl(var(--shadow-color)/0.06)]">
-                {user.email}
-              </p>
-            </div>
+        {/* Logo header */}
+        <div className="flex items-center gap-2.5 border-b border-[hsl(var(--sidebar-border)/0.6)] px-4 py-[13px]">
+          <Link
+            href="/dashboard"
+            className="group flex items-center gap-2.5"
+          >
+            <span className="flex h-6 w-6 items-center justify-center rounded-[0.45rem] bg-[hsl(var(--primary))] shadow-[0_1px_6px_hsl(var(--primary)/0.35)] transition-shadow group-hover:shadow-[0_2px_12px_hsl(var(--primary)/0.45)]">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden>
+                <path d="M2.5 11V5.5L7 2.5l4.5 3V11a.8.8 0 01-.8.8H3.3a.8.8 0 01-.8-.8z" fill="white" />
+              </svg>
+            </span>
+            <span className="text-[0.8125rem] font-semibold tracking-[-0.02em] text-foreground">
+              Lalalaunchboard
+            </span>
+          </Link>
+        </div>
+
+        {/* Nav */}
+        <div className="flex-1 overflow-y-auto py-0.5">
+          <AppShellNav userEmail={user.email} />
+        </div>
+
+        {/* User footer */}
+        <div className="border-t border-[hsl(var(--sidebar-border)/0.6)] p-3">
+          <div className="flex items-center gap-2.5 rounded-[0.65rem] px-2 py-2">
+            {/* Avatar initials */}
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--primary)/0.12)] text-[10px] font-bold text-[hsl(var(--primary))]">
+              {user.email?.charAt(0).toUpperCase() ?? "U"}
+            </span>
+            <p className="flex-1 truncate text-[11px] text-[hsl(var(--muted-foreground))]">
+              {user.email}
+            </p>
             <SignOutButton />
           </div>
         </div>
-      </header>
-      {children}
+      </aside>
+
+      {/* ── Main content ── */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

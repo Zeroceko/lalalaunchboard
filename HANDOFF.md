@@ -1,217 +1,68 @@
-# Handoff
+# LALALaunchBoard Proje Devir Dokümanı (Handoff)
 
-Last updated: 2026-03-15
+**Son Güncelleme:** Mart 2026
+**Mevcut Aşama:** Productized MVP & World-class B2B SaaS Redesign (Tamamlandı)
 
-## Bu sprintte ne oldu?
+Lalalaunchboard, bir yazılımcının/girişimcinin ürününü pazara hazırlarken ve pazara çıktıktan sonraki growth (büyüme) süreçlerini tek bir "board" üzerinden takip etmesini sağlayan premium bir kontrol masasıdır (Control Desk). Y-Combinator / Linear / Vercel ciddiyetinde bir UI/UX diliyle kodlanmıştır.
 
-Bu repo artik yalnizca bir teknik iskelet degil; urunun ilk anlasilir MVP akisi olusmus durumda.
+---
 
-Bu turda tamamlanan ana isler:
+## 1. Neler Tamamlandı? (Son Sürüm Özeti)
 
-- [x] Landing sayfasi pazarlama odakli hale getirildi
-- [x] Hero copy ve CTA hiyerarsisi yeniden kuruldu
-- [x] `Sign in` / `Sign up` akisi netlestirildi
-- [x] Login olmayan kullanici icin dashboard aksiyonlari landing'den kaldirildi
-- [x] Login olan kullanici icin `/` -> `/dashboard` yonlendirmesi eklendi
-- [x] Auth sayfasi sadeletildi; yalnizca giris/kayit deneyimine indirildi
-- [x] Login altina `Uye degil misin? Uye ol`, register altina ters gecis eklendi
-- [x] Turkce copy duzeltildi; Turkce karakter ve yazim kurallari uygulandi
-- [x] TR / EN dil secici landing ve auth akisina eklendi
-- [x] Auth form kopyalari ve API hata mesajlari locale-aware hale getirildi
-- [x] Dashboard iki moda ayrildi:
-  - uygulama varsa `control desk` + mevcut urun ozeti
-  - uygulama yoksa onboarding + `Simdi basla`
-- [x] Dashboard kart dili, yalnizca launch prep degil marketing + growth takibini de kapsayacak sekilde guncellendi
-- [x] Internal `ops` / control tower route'u ana repo icinde korunmaya devam etti
-- [x] Control tower'da tamamlanan lane'ler yer kaplamasin diye detaylar hover/focus ile acilir hale getirildi
-- [x] Dashboard AppCard uzerinden "platform / client varyanti ekle" aksiyonlari eklendi
-- [x] `/app/new` sayfasi query param ile prefill destekler hale getirildi (`templateName`, `platform`, `mode`, `sourceAppId`)
-- [x] Free plan kapasitesi dolu durumlarina "Planlari gor / Ust pakete gec" CTA'si eklendi
-- [x] `/pricing` sayfasi eklendi (Starter / Pro / Enterprise plan tanitimi, TR/EN uyumlu)
+Proje ciddi bir "World-Class B2B SaaS" tasarım revizyonundan geçti:
 
-## Urun vizyonu su anda nasil kilitlendi?
+### Tasarım Sistemi & Mimari
+- **Globals.css:** Sıfırdan yazıldı. Aurora glow spotlight efektleri, dot-grid arka planlar, pulse-dot durum bildirimleri, glow-card hover efektleri, shine-border ve glass-panel mimarileri projeye kazandırıldı.
+- **Themes.css:** "Warm-premium" ve "Liquid-glass" light/dark modları yeniden kalibre edildi. "Light mode"da kartların görünmez olması sorunu onarıldı (background biraz daha griye, borderlar daha belirgin hale çekildi).
+- **Layout (App Shell):** Sidebar mimarisi iyileştirildi, kullanıcı inisiyalli premium avatar yapısı ve signout butonu entegre edildi.
 
-Lalalaunchboard su anda:
+### Müşteri Yüzü (Public Pages)
+- **Landing Page (`/`):** Vercel/Linear ayarında, "Trust" odaklı B2B SaaS landing'ine dönüştürüldü. Aurora background, dashboard mockup, partner/sosyal kanıt (social proof) bari, interaktif feature grid ve testimonal'lar eklendi.
+- **Auth Page (`/auth`):** Premium split-screen tasarıma geçildi. Sol tarafta aurora arka plan üzerinde value proposition, sağ tarafta form alanı var.
+- **Pricing Page (`/pricing`):** Tamamen yeni bir altyapıya kavuştu. "Pro" paketi öne çıkacak şekilde tasarlandı. Alt kısmında çok detaylı "Planlar arası karşılaştırma" (Feature Comparison) tablosu ve SSS bölümü bulunuyor.
 
-- yazilim gelistiricisinin urununu pazara hazirlarken
-- pazarlama, launch ve ilk growth islerini
-- tek bir operasyon yuzeyinden takip etmesini saglayan bir urun
+### Ürün İçi (App Pages)
+- **Dashboard (`/dashboard`):** Uygulamanın kalbi. Y-Combinator seviyesinde bir startup "Control Desk"e dönüştü:
+  - DAU, MAU, MRR, Churn için KPI kartları (ve inline SVG sparkline / bar grafikler).
+  - App Store puan ve yorum dağılım çubuğu.
+  - NPS Skoru ölçüm bandı.
+  - D1-D30 **Retention Cohort Heatmap**.
+  - 5 adımlı Aktivasyon Funnel grafiği.
+  - Tam genişlikli MRR büyüme dalga (area) grafiği ve LTV/CAC, ARR birim ekonomi kartları.
+  - "Bugünün Ajandası" ile launch geri sayımı ve acil checklist eylemleri.
+  - Gantt stili 100 günlük "Launch Zaman Çizelgesi".
+  - Platform DAU Breakdown (iOS, Android, Web dağılımı).
 
-Mesaj artik su eksende:
+---
 
-- landing'de: `Pazardan once ve pazarda tek yardimcin`
-- urun davranisinda: `hazirlik + launch + growth ayni board mantigi icinde`
-- vaat tarafinda: bugun launch odakli, yarin daha genis app operations tarafina evrilebilecek
+## 2. Devralan Ekip Nereden Başlamalı?
 
-Overpromise etmemek icin:
+Bu repo şu an yeni bir geliştirici veya takıma devredilebilecek kadar temiz ve modülerdir. 
+İlk adımlarınız:
 
-- hero alani bugunku net degeri anlatiyor
-- gelecek vizyonu alt bolumlerde ve dashboard yapisinda sezdiriliyor
+1. Başlangıçta mutlaka `dashboard/page.tsx`, `pricing/page.tsx` ve `page.tsx` (landing) kaynak kodlarını okuyarak frontend mimarisindeki "inline SVG" ve "glow-card" CSS hookajlarını kavrayın.
+2. `app/themes.css` ve `app/globals.css` içinde dönen Tailwind variable matematiğini inceleyin. Tüm renkler HSL olarak tutulur ve opacity (örn: `/0.5`) verilerek kullanılır.
+3. Sonraki operasyonlar için Supabase bağlantısını lokalinizde devreye alın (`.env.local` oluşturun). Kullanıcı yönetimi Supabase Session üzerinden yürümektedir (`lib/auth/session.ts`).
 
-## Su an repo icinde gorunur durum
+---
 
-Ana on yuzeyler:
+## 3. Bekleyen İşler & Gelecek Yol Haritası (Roadmap)
 
-- `/` -> pazarlama odakli landing
-- `/auth?tab=login` -> sade giris ekrani
-- `/auth?tab=register` -> sade kayit ekrani
-- `/pricing` -> planlar (Starter / Pro / Enterprise)
-- `/dashboard` -> ana uygulama paneli
-- `/settings` -> hesap/plan/guvenlik/tema ayarlari (ilk yuzey)
-- `/ops` -> internal control tower
-- `/admin` -> portfoy / yonetim paneli
+Tasarım ve UI inşası bitti, ancak özellik entegrasyonu devam etmeli:
 
-Dashboard davranisi:
+- **Mock Datanın Gerçeğe Bağlanması:** Dashboard içindeki DAU, MAU, Retention, Funnel, MRR ve Timeline grafikleri şu an frontend üzerinde hardcoded "sample data" olarak besleniyor. Bu verilerin PostHog, Mixpanel veya Stripe apilerinden çekilecek şekilde `lib/` altında servislere bağlanması gereklidir.
+- **Gelişmiş Pricing Entegrasyonu:** Pricing sayfası tasarımı harika, ancak "Start Pro" tıklandığında Stripe Checkout (veya LemonSqueezy) yönlendirmesi için Supabase Webhook yapısı kurulmalıdır (örn: `api/stripe/checkout`).
+- **Checklist Veritabanı:** Launch checklist verisi Supabase tablolarına kaydedilmeli ve ilerleme (progress bar) buradan render edilmelidir.
+- **Settings İyileştirmeleri:** Profil ayarları, faturalandırma yönetimi (Customer Portal) ve tema/dil seçimleri için backend bağlantıları tamamlanmalı.
 
-- kullanicinin uygulamasi varsa:
-  - en ustte mevcut urun ve launch ozeti gorunur
-  - launch tarihi, platform, mevcut odak ve control desk bloklari gorunur
-  - alt kisimda tum uygulamalar kartlar halinde listelenir
-  - her uygulama kartindan yeni platform/client varyanti icin `/app/new` prefill ile devam edilebilir
-- hic uygulama yoksa:
-  - onboarding odakli bos durum gorunur
-  - `Uygulamani ekle -> pazara hazirlik ritmini kur -> launch ve growth takibini baslat` akisi anlatilir
-  - `Simdi basla` CTA'si verilir
+---
 
-Auth davranisi:
+## 4. Kritik Dosyalar Listesi
 
-- auth sayfasinda artik landing benzeri ekstra pazarlama panelleri yok
-- yalnizca giris / kayit formu ve form alti gecis aksiyonlari var
-- form metinleri secilen dile gore degisiyor
+- `app/globals.css` (Temel utility'ler, efektler)
+- `app/themes.css` (Tasarım tokenleri, hex/hsl renk haritası)
+- `components/ui/LaunchKit.tsx` (Ortak kullanılan buton, badge ve panel varyasyon bileşenleri)
+- `app/pricing/page.tsx` (Abonelik plan yapısı)
+- `app/(app)/dashboard/page.tsx` (Data dashboard'u)
 
-## Kaynak dosyalar
-
-Bu sprintte en kritik degisen dosyalar:
-
-- `app/page.tsx`
-- `app/(auth)/auth/page.tsx`
-- `app/(app)/dashboard/page.tsx`
-- `app/pricing/page.tsx`
-- `components/auth/AuthTabs.tsx`
-- `components/auth/LoginForm.tsx`
-- `components/auth/RegisterForm.tsx`
-- `components/dashboard/AppCard.tsx`
-- `components/dashboard/AppList.tsx`
-- `components/dashboard/NewAppForm.tsx`
-- `components/i18n/LocaleSwitcher.tsx`
-- `lib/i18n/dictionaries.ts`
-- `lib/auth/messages.ts`
-- `lib/auth/validation.ts`
-
-## Verifikasyon
-
-Bu turda tekrar dogrulananlar:
-
-- [x] `npm run lint`
-- [x] `npm run typecheck`
-
-Not:
-
-- Bu handoff guncellemesi sirasinda `npm run build` tekrar kosulmadi.
-- Dev server son calismada `localhost:3001` uzerinden kullaniliyordu.
-
-## Hangi noktadayiz?
-
-Proje artik saf `UI first pass` asamasini gecip su evreye girdi:
-
-- landing / auth / dashboard omurgasi urunlestirildi
-- onboarding mantigi dashboard tarafina tasindi
-- urun copy'si ve bilgi mimarisi daha bilincli hale geldi
-
-Kisaca:
-
-- `Sprint 1`: buyuk olcude tamamlandi, fakat resmi desktop/mobile QA ve tema karari acik
-- `Sprint 2`: fiilen basladi; onboarding, self-explanatory product flow ve adoption iyilestirmeleri uzerindeyiz
-
-## Product, design ve dev ekipleri icin ozet
-
-### Product
-
-Karar verilmis urun cizgisi:
-
-- landing net olmali, kalabalik olmamali
-- CTA ilk olarak auth'a goturmeli
-- login olmayan kisi dashboard aksiyonu gormemeli
-- dashboard sadece app listesi degil, bir `operating desk` gibi calismali
-- urun launch prep kadar marketing ve growth takibini de ayni yuzeyde gostermeli
-
-Acik product kararlar:
-
-- hangi growth KPI'lari ilk dashboard KPI bandina girecek?
-- hangi event'ler `Flow 0` ve onboarding olcumu icin zorunlu olacak?
-- free / pro ayrimi dashboard UX'inde ne kadar belirgin olacak?
-
-Plan karari (uygulama limiti politikasini sonraki developer uygulayacak):
-
-- Free plan: `1 urun`, `1 platform`
-- Ucretli plan: `2 urun`, `3 platform`
-- Daha buyuk paket: `3 urun`, `5 platform`
-- Enterprise: `talep kadar urun`, `x adet platform`
-
-Not: Bugun sistem sadece `free` vs `pro` ayrimini ve urun (board) limitini enforce ediyor.
-Yeni paket yapisi icin giris noktalar:
-
-- `types/index.ts` -> `export type Plan = ...`
-- `lib/apps/service.ts` -> `buildAppLimitState(...)`
-- Supabase `users.plan` + RLS/trigger'lar (migrations altinda)
-- UI vitrini: `/pricing` ve `lib/i18n/dictionaries.ts` (pricing metinleri)
-
-### Design
-
-Tasarim yoresi:
-
-- landing marketing page gibi davranmali
-- fazla cerceve / kutu / panel goruntusu azaltildi; bu yon korunmali
-- dashboard referanslari:
-  - sol-nav + KPI + control desk mantigi
-  - tek bakista okunabilen karar bloklari
-  - operasyonu yoneten bir masa hissi
-
-Acik design isleri:
-
-- dashboard ustunde filter bar / tarih / kanal / kategori secicileri
-- desktop/mobile spacing QA
-- app shell genelinde daha rafine tipografi ve ritim
-
-### Development
-
-Teknik notlar:
-
-- locale secimi cookie ile tutuluyor
-- auth validation ve auth API mesajlari locale-aware
-- landing server component olarak session kontrolu yapiyor
-- Supabase env varsa signed-in user `/dashboard`'a yonlendiriliyor
-- middleware korumasi dashboard/app/settings/admin/ops/auth tarafinda aktif
-
-Acik dev isleri:
-
-- dashboard'un ic verileri bugun hala launch-centric; gercek growth KPI alanlari sonra eklenmeli
-- TR/EN ceviri sistemi landing ve auth'ta aktif, dashboard/app shell'e yayilmasi gerekiyor
-- analytics event tracking henuz eklenmedi
-
-## Siradaki en mantikli isler
-
-Bir sonraki blok icin en yuksek getirili sira:
-
-1. Dashboard filter bar ve KPI bandini netlestir
-2. Dashboard / app shell genelinde tam TR/EN locale yayilimi yap
-3. `Flow 0` ve onboarding icin analytics event'leri ekle
-4. Mobile + desktop UI QA yap
-5. Checklist detail / deliverable UX polish turune geri don
-
-## Kritik eksikler / blocker olmayan ama bilinmesi gerekenler
-
-- Hosted Supabase cutover henuz yapilmadi
-- Gercek live env smoke henuz tamamlanmadi
-- Hosted taraf icin `.env.local` ve CLI access token hala gerekli
-- HCaptcha ve Supabase key'leri olmadan auth fallback notice'lari normal davranis
-- Dashboard'taki growth takibi bugun daha cok copy / bilgi mimarisi duzeyinde; gercek analytics katmani sonraki asama
-
-## README ile iliski
-
-Bu dosya ekip ici operasyonel handoff'tur.
-
-- teknik onboarding ve calistirma adimlari icin: `README.md`
-- resmi kapsam ve plan icin: `specs/`
-- urun akislari icin: `specs/flows.md`
-- gorev listesi ve isaretli ilerleme icin: `specs/tasks.md`
+Projeyi devraldığınızda kod temizliği konusunda endişe etmenize gerek yok (lint ve typecheck `0` hatadır). Kolay gelsin!

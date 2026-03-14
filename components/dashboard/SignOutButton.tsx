@@ -55,21 +55,18 @@ export function SignOutButton() {
   }
 
   return (
-    <div className="flex flex-col items-end gap-2">
-      <LaunchButton
+    <>
+      <button
         type="button"
-        tone="secondary"
         onClick={handleSignOut}
         disabled={isSubmitting || isPending}
-        className="px-4 py-2.5 text-sm"
+        className="rounded-[0.5rem] px-2 py-1 text-[11px] font-medium text-[hsl(var(--muted-foreground))] hover:text-foreground transition-colors shrink-0"
       >
-        {isSubmitting || isPending ? "Cikis yapiliyor..." : "Cikis Yap"}
-      </LaunchButton>
+        {isSubmitting || isPending ? "..." : "Çıkış"}
+      </button>
       {statusMessage ? (
-        <p className="max-w-48 text-right text-xs text-destructive">
-          {statusMessage}
-        </p>
+        <p className="text-xs text-destructive">{statusMessage}</p>
       ) : null}
-    </div>
+    </>
   );
 }
