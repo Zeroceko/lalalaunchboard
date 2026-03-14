@@ -9,8 +9,34 @@ import {
   LaunchRailList,
   launchButtonStyles
 } from "@/components/ui/LaunchKit";
-import { getAppCreationState } from "@/lib/apps/service";
+import { getAppByIdForUser, getAppCreationState } from "@/lib/apps/service";
 import { requireSessionContext } from "@/lib/auth/session";
+
+type SearchParams = Record<string, string | string[] | undefined>;
+
+function firstParam(value: SearchParams[string] | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function parsePlatform(value: string | undefined) {
+  if (value === "ios" || value === "android" || value === "web") {
+    return value;
+  }
+
+  return undefined;
+}
+
+function parseMode(value: string | undefined) {
+  if (value === "platform" || value === "client") {
+    return value;
+  }
+
+  return "default" as const;
+}
 
 const setupFlow = [
   {
@@ -36,9 +62,44 @@ const setupFlow = [
   }
 ];
 
-export default async function NewAppPage() {
+export default async function NewAppPage({
+  searchParams
+}: {
+  searchParams?: SearchParams;
+}) {
   const { supabase, user } = await requireSessionContext();
   let state;
+
+  const templateName = firstParam(searchParams?.templateName);
+  const mode = parseMode(firstParam(searchParams?.mode));
+  const requestedPlatform = parsePlatform(firstParam(searchParams?.platform));
+  const sourceAppId = firstParam(searchParams?.sourceAppId);
+  const sourceApp = sourceAppId
+    ? await getAppByIdForUser(supabase, user.id, sourceAppId)
+    : null;
+
+  const initialValues: {
+    name?: string;
+    platform?: "ios" | "android" | "web";
+    launchDate?: string;
+  } = {};
+
+  const resolvedName = templateName ?? sourceApp?.name ?? undefined;
+  const resolvedPlatform = requestedPlatform ?? sourceApp?.platform ?? undefined;
+
+  if (resolvedName) {
+    initialValues.name = resolvedName;
+  }
+
+  if (resolvedPlatform) {
+    initialValues.platform = resolvedPlatform;
+  }
+
+  if (sourceApp?.launch_date) {
+    initialValues.launchDate = sourceApp.launch_date;
+  }
+
+  const hasInitialValues = Object.keys(initialValues).length > 0;
 
   try {
     state = await getAppCreationState(supabase, user.id);
@@ -76,12 +137,34 @@ export default async function NewAppPage() {
     );
   }
 
+  const hero =
+    mode === "platform"
+      ? {
+          eyebrow: "Platform expansion",
+          title: "Mevcut proje icin yeni bir platform workspace'i ac.",
+          description:
+            "Bu varyant mevcut isimle gelir, yeni platformu secip devam edersin. Ardindan checklist workspace'i otomatik olusur."
+        }
+      : mode === "client"
+        ? {
+            eyebrow: "Client variant",
+            title: "Mevcut proje icin yeni bir client workspace'i ac.",
+            description:
+              "Bu varyant mevcut isimle gelir; client adina gore duzenleyip yeni board'u olusturabilirsin."
+          }
+        : {
+            eyebrow: "New launch workspace",
+            title: "Yeni uygulaman icin board'u sifirdan kur.",
+            description:
+              "Ilk uygulamani ekle ve pre-launch surecini baslat. Bu ekran isim, platform ve launch window gibi temel kararlari sabitler; hemen ardindan seni checklist workspace'ine tasir."
+          };
+
   return (
     <LaunchPage>
       <LaunchHero
-        eyebrow="New launch workspace"
-        title="Yeni uygulaman icin board'u sifirdan kur."
-        description="Ilk uygulamani ekle ve pre-launch surecini baslat. Bu ekran isim, platform ve launch window gibi temel kararlari sabitler; hemen ardindan seni checklist workspace'ine tasir."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        description={hero.description}
         actions={
           <>
             <Link href="/dashboard" className={launchButtonStyles.secondary}>
@@ -103,7 +186,12 @@ export default async function NewAppPage() {
         }
       />
 
-      <NewAppForm limit={state.limit} />
+      <NewAppForm
+        limit={state.limit}
+        initialValues={hasInitialValues ? initialValues : undefined}
+        mode={mode}
+        sourceAppName={sourceApp?.name ?? null}
+      />
     </LaunchPage>
   );
 }

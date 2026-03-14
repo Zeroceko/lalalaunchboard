@@ -24,6 +24,9 @@ import {
 
 interface NewAppFormProps {
   limit: AppLimitState;
+  initialValues?: Partial<NewAppFormState>;
+  mode?: "default" | "platform" | "client";
+  sourceAppName?: string | null;
 }
 
 type NewAppFormState = {
@@ -84,7 +87,7 @@ function getDefaultLaunchDate() {
   return nextTwoWeeks.toISOString().slice(0, 10);
 }
 
-const initialState: NewAppFormState = {
+const defaultState: NewAppFormState = {
   name: "",
   platform: "web",
   launchDate: getDefaultLaunchDate()
@@ -129,12 +132,20 @@ function FormSection({
   );
 }
 
-export function NewAppForm({ limit }: NewAppFormProps) {
+export function NewAppForm({
+  limit,
+  initialValues,
+  mode = "default",
+  sourceAppName = null
+}: NewAppFormProps) {
   const router = useRouter();
   const { pushToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [form, setForm] = useState(initialState);
+  const [form, setForm] = useState<NewAppFormState>({
+    ...defaultState,
+    ...initialValues
+  });
   const [fieldErrors, setFieldErrors] = useState<
     AppActionResult["fieldErrors"]
   >({});
@@ -142,9 +153,9 @@ export function NewAppForm({ limit }: NewAppFormProps) {
 
   const isBlocked = !limit.canCreateApp;
 
-  function updateField<K extends keyof typeof initialState>(
+  function updateField<K extends keyof NewAppFormState>(
     key: K,
-    value: (typeof initialState)[K]
+    value: NewAppFormState[K]
   ) {
     setForm((current) => ({
       ...current,
@@ -240,6 +251,14 @@ export function NewAppForm({ limit }: NewAppFormProps) {
             </div>
             <LaunchBadge tone="warning">About 1 minute</LaunchBadge>
           </div>
+
+          {mode !== "default" ? (
+            <LaunchNotice tone="info">
+              {mode === "platform"
+                ? `${sourceAppName ?? "Mevcut proje"} icin yeni bir platform workspace'i aciyorsun. Isim ve tarih bilgisi hazir getirildi; istersen bu varyanti duzenleyebilirsin.`
+                : `${sourceAppName ?? "Mevcut proje"} icin yeni bir client veya varyant workspace'i aciyorsun. Mevcut isim taslak olarak getirildi; client adina gore duzenleyebilirsin.`}
+            </LaunchNotice>
+          ) : null}
 
           <div className="grid gap-4 sm:grid-cols-3">
             <LaunchMiniStat

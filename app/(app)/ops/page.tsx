@@ -203,58 +203,76 @@ export default async function OpsPage() {
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
           <LaunchPanel tone="default" className="space-y-5">
             <div className="grid gap-4 md:grid-cols-2">
-              {overview.sections.map((section) => (
-                <div
-                  key={section.id}
-                  className="rounded-[1.35rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--card))/0.92] p-4 shadow-[0_14px_34px_hsl(var(--shadow-color)/0.05)]"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-2">
-                      <LaunchBadge tone={getToneForLevel(section.level)}>
-                        {section.level}
-                      </LaunchBadge>
-                      <h3 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
-                        {section.id}. {section.title}
-                      </h3>
-                    </div>
-                    <div className="rounded-[0.95rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--surface-inset))/0.82] px-3 py-2 text-right">
-                      <p className="text-lg font-semibold text-foreground">
-                        %{section.completionRate}
-                      </p>
-                      <p className="text-[11px] uppercase tracking-[0.14em] text-[hsl(var(--muted-foreground))]">
-                        {section.completed}/{section.total}
-                      </p>
-                    </div>
-                  </div>
+              {overview.sections.map((section) => {
+                const isComplete = section.completionRate === 100;
+                const detailsClassName = isComplete
+                  ? "mt-4 space-y-2 max-h-0 overflow-hidden opacity-0 transition-[max-height,opacity] duration-200 ease-out group-hover:max-h-48 group-hover:opacity-100 group-focus-within:max-h-48 group-focus-within:opacity-100"
+                  : "mt-4 space-y-2";
 
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-[hsl(var(--surface-inset))/0.92]">
-                    <div
-                      className={`h-full rounded-full ${getBarTone(section.completionRate)}`}
-                      style={{ width: `${section.completionRate}%` }}
-                    />
-                  </div>
-
-                  <div className="mt-4 space-y-2">
-                    {section.openTasks.length > 0 ? (
-                      section.openTasks.slice(0, 2).map((task) => (
-                        <div
-                          key={task.id}
-                          className="rounded-[0.95rem] border border-[hsl(var(--border))/0.45] bg-[hsl(var(--surface-inset))/0.75] px-3 py-2 text-sm text-[hsl(var(--muted-foreground))]"
-                        >
-                          <span className="font-semibold text-foreground">
-                            {task.id}
-                          </span>{" "}
-                          {task.title}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="rounded-[0.95rem] border border-[hsl(var(--success))/0.18] bg-[hsl(var(--success-soft))/0.92] px-3 py-2 text-sm text-foreground">
-                        Bu bolumde acik gorev kalmadi.
+                return (
+                  <div
+                    key={section.id}
+                    tabIndex={isComplete ? 0 : undefined}
+                    className={`group rounded-[1.35rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--card))/0.92] p-4 shadow-[0_14px_34px_hsl(var(--shadow-color)/0.05)] ${
+                      isComplete
+                        ? "cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))/0.32] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-2">
+                        <LaunchBadge tone={getToneForLevel(section.level)}>
+                          {section.level}
+                        </LaunchBadge>
+                        <h3 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
+                          {section.id}. {section.title}
+                        </h3>
                       </div>
-                    )}
+                      <div className="rounded-[0.95rem] border border-[hsl(var(--border))/0.5] bg-[hsl(var(--surface-inset))/0.82] px-3 py-2 text-right">
+                        <p className="text-lg font-semibold text-foreground">
+                          %{section.completionRate}
+                        </p>
+                        <p className="text-[11px] uppercase tracking-[0.14em] text-[hsl(var(--muted-foreground))]">
+                          {section.completed}/{section.total}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-[hsl(var(--surface-inset))/0.92]">
+                      <div
+                        className={`h-full rounded-full ${getBarTone(section.completionRate)}`}
+                        style={{ width: `${section.completionRate}%` }}
+                      />
+                    </div>
+
+                    {isComplete ? (
+                      <p className="mt-3 text-xs leading-5 text-[hsl(var(--muted-foreground))]">
+                        Tamamlandi. Detaylari gormek icin uzerine gel veya odakla.
+                      </p>
+                    ) : null}
+
+                    <div className={detailsClassName}>
+                      {section.openTasks.length > 0 ? (
+                        section.openTasks.slice(0, 2).map((task) => (
+                          <div
+                            key={task.id}
+                            className="rounded-[0.95rem] border border-[hsl(var(--border))/0.45] bg-[hsl(var(--surface-inset))/0.75] px-3 py-2 text-sm text-[hsl(var(--muted-foreground))]"
+                          >
+                            <span className="font-semibold text-foreground">
+                              {task.id}
+                            </span>{" "}
+                            {task.title}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="rounded-[0.95rem] border border-[hsl(var(--success))/0.18] bg-[hsl(var(--success-soft))/0.92] px-3 py-2 text-sm text-foreground">
+                          Bu bolumde acik gorev kalmadi.
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </LaunchPanel>
 

@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 
 interface AppCardProps {
   app: App;
+  canCreateApp?: boolean;
 }
 
 const platformTone: Record<App["platform"], "brand" | "success" | "clay"> = {
@@ -74,9 +75,40 @@ function resolveCountdownTone(countdown: string) {
   return "brand" as const;
 }
 
-export function AppCard({ app }: AppCardProps) {
+export function AppCard({ app, canCreateApp = true }: AppCardProps) {
   const countdown = getLaunchCountdown(app.launch_date);
   const tone = platformTone[app.platform];
+  const expansionPlatforms = (["ios", "android", "web"] as const).filter(
+    (platform) => platform !== app.platform
+  );
+
+  function buildNewWorkspaceHref(params: {
+    templateName?: string;
+    platform?: App["platform"];
+    mode?: "default" | "platform" | "client";
+    sourceAppId?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+
+    if (params.templateName) {
+      searchParams.set("templateName", params.templateName);
+    }
+
+    if (params.platform) {
+      searchParams.set("platform", params.platform);
+    }
+
+    if (params.mode && params.mode !== "default") {
+      searchParams.set("mode", params.mode);
+    }
+
+    if (params.sourceAppId) {
+      searchParams.set("sourceAppId", params.sourceAppId);
+    }
+
+    const query = searchParams.toString();
+    return query.length > 0 ? `/app/new?${query}` : "/app/new";
+  }
 
   return (
     <LaunchPanel className="overflow-hidden p-0">
@@ -176,6 +208,67 @@ export function AppCard({ app }: AppCardProps) {
                 </div>
               ))}
             </div>
+          </LaunchPanel>
+
+          <LaunchPanel tone="inset" className="space-y-5 p-5">
+            <div className="space-y-2">
+              <LaunchBadge tone={tone}>Genislet</LaunchBadge>
+              <h4 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
+                Platform veya client ekle
+              </h4>
+              <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                Mevcut board uzerine yeni bir platform workspace&apos;i ya da yeni bir
+                client varyanti ac. Isim ve platform bilgisi hazir gelir.
+              </p>
+            </div>
+
+            {canCreateApp ? (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
+                    Platform ekle
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {expansionPlatforms.map((platform) => (
+                      <Link
+                        key={platform}
+                        href={buildNewWorkspaceHref({
+                          templateName: app.name,
+                          platform,
+                          mode: "platform",
+                          sourceAppId: app.id
+                        })}
+                        className={launchButtonStyles.secondary}
+                      >
+                        + {formatPlatformLabel(platform)}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
+                    Client / varyant
+                  </p>
+                  <Link
+                    href={buildNewWorkspaceHref({
+                      templateName: `${app.name} - Yeni client`,
+                      platform: app.platform,
+                      mode: "client",
+                      sourceAppId: app.id
+                    })}
+                    className={launchButtonStyles.secondary}
+                  >
+                    Client ekle
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-[1.1rem] border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.92] px-4 py-3 text-sm text-[hsl(var(--warning-foreground))]">
+                Free plan limiti dolu. Yeni platform veya client varyanti acmak icin
+                Pro plana gecmen gerekir.
+              </div>
+            )}
           </LaunchPanel>
         </div>
       </div>
