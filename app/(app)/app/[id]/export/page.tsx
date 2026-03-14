@@ -142,6 +142,8 @@ export default async function ExportPage({
           eyebrow="Schema bekleniyor"
           title="Export veritabanini bekliyor."
           description="Hosted Supabase projesine migration push tamamlandiginda bu ekran gercek workspace verisiyle export alabilecek."
+          actionHref={`/app/${params.id}/export`}
+          actionLabel="Yeniden dene"
         />
       </main>
     );

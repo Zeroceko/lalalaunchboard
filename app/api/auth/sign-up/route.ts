@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${getAppUrl()}/dashboard`,
+      emailRedirectTo: `${getAppUrl()}/app/new`,
       captchaToken: parsed.data.captchaToken
     }
   });
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
   return json(
     {
       ok: true,
-      redirectTo: "/dashboard"
+      redirectTo: "/app/new"
     },
     200
   );

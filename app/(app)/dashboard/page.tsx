@@ -79,6 +79,16 @@ export default async function DashboardPage() {
     );
   }
 
+  const createAction = snapshot.limit.canCreateApp ? (
+    <Link href="/app/new" className={launchButtonStyles.primary}>
+      Yeni board olustur
+    </Link>
+  ) : (
+    <span className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-4 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))] shadow-[0_12px_30px_hsl(var(--shadow-color)/0.08)]">
+      Pro plan ile yeni board ac
+    </span>
+  );
+
   return (
     <LaunchPage>
       <LaunchHero
@@ -87,8 +97,9 @@ export default async function DashboardPage() {
         description="Her uygulama icin prep, launch date, next move ve board durumu ayni yuzeyde kalir. Bu ekran liste gostermekten cok, neye odaklanman gerektigini hizla okutmak icin vardir."
         actions={
           <>
-            <Link href="/app/new" className={launchButtonStyles.primary}>
-              Yeni board olustur
+            {createAction}
+            <Link href="/admin" className={launchButtonStyles.secondary}>
+              Yonetim paneli
             </Link>
             <span className="inline-flex rounded-full border border-[hsl(var(--border))/0.7] bg-[hsl(var(--card))/0.92] px-4 py-3 text-sm font-semibold text-[hsl(var(--muted-foreground))] shadow-[0_12px_30px_hsl(var(--shadow-color)/0.08)]">
               {snapshot.apps.length} active board
@@ -110,7 +121,7 @@ export default async function DashboardPage() {
         <LaunchMetricCard
           label="Plan"
           value={snapshot.limit.plan === "pro" ? "Pro" : "Free"}
-          detail="Kapasite ve board sayisi bu katmanda belirlenir."
+          detail="Kapasite ve board sayisi bu asamada belirlenir."
           tone="brand"
         />
         <LaunchMetricCard
@@ -148,12 +159,18 @@ export default async function DashboardPage() {
           title="Board'lari odak sirasi bozulmadan gor"
           description="Kartlar platform tonunu, launch timing'i ve siradaki hareketi ayni anda gosterir. Ayni yapi checklist ekranina da dogrudan tasinacak."
           action={
-            <Link href="/app/new" className={launchButtonStyles.secondary}>
-              Yeni workspace
-            </Link>
+            snapshot.limit.canCreateApp ? (
+              <Link href="/app/new" className={launchButtonStyles.secondary}>
+                Yeni workspace
+              </Link>
+            ) : (
+              <span className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-4 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
+                Slot dolu
+              </span>
+            )
           }
         />
-        <AppList apps={snapshot.apps} />
+        <AppList apps={snapshot.apps} canCreateApp={snapshot.limit.canCreateApp} />
       </section>
     </LaunchPage>
   );

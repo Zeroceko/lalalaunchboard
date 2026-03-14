@@ -1,68 +1,30 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { ItemDetailPanel } from "@/components/checklist/ItemDetailPanel";
-import { useToast } from "@/components/shared/ToastProvider";
 import { LaunchBadge, launchButtonStyles } from "@/components/ui/LaunchKit";
 import { cn } from "@/lib/utils";
-import type { ChecklistActionResult, ChecklistItemWithStatus } from "@/types";
+import type { ChecklistItemWithStatus, Deliverable } from "@/types";
 
 interface ChecklistItemProps {
   appId: string;
   item: ChecklistItemWithStatus;
+  isPending: boolean;
+  onToggle: () => void;
+  onDeliverablesChange: (deliverables: Deliverable[]) => void;
 }
 
-export function ChecklistItem({ appId, item }: ChecklistItemProps) {
-  const router = useRouter();
-  const { pushToast } = useToast();
-  const [isPending, startTransition] = useTransition();
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+export function ChecklistItem({
+  appId,
+  item,
+  isPending,
+  onToggle,
+  onDeliverablesChange
+}: ChecklistItemProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const isCompleted = item.status?.completed ?? false;
-
-  function handleToggle() {
-    setStatusMessage(null);
-
-    void (async () => {
-      try {
-        const response = await fetch(`/api/apps/${appId}/checklist/${item.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            completed: !isCompleted
-          })
-        });
-        const result = (await response.json()) as ChecklistActionResult;
-
-        if (!response.ok || !result.ok) {
-          const message = result.message ?? "Checklist guncellenemedi";
-          setStatusMessage(message);
-          pushToast({
-            title: "Checklist guncellenemedi",
-            description: message,
-            variant: "destructive"
-          });
-          return;
-        }
-
-        startTransition(() => {
-          router.refresh();
-        });
-      } catch {
-        setStatusMessage("Checklist guncellenemedi");
-        pushToast({
-          title: "Checklist guncellenemedi",
-          description: "Lutfen tekrar dene.",
-          variant: "destructive"
-        });
-      }
-    })();
-  }
 
   return (
     <>
@@ -71,7 +33,7 @@ export function ChecklistItem({ appId, item }: ChecklistItemProps) {
           <button
             type="button"
             aria-pressed={isCompleted}
-            onClick={handleToggle}
+            onClick={onToggle}
             disabled={isPending}
             className={cn(
               "mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm transition duration-200",
@@ -136,11 +98,12 @@ export function ChecklistItem({ appId, item }: ChecklistItemProps) {
                   ? "Evidence attached"
                   : "No deliverable yet"}
               </span>
+              {isPending ? (
+                <span className="rounded-full border border-[hsl(var(--info))/0.22] bg-[hsl(var(--info-soft))/0.96] px-2.5 py-1 text-[hsl(var(--info))]">
+                  Kaydediliyor
+                </span>
+              ) : null}
             </div>
-
-            {statusMessage ? (
-              <p className="text-sm text-destructive">{statusMessage}</p>
-            ) : null}
           </div>
         </div>
       </div>
@@ -149,6 +112,7 @@ export function ChecklistItem({ appId, item }: ChecklistItemProps) {
         item={item}
         open={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
+        onDeliverablesChange={onDeliverablesChange}
       />
     </>
   );

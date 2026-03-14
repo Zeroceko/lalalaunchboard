@@ -12,6 +12,7 @@ The official project specs live in [`specs/`](./specs):
 - `specs/design.md`
 - `specs/tasks.md`
 - `specs/roadmap.md`
+- `specs/flows.md`
 
 These files are the source of truth for product scope, architecture, and implementation order.
 
@@ -36,6 +37,9 @@ The codebase currently includes:
 - Middleware-protected app routes and smarter auth redirects
 - Global toast notifications plus workspace section navigation
 - First visible frontend pass across landing, auth, dashboard, new-app, and workspace screens
+- Appearance settings helper surface and user-facing portfolio management panel
+- Product flow ownership in `specs/flows.md`, including the new landing -> signup start flow (`Flow 0`)
+- Repo consolidation into the broader `LALALaunchBoard` workspace, with the active app now living under `Development/`
 - Property-based test foundation with `vitest` and `fast-check`
 - Docker-based dev/test workflow
 
@@ -48,6 +52,19 @@ The codebase currently includes:
 - `specs/` - official project specifications
 - `vault/` - Obsidian-friendly working memory, decisions, and dev notes
 - `HANDOFF.md` - current project state and next recommended steps
+
+At the workspace level, the broader folder layout is now:
+
+- `LALALaunchBoard/Development` - the active application workspace
+- `LALALaunchBoard/Product` - reserved for product-only work
+- `LALALaunchBoard/Design - UI:UX` - reserved for design/UI handoff work
+
+Important note:
+
+- the main source of truth remains `Development/`
+- older notes may still mention `Development/Yeni Proje`; treat that as a legacy path reference
+- `Design - UI:UX` is not yet a clean design-only workspace and currently contains a copied project snapshot
+- this workspace snapshot does not currently expose `.git` metadata, so git history and CI state should be checked from the original clone or remote repo
 
 ## Local Setup
 
@@ -110,6 +127,15 @@ Current frontend coverage includes:
 - dashboard and new-app setup flows
 - workspace hero layouts for prep, routine, and export
 
+The current workspace snapshot was re-checked successfully on `2026-03-14` with:
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+- `npm run test:properties`
+- `npm run supabase:status`
+- `npm run smoke:db:local`
+
 ## Go-Live Readiness
 
 Check the current hosted/live blockers:
@@ -120,6 +146,7 @@ npm run go-live:check
 
 Current go-live expectations:
 
+- this workspace snapshot does not commit a `.env.local`, so the readiness script will report missing hosted values until one is created locally
 - Hosted Supabase cutover needs `SUPABASE_ACCESS_TOKEN` or an authenticated `supabase login`
 - Hosted smoke needs `SUPABASE_SERVICE_ROLE_KEY`
 - Public signup needs `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` and `HCAPTCHA_SECRET_KEY`
@@ -192,6 +219,7 @@ Without these, the app uses local fallback checklist and routine content so UI d
 ## Working Notes
 
 - `specs/` stays authoritative
+- `specs/flows.md` now holds product flow ownership, acceptance criteria, and the current landing-first acquisition focus
 - `vault/` is for decisions, notes, handoff context, and working memory
 - `HANDOFF.md` should always reflect where we last stopped
 - hosted Supabase pushes require `SUPABASE_ACCESS_TOKEN` or a linked CLI session

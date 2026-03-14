@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 
 import { DeliverableForm } from "@/components/checklist/DeliverableForm";
 import { useToast } from "@/components/shared/ToastProvider";
@@ -18,6 +17,7 @@ interface ItemDetailPanelProps {
   item: ChecklistItemWithStatus;
   open: boolean;
   onClose: () => void;
+  onDeliverablesChange: (deliverables: Deliverable[]) => void;
 }
 
 function formatFileSize(size?: number) {
@@ -46,25 +46,19 @@ function formatDeliverableType(type: Deliverable["type"]) {
 
 function DeliverableRow({
   appId,
-  deliverable
+  deliverable,
+  onDeleted
 }: {
   appId: string;
   deliverable: Deliverable;
+  onDeleted: (deliverableId: string) => void;
 }) {
-  const router = useRouter();
   const { pushToast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   function handleDelete() {
-    const confirmed = window.confirm(
-      "Bu deliverable kalici olarak silinecek. Devam etmek istiyor musun?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     setStatusMessage(null);
 
     void (async () => {
@@ -94,7 +88,7 @@ function DeliverableRow({
           variant: "success"
         });
         startTransition(() => {
-          router.refresh();
+          onDeleted(deliverable.id);
         });
       } catch {
         setStatusMessage(deliverableMessages.genericError);
@@ -166,17 +160,53 @@ function DeliverableRow({
                 Ac
               </a>
             ) : null}
+            {deliverable.type === "link" ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(deliverable.content);
+                  pushToast({
+                    title: "Link kopyalandi",
+                    description: "Deliverable linki panoya alindi.",
+                    variant: "success"
+                  });
+                }}
+                className="rounded-full border border-foreground/10 px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-secondary/45"
+              >
+                Kopyala
+              </button>
+            ) : null}
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleDelete}
-          disabled={isPending}
-          className="rounded-full border border-destructive/20 px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/5 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isPending ? "Siliniyor..." : "Sil"}
-        </button>
+        {isConfirmingDelete ? (
+          <div className="flex flex-col items-end gap-2">
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isPending}
+              className="rounded-full border border-destructive/20 px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/5 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isPending ? "Siliniyor..." : "Silmeyi onayla"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsConfirmingDelete(false)}
+              className="rounded-full border border-foreground/10 px-3 py-1.5 text-xs font-semibold text-foreground/70 transition hover:bg-secondary/45"
+            >
+              Vazgec
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsConfirmingDelete(true)}
+            disabled={isPending}
+            className="rounded-full border border-destructive/20 px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/5 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Sil
+          </button>
+        )}
       </div>
 
       {statusMessage ? (
@@ -190,7 +220,8 @@ export function ItemDetailPanel({
   appId,
   item,
   open,
-  onClose
+  onClose,
+  onDeliverablesChange
 }: ItemDetailPanelProps) {
   useEffect(() => {
     if (!open) {
@@ -238,8 +269,10 @@ export function ItemDetailPanel({
         aria-modal="true"
         aria-label={`${item.title} detay paneli`}
         className={cn(
-          "absolute right-0 top-0 h-full w-full max-w-[860px] overflow-y-auto border-l border-foreground/10 bg-[hsl(var(--background))] shadow-[0_20px_80px_rgba(15,23,42,0.2)] transition-transform duration-300",
-          open ? "translate-x-0" : "translate-x-full"
+          "absolute inset-x-0 bottom-0 h-[88dvh] overflow-y-auto rounded-t-[1.9rem] border border-foreground/10 bg-[hsl(var(--background))] shadow-[0_20px_80px_rgba(15,23,42,0.2)] transition-transform duration-300 md:inset-y-0 md:left-auto md:right-0 md:h-full md:w-full md:max-w-[860px] md:rounded-none md:border-y-0 md:border-r-0 md:border-l",
+          open
+            ? "translate-y-0 md:translate-x-0"
+            : "translate-y-full md:translate-y-0 md:translate-x-full"
         )}
       >
         <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
@@ -389,7 +422,13 @@ export function ItemDetailPanel({
                 </div>
 
                 <div className="mt-5">
-                  <DeliverableForm appId={appId} itemId={item.id} />
+                  <DeliverableForm
+                    appId={appId}
+                    itemId={item.id}
+                    onCreated={(deliverable) =>
+                      onDeliverablesChange([deliverable, ...item.deliverables])
+                    }
+                  />
                 </div>
               </section>
 
@@ -415,6 +454,14 @@ export function ItemDetailPanel({
                         key={deliverable.id}
                         appId={appId}
                         deliverable={deliverable}
+                        onDeleted={(deliverableId) =>
+                          onDeliverablesChange(
+                            item.deliverables.filter(
+                              (currentDeliverable) =>
+                                currentDeliverable.id !== deliverableId
+                            )
+                          )
+                        }
                       />
                     ))
                   ) : (

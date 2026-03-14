@@ -81,7 +81,7 @@ export default async function NewAppPage() {
       <LaunchHero
         eyebrow="New launch workspace"
         title="Yeni uygulaman icin board'u sifirdan kur."
-        description="Bu ekran isim, platform ve launch window gibi temel kararlari sabitler. Sonra dashboard karti, countdown hissi ve checklist yapisi ayni planin ustune oturur."
+        description="Ilk uygulamani ekle ve pre-launch surecini baslat. Bu ekran isim, platform ve launch window gibi temel kararlari sabitler; hemen ardindan seni checklist workspace'ine tasir."
         actions={
           <>
             <Link href="/dashboard" className={launchButtonStyles.secondary}>
@@ -94,7 +94,7 @@ export default async function NewAppPage() {
         }
         aside={
           <LaunchRailList
-            eyebrow="Setup model"
+            eyebrow="Onboarding step 2/3"
             title="Uc net adim"
             description="Bu alan uzun bir form gibi davranmaz. Her karar bir sonraki launch katmanina temel verir."
             items={setupFlow}

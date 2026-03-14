@@ -4,12 +4,13 @@ Last updated: 2026-03-14
 
 ## Executive Summary
 
-Lalalaunchboard is moving from a live, manually operated launch board into an
-AI-assisted launch operating system for indie app builders. The current product
-already has a working production foundation: GitHub + CI, Vercel deployment,
-Supabase auth/database/storage, protected dashboard flows, checklist,
+Lalalaunchboard is moving from a manually operated launch board into an
+AI-assisted launch operating system for indie app builders. In the current
+workspace snapshot, the directly re-verified foundation is the local app,
+local Supabase flow, protected dashboard/workspace routes, checklist,
 deliverables, post-launch routine, and export. The next step is not rebuilding
-the foundation, but upgrading the product in layers.
+the foundation, but upgrading the product in layers while finishing hosted
+cutover and release hardening.
 
 Version `v0` is the live MVP foundation. Version `v1` is the first complete
 product vision: a user can upload app screenshots and app context, receive AI
@@ -21,11 +22,11 @@ without re-architecting the stack later.
 ## Yonetici Ozeti
 
 Lalalaunchboard, indie gelistiriciler icin lansman surecini tek bir calisma
-alaninda toplayan bir launch operating system'e donusuyor. Urunun su anki hali
-calisan bir `v0` temel surumu: GitHub ve CI kurulu, Vercel deploy canli,
-Supabase auth/database/storage aktif, dashboard/checklist/deliverable/routine
-ve export akislarimiz calisiyor. Bundan sonraki hedef zemini yeniden kurmak
-degil, bu temelin ustune urunu katman katman buyutmek.
+alaninda toplayan bir launch operating system'e donusuyor. Bu workspace
+snapshot'inda dogrudan yeniden dogrulanan `v0` temeli; lokal uygulama,
+lokal Supabase akisi, dashboard/checklist/deliverable/routine ve export
+akislaridir. Bundan sonraki hedef zemini yeniden kurmak degil, bu temelin
+ustune urunu katman katman buyutmek ve hosted cutover'u tamamlamaktir.
 
 `v0`, canli MVP temelimiz. `v1` ise ilk tam urun vizyonu: kullanici uygulama
 ekran goruntulerini ve urun baglamini verecek, sistem buna gore AI destekli
@@ -52,15 +53,19 @@ bastan kurmak zorunda kalmadan yapabilmemiz icin hazirlandi.
 ## Current Position
 
 - Current version: `v0`
-- Current sprint focus: `Sprint 1 - Live MVP stabilization and UI merge`
+- Current sprint focus: `Sprint 1 - Live MVP stabilization, flow clarity, and release readiness`
 - Current platform status:
-  - [x] GitHub repo, CI, and protected `main`
-  - [x] Hosted Supabase linked, migrated, and smoke-tested
-  - [x] Vercel production deploy live
-  - [x] Auth redirects and hCaptcha wired for production
-  - [x] Live signup, login, dashboard, and new workspace flow verified
-  - [ ] UI sandbox handoff reviewed and merge completed
+  - [x] Local app routes, build, typecheck, property tests, and local Supabase smoke re-verified
+  - [x] Checklist, deliverables, post-launch routine, export, settings helper, and portfolio management panel exist in the main repo
+  - [x] UI sandbox outputs have been partially merged into the main app surfaces
+  - [ ] Hosted Supabase cutover is configured in this workspace snapshot
+  - [ ] Public launch env, hCaptcha, and external app URL are configured
+  - [ ] Final UI sandbox cleanup and remaining polish pass are completed
   - [ ] Monitoring and post-launch QA pass completed
+
+Current workspace note:
+
+- This snapshot does not currently expose `.git`, so git history, CI, and remote deploy state should be confirmed from the original clone or remote repo before release decisions.
 
 ## Version Map
 
@@ -74,7 +79,8 @@ execution flows.
 - [x] Checklist, progress, deliverables, and storage
 - [x] Post-launch routine tracking
 - [x] Markdown and PDF export
-- [x] GitHub, CI, Vercel, and hosted Supabase foundation
+- [x] Local verification and local Supabase foundation
+- [ ] Hosted Supabase cutover and hosted smoke against the target project
 - [ ] Final UI merge from sandbox
 - [ ] Monitoring and release QA baseline
 
@@ -84,7 +90,7 @@ Goal: Make the non-AI product feel production-ready and repeatable.
 
 - [ ] Merge the new UI system and choose one default production theme
 - [ ] Polish landing, auth, dashboard, new-app, checklist, export, and routine surfaces
-- [ ] Add settings surface for profile/app/theme preferences
+- [ ] Expand the current settings surface into fuller profile/app/theme preferences
 - [ ] Improve empty, blocker, and success states
 - [ ] Add onboarding and first-workspace guidance
 - [ ] Add analytics and error monitoring
@@ -207,12 +213,12 @@ Status: `in progress`
 
 Goal: Merge the UI pass safely and make the live manual workflow feel coherent.
 
-- [ ] Review UI sandbox handoff and changed files
-- [ ] Merge only the production-ready UI surfaces into the main repo
-- [ ] Select one default production theme
-- [ ] Re-run `lint`, `build`, `typecheck`, `test:properties`
+- [x] Review UI sandbox handoff and separate sandbox-only notes from main-repo truth
+- [x] Merge the first production-ready UI surfaces into the main repo
+- [x] Re-run `lint`, `build`, `typecheck`, `test:properties`
+- [ ] Select and document one default production theme for the remaining polish pass
 - [ ] Run a mobile and desktop QA pass on landing, auth, dashboard, and workspace
-- [ ] Add a short release checkpoint update to `HANDOFF.md`
+- [ ] Add a short release checkpoint update to `HANDOFF.md` after hosted-env decisions are made
 
 Exit criteria:
 - The live app feels visually coherent and safe to demo.
@@ -227,7 +233,7 @@ Goal: Make the manual product self-explanatory and easier to adopt.
 - [ ] Add onboarding and first-workspace setup guidance
 - [ ] Improve checklist detail flow and deliverable UX
 - [ ] Improve export readability and usefulness
-- [ ] Add settings surface
+- [ ] Expand the current settings helper into a fuller settings surface
 - [ ] Add product analytics baseline
 - [ ] Add error monitoring baseline
 

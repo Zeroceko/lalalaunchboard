@@ -13,9 +13,10 @@ import {
 
 interface AppListProps {
   apps: App[];
+  canCreateApp?: boolean;
 }
 
-export function AppList({ apps }: AppListProps) {
+export function AppList({ apps, canCreateApp = true }: AppListProps) {
   if (apps.length === 0) {
     return (
       <div className="space-y-6">
@@ -46,9 +47,15 @@ export function AppList({ apps }: AppListProps) {
                 ))}
               </div>
 
-              <Link href="/app/new" className={launchButtonStyles.primary}>
-                Ilk workspace&apos;i olustur
-              </Link>
+              {canCreateApp ? (
+                <Link href="/app/new" className={launchButtonStyles.primary}>
+                  Ilk workspace&apos;i olustur
+                </Link>
+              ) : (
+                <div className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-5 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
+                  Free plan limiti dolu
+                </div>
+              )}
             </div>
 
             <div className="border-t border-[hsl(var(--border))/0.68] bg-[linear-gradient(180deg,hsl(var(--surface-brand-start))/0.96,hsl(var(--surface-clay-start))/0.92)] p-6 sm:p-8 xl:border-l xl:border-t-0">
@@ -60,7 +67,7 @@ export function AppList({ apps }: AppListProps) {
                   {
                     title: "Prep layer",
                     description:
-                      "Store prep, aciklamalar, gorseller ve son teslimler tek workflow katmaninda toplanir.",
+                      "Store prep, aciklamalar, gorseller ve son teslimler tek workflow akisinda toplanir.",
                     badge: "Core",
                     tone: "brand"
                   },
@@ -90,9 +97,15 @@ export function AppList({ apps }: AppListProps) {
           title="Ilk board ile urunun asil hissini ac"
           description="Lalalaunchboard'un degeri yeni bir kayit olusturmak degil; launch surecini tek bir komuta alanina cevirmek."
         >
-          <Link href="/app/new" className={launchButtonStyles.primary}>
-            Yeni board baslat
-          </Link>
+          {canCreateApp ? (
+            <Link href="/app/new" className={launchButtonStyles.primary}>
+              Yeni board baslat
+            </Link>
+          ) : (
+            <div className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-5 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
+              Yeni board icin Pro plan gerekecek
+            </div>
+          )}
         </LaunchActionBar>
       </div>
     );

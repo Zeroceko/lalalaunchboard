@@ -9,20 +9,20 @@ import { cn } from "@/lib/utils";
 
 const tabs = [
   {
-    id: "register",
-    label: "Kayit ol",
-    description: "Ilk boardunu ac ve sistemi baslat."
-  },
-  {
     id: "login",
     label: "Giris yap",
     description: "Mevcut launch boardlarina geri don."
+  },
+  {
+    id: "register",
+    label: "Kayit ol",
+    description: "Ilk boardunu ac ve sistemi baslat."
   }
 ] as const;
 
 export function AuthTabs() {
   const [activeTab, setActiveTab] =
-    useState<(typeof tabs)[number]["id"]>("register");
+    useState<(typeof tabs)[number]["id"]>("login");
 
   const activeTabData = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
 

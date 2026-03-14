@@ -111,7 +111,6 @@ Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboar
     - Genel progress ve kategori bazlı progress hesaplama
     - `round(tamamlanan / toplam * 100)` formülü
     - _Gereksinimler: 6.1, 6.4_
-  - [ ]* 7.3 Progress hesaplama doğruluğu için özellik testi yaz
   - [x]* 7.3 Progress hesaplama doğruluğu için özellik testi yaz
     - **Özellik 12: Progress Hesaplama Doğruluğu**
     - **Doğrular: Gereksinim 6.1, 6.4, 4.5**
@@ -132,7 +131,7 @@ Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboar
     - Genel progress bar, countdown badge
     - _Gereksinimler: 4.1, 4.2, 6.2, 7.1_
 
-- [ ] 8. Item Detay Paneli ve Deliverable yönetimi
+- [x] 8. Item Detay Paneli ve Deliverable yönetimi
   - [x] 8.1 Deliverable API route'larını uygula
     - `GET /api/apps/[id]/checklist/[itemId]/deliverables`
     - `POST /api/apps/[id]/checklist/[itemId]/deliverables` — URL validasyonu, dosya boyutu kontrolü
@@ -222,14 +221,36 @@ Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboar
     - `supabase link`, `db push` ve hosted smoke sequence'i calistir
     - _Gereksinimler: 2.1, 2.2, 3.4, 12.1_
   - [ ]* 14.4 Kalan property-test backlog'unu kapat
-    - `10.2`, `11.4`, `8.2`, `8.3`, `8.4` ve uygun gorulen auth/app-limit property testlerini ekle
+    - kalan auth/app/CMS/checklist property testlerini kapat (`2.3`, `3.2`, `3.3`, `3.5`, `3.6`, `3.7`, `3.8`, `5.2`, `5.3`, `6.3`, `7.4`, `7.6`)
     - _Gereksinimler: 3.3, 3.4, 5.3, 5.4, 8.2, 8.3, 9.2, 9.3_
   - [ ] 14.5 Live CMS ve runtime entegrasyonunu sertlestir
     - Gercek Contentful credential'lariyla fallback/live davranisini dogrula
     - _Gereksinimler: 10.1, 10.2, 10.3, 10.4_
   - [ ] 14.6 MVP QA ve release hazirligini tamamla
-    - Uctan uca mutlu yol kontrolu, blocker kopyalari, son README/HANDOFF/devlog guncellemeleri
+    - Uctan uca mutlu yol kontrolu, blocker kopyalari ve kalan runtime QA'yi tamamla
     - _Gereksinimler: 1.3, 3.2, 4.6, 8.4, 9.5, 12.3_
+
+- [ ] 15. Product flow ownership ve UX iyilestirme sprinti
+  - [x] 15.1 Team split modelini tanimla (`development`, `product`, `design`)
+    - Roller, sahiplik alanlari ve handoff contract dokumani olustur (`specs/flows.md`)
+    - _Gereksinimler: 12.3_
+  - [x] 15.2 Core flow kartlarini netlestir (`Flow 1-6`)
+    - Auth, Workspace Creation, Checklist, Item Detail, Routine, Export akislari icin happy path + edge case tanimlarini finalize et
+    - _Gereksinimler: 3.2, 4.6, 5.1, 8.4, 9.1_
+  - [ ] 15.3 Flow 3 ve Flow 4 UX refactor backlog'unu cikart
+    - `ChecklistExecution` ve `ItemDetailAndDeliverables` icin ekran bazli UX sorunlarini task listesine cevir
+    - _Gereksinimler: 5.1, 5.2, 5.5, 12.2_
+  - [ ] 15.4 UX quality bar checklist'ini release gate'e bagla
+    - loading/empty/error/success state tamligi, mobile viability ve 3-click rule kontrollerini QA akisina ekle
+    - _Gereksinimler: 12.2, 12.3_
+  - [ ] 15.5 Landing -> Auth baslangic hunisini urunlestir (`Flow 0`)
+    - Landing sayfasinda net deger onermesi, sade 3-adim anlatim ve birincil CTA hiyerarsisini kesinlestir
+    - Landing'den auth'a gecis olcumlerini event olarak takip et (`landing_to_auth_click_rate`, `auth_start_rate`)
+    - _Gereksinimler: 1.3, 2.1, 12.3_
+  - [ ] 15.6 Teknik olmayan kullanici anlama testi (smoke UX)
+    - 3 kisilik hizli testte "urun ne yapiyor?" sorusuna 10 saniye icinde dogru cevap verilebilmesini dogrula
+    - test sonucuna gore landing bilgi yogunlugunu ve CTA copy'sini tekrar duzenle
+    - _Gereksinimler: 12.3_
 
 ## Notlar
 

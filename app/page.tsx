@@ -16,55 +16,79 @@ const productModules = [
   {
     title: "Dashboard",
     description:
-      "Tum launch boardlarini, tarihlerini ve odak alanlarini tek bakista gorursun."
+      "Tum projelerini tek listede gorur, nereden baslaman gerektigini hemen anlarsin."
   },
   {
-    title: "New App Setup",
+    title: "Workspace Kurulumu",
     description:
-      "Yeni bir uygulama icin isim, platform ve tarih kararlarini hizlica sabitlersin."
+      "Uygulama adi, platform ve hedef tarih bilgilerini 1 dakikada tamamlarsin."
   },
   {
-    title: "Pre-launch Checklist",
+    title: "Yapilacaklar Listesi",
     description:
-      "Store prep, kreatif teslimler ve yayin hazirliklari board mantiginda ilerler."
+      "Lansman oncesi tum adimlari sirasiyla gorur ve tiklayarak kapatirsin."
   },
   {
-    title: "Progress",
+    title: "Ilerleme Takibi",
     description:
-      "Tamamlanan isler ile acik riskler ayni sistem icinde gorunur olur."
+      "Neler bitti, neler eksik tek ekranda gorundugu icin gecikmeleri erken fark edersin."
   },
   {
-    title: "Countdown",
+    title: "Geri Sayim",
     description:
-      "Launch tarihi uzak bir hedef degil, gunluk karar ritmini belirleyen merkez olur."
+      "Yayin tarihine kalan gunu gorur, onceligini her gun daha dogru belirlersin."
   },
   {
-    title: "Post-launch Routine",
+    title: "Yayin Sonrasi Plan",
     description:
-      "Lansman sonrasi buyume gorevleri urunun devam eden akisina baglanir."
+      "Yayin sonrasi buyume islerini de ayni duzenin icinde takip etmeye devam edersin."
   }
 ];
 
 const flowItems = [
   {
+    title: "Projeni ekle",
+    description:
+      "Uygulama adini, platformunu ve hedef tarihini girerek basla.",
+    badge: "01",
+    tone: "info" as const
+  },
+  {
+    title: "Adim adim tamamla",
+    description:
+      "Yapilacaklar listesini kapat, teslim dosyalarini ekle, ilerlemeni izle.",
+    badge: "02",
+    tone: "warning" as const
+  },
+  {
+    title: "Raporla ve paylas",
+    description:
+      "PDF veya Markdown rapor al, ekip veya partnerlerle aninda paylas.",
+    badge: "03",
+    tone: "success" as const
+  }
+];
+
+const lifecycleLayers = [
+  {
     title: "Boardu kur",
     description:
-      "Isim, platform ve lansman tarihiyle operasyon yuzeyini baslat.",
-    badge: "01",
+      "Isim, platform ve lansman tarihiyle operasyon yuzeyini baslat; ilk kararlar ayni board mantigina otursun.",
+    badge: "Launch",
     tone: "info" as const
   },
   {
     title: "Lansmani calistir",
     description:
-      "Checklist, progress ve countdown ile uygulamayi kontrollu bicimde hazirla.",
-    badge: "02",
+      "Checklist, progress ve countdown ile pre-launch hazirligini kontrollu sekilde ilerlet.",
+    badge: "Operate",
     tone: "warning" as const
   },
   {
-    title: "Buyumeyi surdur",
+    title: "Buyumeyi yonet",
     description:
-      "Post-launch rutinleri ve export ile boardu yasayan bir sisteme donustur.",
-    badge: "03",
+      "Lansman bittiginde sistem bitmez; routine ve export katmanlari ayni boardun devamina donusur.",
+    badge: "Grow",
     tone: "success" as const
   }
 ];
@@ -78,12 +102,13 @@ export default function HomePage() {
             <span className="text-xl font-semibold tracking-tight text-foreground">
               Lalalaunchboard
             </span>
-            <LaunchBadge tone="brand">Prep, launch, grow</LaunchBadge>
-            <LaunchBadge tone="warning">Board-first product</LaunchBadge>
+            <LaunchBadge tone="brand">Urununu pazara hazirla</LaunchBadge>
+            <LaunchBadge tone="info">Launch & grow</LaunchBadge>
+            <LaunchBadge tone="warning">Tek ekranda takip</LaunchBadge>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href="/auth" className={launchButtonStyles.secondary}>
-              Auth
+              Giris / Kayit
             </Link>
             <Link href="/dashboard" className={launchButtonStyles.secondary}>
               Dashboard
@@ -92,16 +117,16 @@ export default function HomePage() {
         </div>
 
         <LaunchHero
-          eyebrow="Launch Operating System"
-          title="App lansmanini daginik notlardan cikar, tek board uzerinde yonet."
-          description="Lalalaunchboard, indie gelistiriciler icin setup, checklist, countdown, progress ve post-launch rutinlerini tek bir urun ritmi icinde toplar. Amac daha cok kart degil, daha net karar almak."
+          eyebrow="Lansmana Hazirlik Araci"
+          title="Ne yapacagini her gun net gor, lansmana paniksiz hazirlan."
+          description="Lalalaunchboard, teknik olmayan kullanicilarin bile kolayca anlayacagi bir sistem sunar. Yapilacaklar, teslim dosyalari ve geri sayim tek yerde oldugu icin sureci daha rahat yonetirsin."
           actions={
             <>
               <Link href="/app/new" className={launchButtonStyles.primary}>
-                Yeni workspace baslat
+                Ucretsiz basla
               </Link>
               <Link href="/dashboard" className={launchButtonStyles.secondary}>
-                Dashboardu gor
+                Ornek dashboard
               </Link>
             </>
           }
@@ -109,7 +134,7 @@ export default function HomePage() {
             <LaunchPanel tone="default" className="space-y-6">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-2">
-                  <LaunchBadge tone="info">Live board preview</LaunchBadge>
+                  <LaunchBadge tone="info">Ornek calisma alani</LaunchBadge>
                   <h2 className="text-2xl font-semibold tracking-tight text-foreground">
                     FocusFlow
                   </h2>
@@ -129,8 +154,7 @@ export default function HomePage() {
                     %68
                   </p>
                   <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                    Hazirlik islerinin cogu tamamlandi, kritik kalanlar gorunur
-                    durumda.
+                    Yapilacaklarin cogu tamamlandi. Kalan kritik adimlar net gorunuyor.
                   </p>
                 </div>
                 <div
@@ -138,13 +162,13 @@ export default function HomePage() {
                   className="launch-glass-widget rounded-[1.45rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--amber-soft))/0.64] p-5"
                 >
                   <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
-                    Siradaki hamle
+                    Bu hafta odak
                   </p>
                   <p className="mt-3 text-lg font-semibold tracking-tight text-foreground">
-                    App Store kreatif paketi
+                    Magaza gorselleri
                   </p>
                   <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                    Son teslim listesi ve ekran goruntuleri bu asamada netlesir.
+                    Son gorsel paketi bitince lansman adimlari daha guvenli ilerler.
                   </p>
                 </div>
               </div>
@@ -174,53 +198,74 @@ export default function HomePage() {
 
         <div className="grid gap-4 lg:grid-cols-3">
           <LaunchMetricCard
-            label="Urun yaklasimi"
-            value="Board-first"
-            detail="Her app tekil kart degil, kendi operasyon yuzeyi gibi ele alinir."
+            label="Kime uygun"
+            value="Solo ekipler"
+            detail="Tek kisi veya kucuk ekiplerle urun cikaranlar icin tasarlandi."
             tone="brand"
           />
           <LaunchMetricCard
-            label="Hedef kullanici"
-            value="Indie makers"
-            detail="Daginik araclar yerine tek akis isteyen gelistiriciler icin tasarlanir."
+            label="Kurulum suresi"
+            value="~2 dakika"
+            detail="Hesap acip ilk workspace olusturman cok kisa surer."
             tone="warning"
           />
           <LaunchMetricCard
-            label="Ana fayda"
-            value="Daha net karar"
-            detail="Hazirlik, tarih ve siradaki hamle ayni anda gorunur olur."
+            label="En buyuk kazanc"
+            value="Zihin rahatligi"
+            detail="Neyi ne zaman yapacagin netlesir, son dakika stresi azalir."
             tone="success"
           />
         </div>
+
+        <section className="space-y-5">
+          <LaunchSectionHeader
+            eyebrow="Lifecycle"
+            title="Tek launch gunu degil, butun urun ritmi"
+            description="Product manager tarafindaki `launch -> operate -> grow` bakisini landing'e de tasidim. Boylece Lalalaunchboard yalnizca checklist araci gibi degil, daha uzun omurlu bir operasyon sistemi gibi okunur."
+          />
+          <div className="grid gap-4 lg:grid-cols-3">
+            {lifecycleLayers.map((layer) => (
+              <LaunchPanel key={layer.title} tone="default" className="space-y-3 p-5">
+                <LaunchBadge tone={layer.tone}>{layer.badge}</LaunchBadge>
+                <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                  {layer.title}
+                </h3>
+                <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                  {layer.description}
+                </p>
+              </LaunchPanel>
+            ))}
+          </div>
+        </section>
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-5">
             <LaunchSectionHeader
               eyebrow="Problem"
-              title="Launch sureci genelde araclar arasinda parcalanir"
-              description="Notlar bir yerde, tarih baska yerde, yapilacaklar baska yerde kalinca ekipler degil solo gelistiriciler bile ritmi kaybeder. Lalalaunchboard bunu tek board mantigina indirger."
+              title="Lansman sureci karmasik olmak zorunda degil"
+              description="Notlarin bir yerde, dosyalarin baska yerde oldugu duzende herkes gecikir. Lalalaunchboard, butun sureci tek bir akisa indirerek kafa karisikligini azaltir."
             />
 
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 {
-                  title: "Tek gorunur ritim",
+                  title: "Neyi yapacagin acik",
                   description:
-                    "Tarih, ilerleme ve odak alani ayni ekranda gorunur kalir."
+                    "Tarih, ilerleme ve oncelik ayni ekranda oldugu icin karar vermek kolaylasir."
                 },
                 {
-                  title: "Daha az context switch",
+                  title: "Daha az daginiklik",
                   description:
-                    "Farkli notlar ve tablar arasinda gezinmek yerine ayni board uzerinde kalirsin."
+                    "Farkli tablar arasinda kaybolmadan tum sureci tek yerden yonetirsin."
                 },
                 {
-                  title: "Daha guclu hafiza",
+                  title: "Tekrar kullanilabilir sistem",
                   description:
-                    "Her app kendi boardu ile tekrar kullanilabilir bir launch hafizasi birakir."
+                    "Her yeni urunde sifirdan dusunmek yerine ayni duzeni tekrar kullanirsin."
                 }
               ].map((item) => (
                 <LaunchPanel key={item.title} tone="default" className="space-y-3">
-                  <LaunchBadge tone="neutral">Value</LaunchBadge>
+                  <LaunchBadge tone="neutral">Fayda</LaunchBadge>
                   <h3 className="text-2xl font-semibold tracking-tight text-foreground">
                     {item.title}
                   </h3>
@@ -233,23 +278,23 @@ export default function HomePage() {
           </div>
 
           <LaunchRailList
-            eyebrow="Flow"
-            title="Urun nasil calisir?"
-            description="Lalalaunchboard'un kullanim amaci tek launch gununu degil, tum hazirlik ve sonrasi sureci ayni board uzerinde isletmektir."
+            eyebrow="3 Adim"
+            title="Nasil calisir?"
+            description="Ilk projeyi ac, adimlari tamamla, raporu paylas. Butun yol haritasi bu kadar net."
             items={flowItems}
           />
         </section>
 
         <section className="space-y-5">
           <LaunchSectionHeader
-            eyebrow="Modules"
-            title="Birbirine bagli launch modulleri"
-            description="Her modul tek basina feature gibi gorunse de aslinda ayni board mantiginin farkli asamalaridir."
+            eyebrow="Ozellikler"
+            title="Tek tek arac degil, tek bir sistem"
+            description="Butun bolumler birbirine bagli calisir. Bu sayede sureci parcalamadan ilerlersin."
           />
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {productModules.map((module) => (
               <LaunchPanel key={module.title} tone="default" className="space-y-3 p-5">
-                <LaunchBadge tone="info">Module</LaunchBadge>
+                <LaunchBadge tone="info">Ozellik</LaunchBadge>
                 <h3 className="text-xl font-semibold tracking-tight text-foreground">
                   {module.title}
                 </h3>
@@ -270,22 +315,21 @@ export default function HomePage() {
                 tone="warning"
                 className="bg-[hsl(var(--card))/0.12] text-[hsl(var(--surface-dark-foreground))]"
               >
-                Start here
+                Simdi basla
               </LaunchBadge>
               <h2 className="max-w-3xl text-4xl font-semibold tracking-tight text-[hsl(var(--surface-dark-foreground))]">
-                Ilk uygulaman icin boardu kur ve tum launch akisini ayni yerden yonet.
+                2 dakikada hesabini ac, ilk lansman planini kur, sonra buyumeyi takip et.
               </h2>
               <p className="max-w-2xl text-sm leading-7 text-[hsl(var(--surface-dark-muted))]">
-                Dashboard, setup, checklist ve growth yuzeyleri artik ortak bir UI kit
-                ve daha net urun dili ile sekilleniyor.
+                Teknik bilgin olmasa bile bu akisi rahatca yonetebilirsin. Sistem sana yalnizca ne yapman gerektigini degil, sonrasinda nasil ritim koruyacagini da gosterir.
               </p>
             </div>
             <div className="flex flex-col gap-3">
               <Link href="/app/new" className={launchButtonStyles.primary}>
-                Workspace olustur
+                Ilk workspace&apos;i olustur
               </Link>
               <Link href="/auth" className={launchButtonStyles.secondary}>
-                Auth akisina bak
+                Giris ve kayit
               </Link>
             </div>
           </div>

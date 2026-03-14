@@ -85,6 +85,36 @@ export function groupChecklistItems(items: ChecklistItemWithStatus[]) {
   });
 }
 
+export function calculateProgressFromItems(items: ChecklistItemWithStatus[]) {
+  const cmsItems: CmsChecklistItem[] = items.map(
+    ({ status: _status, deliverables: _deliverables, ...item }) => item
+  );
+  const statuses = items
+    .filter((item) => item.status)
+    .map((item) => ({
+      cms_item_id: item.id,
+      completed: item.status?.completed ?? false
+    }));
+
+  return calculateProgress(cmsItems, statuses);
+}
+
+export function getNextCriticalItem(items: ChecklistItemWithStatus[]) {
+  return [...items]
+    .filter((item) => !item.status?.completed)
+    .sort((left, right) => {
+      const categoryDifference =
+        checklistCategoryOrder.indexOf(left.category) -
+        checklistCategoryOrder.indexOf(right.category);
+
+      if (categoryDifference !== 0) {
+        return categoryDifference;
+      }
+
+      return left.order - right.order;
+    })[0] ?? null;
+}
+
 export function getCountdownState(launchDate: string) {
   const millisecondsPerDay = 1000 * 60 * 60 * 24;
   const today = new Date();

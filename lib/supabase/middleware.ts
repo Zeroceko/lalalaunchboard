@@ -4,7 +4,12 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { getSupabaseServerEnv, hasSupabaseEnv } from "@/lib/env";
 
 function isProtectedRoute(pathname: string) {
-  return pathname.startsWith("/dashboard") || pathname.startsWith("/app");
+  return (
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/app") ||
+    pathname.startsWith("/settings") ||
+    pathname.startsWith("/admin")
+  );
 }
 
 function isAuthRoute(pathname: string) {

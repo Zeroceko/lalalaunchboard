@@ -16,7 +16,7 @@ const authFlow = [
   {
     title: "Hesabi ac",
     description:
-      "Ilk boardunu kurmak icin gerekli guvenli giris katmani burada baslar.",
+      "Ilk boardunu kurmak icin gerekli guvenli giris adimi burada baslar.",
     badge: "Step 1",
     tone: "info" as const
   },
@@ -72,7 +72,7 @@ export default function AuthPage({
 
         <LaunchHero
           eyebrow="Authentication"
-          title="Launch operating systeme guvenli ve net bir giris katmani."
+          title="Launch operating systeme guvenli ve net bir giris deneyimi."
           description="Bu ekran yalnizca auth formu degil. Kullanici burada hesabini acar, board sistemine baglanir ve sonraki gelislerde ayni ritme geri doner."
           actions={
             <>

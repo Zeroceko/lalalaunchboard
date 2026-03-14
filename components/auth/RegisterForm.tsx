@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { HCaptchaField } from "@/components/auth/HCaptchaField";
 import { useToast } from "@/components/shared/ToastProvider";
@@ -27,7 +27,6 @@ const initialState = {
 
 export function RegisterForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { pushToast } = useToast();
   const [form, setForm] = useState(initialState);
   const [fieldErrors, setFieldErrors] = useState<
@@ -92,11 +91,7 @@ export function RegisterForm() {
         return;
       }
 
-      const nextPath = searchParams.get("next");
-
-      router.push(
-        nextPath && nextPath.startsWith("/") ? nextPath : "/dashboard"
-      );
+      router.push("/app/new");
       router.refresh();
     } catch {
       setStatusMessage(authMessages.genericError);
@@ -226,7 +221,7 @@ export function RegisterForm() {
       <LaunchActionBar
         eyebrow="Start launch OS"
         title="Hesabini olustur ve boardunu baslat"
-        description="Kaydi tamamladiginda urun seni dogrudan dashboard ve kurulum akisina tasiyacak."
+        description="Kaydi tamamladiginda urun seni bos dashboard'a birakmadan dogrudan ilk workspace kurulumuna tasiyacak."
       >
         <LaunchButton type="submit" disabled={isSubmitting || !signupEnabled}>
           {isSubmitting ? "Hesap olusturuluyor..." : "Kayit ol"}
