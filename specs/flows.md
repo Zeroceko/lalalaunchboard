@@ -440,7 +440,7 @@ Her hafta sabit ritim:
 
 Bu handoff'a gore en kritik acik odaklar:
 
-1. Flow 0 icin landing comprehension, CTA hiyerarsisi ve kisa nasil-calisir anlatimini sertlestirmek
-2. Flow 1 ve Flow 3 icin kesintisiz `landing -> /auth -> /app/new -> /app/[id]` zincirini sertlestirmek
-3. Flow 2, Flow 4 ve Flow 5 icin dashboard `next move`, checklist optimistic update, skeleton/error recovery ve mobile detail-panel davranislarini tamamlamak
-4. Flow 8 kapsaminda ortak empty/error/retry pattern'lerini tum kritik yuzeylerde standartlastirmak
+1. Flow 0 icin landing -> auth olcumlerini event tracking ile gorunur hale getirmek
+2. Flow 1 ve Flow 2 icin dashboard KPI / filter bar / control-desk katmanini derinlestirmek
+3. Flow 3 ve Flow 4 icin checklist optimistic update, detail panel ve deliverable UX backlog'unu kapatmak
+4. Flow 8 kapsaminda ortak empty/error/retry pattern'lerini ve mobile QA'yi tum kritik yuzeylerde standartlastirmak

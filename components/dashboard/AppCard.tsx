@@ -37,30 +37,30 @@ const platformSurface: Record<App["platform"], string> = {
 };
 
 const platformFocus: Record<App["platform"], string> = {
-  ios: "App Store release pack",
-  android: "Play rollout prep",
-  web: "Landing and funnel prep"
+  ios: "Store sayfası ve yayın paketi",
+  android: "Play rollout ve duyuru akışı",
+  web: "Landing, funnel ve signup akışı"
 };
 
 const nextMoves: Record<App["platform"], string[]> = {
   ios: [
-    "Store metadata ve subtitle son kontrolu",
-    "Screenshot ve creative set final duzeni",
-    "Launch-day changelog ve share copy"
+    "Store sayfası, görseller ve ASO metinleri son okumaya alınmalı.",
+    "Launch günü duyuru akışı ve paylaşım planı tek sıraya bağlanmalı.",
+    "İlk hafta yorum, dönüşüm ve retention sinyalleri izlenmeli."
   ],
   android: [
-    "Play listing copy ve visual set son hali",
-    "Release note ve phased rollout plani",
-    "Launch-day announcement sequence"
+    "Play listing, görseller ve rollout planı aynı yüzeyde netleşmeli.",
+    "Topluluk paylaşımı, changelog ve release note akışı hazırlanmalı.",
+    "İlk hafta acquisition, rating ve retention verisi takip edilmeli."
   ],
   web: [
-    "Landing headline ve CTA final kontrolu",
-    "Onboarding funnel ve waitlist akisi",
-    "Launch-day post, email ve changelog paketi"
+    "Landing, pricing ve CTA'lar yayına hazır hale getirilmeli.",
+    "E-posta, sosyal duyuru ve changelog paketi aynı ritimde hazırlanmalı.",
+    "Signup funnel ve ilk growth deneyi sonuçları izlenmeli."
   ]
 };
 
-const workflowLayers = ["Checklist", "Countdown", "Progress", "Routine"];
+const workflowLayers = ["Prep", "Marketing", "Growth", "Routine"];
 
 function resolveCountdownTone(countdown: string) {
   if (countdown === "Lansman günü") {
@@ -94,9 +94,9 @@ export function AppCard({ app }: AppCardProps) {
                 {app.name}
               </h3>
               <p className="max-w-3xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
-                Launch plan, zaman ritmi ve siradaki hareket ayni workspace icinde
-                kalir. Bu kart liste satiri degil; aktif board&apos;un operasyon
-                ozetidir.
+                Launch planı, pazarlama akışı ve growth tarafındaki sıradaki iş aynı
+                workspace içinde kalır. Bu kart bir liste satırı değil; aktif
+                ürünün operasyon özetidir.
               </p>
             </div>
           </div>
@@ -113,19 +113,19 @@ export function AppCard({ app }: AppCardProps) {
             <LaunchMiniStat
               label="Launch date"
               value={formatLaunchDate(app.launch_date)}
-              detail="Countdown ve prep ritmi bu tarihe gore calisir."
+              detail="Geri sayım ve hazırlık ritmi bu tarihe göre çalışır."
               tone="warning"
             />
             <LaunchMiniStat
               label="Primary focus"
               value={platformFocus[app.platform]}
-              detail="Platform secimi ilk dikkat alanini netlestirir."
+              detail="Platform seçimi bugünün ana dikkat alanını netleştirir."
               tone={tone}
             />
             <LaunchMiniStat
               label="Board state"
-              value="Ready to run"
-              detail="Checklist ve progress katmanlari bu yuzeye genisler."
+              value="Çalışıyor"
+              detail="Hazırlık, pazarlama ve growth katmanları bu yüzeyde birleşir."
               tone="success"
             />
           </div>
@@ -137,10 +137,10 @@ export function AppCard({ app }: AppCardProps) {
                   Stack
                 </p>
                 <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
-                  Bu boardun tasidigi ana workflow katmanlari.
+                  Bu ürün için birlikte takip edilen ana operasyon katmanları.
                 </p>
               </div>
-              <LaunchBadge tone={tone}>Workspace summary</LaunchBadge>
+              <LaunchBadge tone={tone}>Ürün özeti</LaunchBadge>
             </div>
 
             <LaunchPillList items={workflowLayers} />
@@ -152,11 +152,11 @@ export function AppCard({ app }: AppCardProps) {
             <div className="space-y-2">
               <LaunchBadge tone={tone}>Next move</LaunchBadge>
               <h4 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
-                Simdi netlestirilecek alanlar
+                Kontrol masası
               </h4>
               <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                Bu app icin sonraki hareketler, platform tipine gore farkli bir
-                hazirlik sirasina oturur.
+                Bu ürün için sıradaki işler; hazırlık, launch iletişimi ve growth
+                tarafına göre burada okunur.
               </p>
             </div>
 
@@ -183,7 +183,7 @@ export function AppCard({ app }: AppCardProps) {
       <div className="border-t border-[hsl(var(--border))/0.48] px-6 py-5 sm:px-7">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-            Checklist, post-launch ve export yuzeylerine bu kart uzerinden gecis
+            Checklist, growth ve export yüzeylerine bu kart üzerinden geçiş
             yapabilirsin.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -194,7 +194,7 @@ export function AppCard({ app }: AppCardProps) {
               href={`/app/${app.id}/post-launch`}
               className={launchButtonStyles.secondary}
             >
-              Post-launch
+              Growth
             </Link>
             <Link
               href={`/app/${app.id}/export`}

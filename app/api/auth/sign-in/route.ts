@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { authMessages } from "@/lib/auth/messages";
-import { flattenFieldErrors, loginSchema } from "@/lib/auth/validation";
+import { getAuthMessages } from "@/lib/auth/messages";
+import { flattenFieldErrors, getLoginSchema } from "@/lib/auth/validation";
 import { readJsonBody } from "@/lib/api/request";
 import { hasSupabaseEnv } from "@/lib/env";
+import { resolveRequestLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import type { AuthActionResult } from "@/types";
 
@@ -12,6 +13,8 @@ function json(body: AuthActionResult, status: number) {
 }
 
 export async function POST(request: Request) {
+  const locale = resolveRequestLocale();
+  const authMessages = getAuthMessages(locale);
   const body = await readJsonBody(request);
 
   if (!body.ok) {
@@ -25,7 +28,7 @@ export async function POST(request: Request) {
   }
 
   const payload = body.data;
-  const parsed = loginSchema.safeParse(payload);
+  const parsed = getLoginSchema(locale).safeParse(payload);
 
   if (!parsed.success) {
     return json(

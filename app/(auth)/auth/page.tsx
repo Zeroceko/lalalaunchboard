@@ -1,46 +1,23 @@
 import Link from "next/link";
 
 import { AuthTabs } from "@/components/auth/AuthTabs";
+import { LocaleSwitcher } from "@/components/i18n/LocaleSwitcher";
 import { ToastTrigger } from "@/components/shared/ToastTrigger";
 import {
   LaunchBadge,
-  LaunchHero,
   LaunchPage,
-  LaunchPanel,
-  LaunchRailList,
-  LaunchSectionHeader,
   launchButtonStyles
 } from "@/components/ui/LaunchKit";
-
-const authFlow = [
-  {
-    title: "Hesabi ac",
-    description:
-      "Ilk boardunu kurmak icin gerekli guvenli giris adimi burada baslar.",
-    badge: "Step 1",
-    tone: "info" as const
-  },
-  {
-    title: "Boarda baglan",
-    description:
-      "Auth tamamlandiginda urun seni dogrudan dashboard ve setup akisina tasir.",
-    badge: "Step 2",
-    tone: "brand" as const
-  },
-  {
-    title: "Ritmi koru",
-    description:
-      "Sonraki girislerde urun seni launch akisinin kaldigi yere geri goturur.",
-    badge: "Step 3",
-    tone: "success" as const
-  }
-];
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { resolveRequestLocale } from "@/lib/i18n/server";
 
 export default function AuthPage({
   searchParams
 }: {
   searchParams?: { reason?: string; next?: string; tab?: string };
 }) {
+  const locale = resolveRequestLocale();
+  const dictionary = getDictionary(locale);
   const redirectedToProtectedRoute =
     searchParams?.reason === "auth" &&
     typeof searchParams.next === "string" &&
@@ -52,88 +29,55 @@ export default function AuthPage({
       : "login";
 
   return (
-    <LaunchPage className="min-h-screen py-8 sm:py-10">
+    <LaunchPage className="min-h-screen max-w-[1080px] py-6 sm:py-8">
       {redirectedToProtectedRoute ? (
         <ToastTrigger
           toastKey={`auth-redirect-${searchParams?.next}`}
-          title="Giris gerekiyor"
-          description="Istedigin workspace ekranina devam etmek icin once giris yapman gerekiyor."
+          title={dictionary.authPage.redirectNoticeTitle}
+          description={dictionary.authPage.redirectNoticeDescription}
           variant="info"
         />
       ) : null}
 
-      <div className="space-y-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-3">
+      <div className="space-y-10">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-2">
             <Link href="/" className="text-xl font-semibold tracking-tight text-foreground">
               Lalalaunchboard
             </Link>
-            <LaunchBadge tone="brand">Launch access</LaunchBadge>
-          </div>
-          <Link href="/" className={launchButtonStyles.secondary}>
-            Ana sayfa
-          </Link>
-        </div>
-
-        <LaunchHero
-          eyebrow="Authentication"
-          title="Launch operating systeme guvenli ve net bir giris deneyimi."
-          description="Bu ekran yalnizca auth formu degil. Kullanici burada hesabini acar, board sistemine baglanir ve sonraki gelislerde ayni ritme geri doner."
-          actions={
-            <>
-              <LaunchBadge tone="info">Email auth</LaunchBadge>
-              <LaunchBadge tone="warning">CAPTCHA protected</LaunchBadge>
-              <LaunchBadge tone="success">Board connected</LaunchBadge>
-            </>
-          }
-          aside={
-            <LaunchRailList
-              eyebrow="Access flow"
-              title="Formdan fazlasi"
-              description="Auth yuzeyi, urunun geri kalanindaki board yapisina giris kapisi gibi davranmali."
-              items={authFlow}
-            />
-          }
-        />
-
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_540px]">
-          <div className="space-y-6">
-            <section className="space-y-5">
-              <LaunchSectionHeader
-                eyebrow="Why this matters"
-                title="Daginik launch araclarini tek hesaba bagla"
-                description="Indie ekiplerin en buyuk problemi tek bir dashboarda degil, tek bir ritme sahip olmamaktir. Auth yuzeyi de bu butunlugun ilk parcasi olmali."
-              />
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {[
-                  {
-                    title: "Tek hesap, tek sistem",
-                    description:
-                      "Dashboard, setup ve checklist ekranlari ayni kullanici akisinda baglanir."
-                  },
-                  {
-                    title: "Giriste bile urun hissi",
-                    description:
-                      "Kullanici daha ilk saniyede siradan bir form degil, rafine bir launch urunu kullandigini hissetmelidir."
-                  }
-                ].map((item) => (
-                  <LaunchPanel key={item.title} tone="default" className="space-y-3">
-                    <LaunchBadge tone="neutral">Signal</LaunchBadge>
-                    <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                      {item.description}
-                    </p>
-                  </LaunchPanel>
-                ))}
-              </div>
-            </section>
+            <div className="flex flex-wrap items-center gap-3">
+              <LaunchBadge tone="brand">{dictionary.authPage.topBadge}</LaunchBadge>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
+                {dictionary.authPage.description}
+              </p>
+            </div>
           </div>
 
-          <AuthTabs initialTab={initialTab} />
+          <div className="flex flex-wrap items-center gap-3">
+            <LocaleSwitcher locale={locale} />
+            <Link href="/" className={launchButtonStyles.secondary}>
+              {dictionary.common.homeLabel}
+            </Link>
+          </div>
         </div>
+
+        <section className="relative overflow-hidden rounded-[2.75rem] border border-[hsl(var(--border))/0.52] bg-[linear-gradient(135deg,hsl(var(--surface-default-start)/0.88),hsl(var(--surface-tint-end)/0.76))] px-5 py-8 shadow-[0_30px_90px_hsl(var(--shadow-color)/0.1)] sm:px-8 sm:py-10 lg:px-12">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,hsl(var(--bg-glow-brand)/0.16),transparent_30%),radial-gradient(circle_at_90%_18%,hsl(var(--bg-glow-accent)/0.16),transparent_24%),radial-gradient(circle_at_50%_100%,hsl(var(--bg-glow-clay)/0.14),transparent_26%)]" />
+          <div className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--primary))/0.28] to-transparent" />
+
+          <div className="relative mx-auto max-w-[620px]">
+            <div className="space-y-3 pb-8 text-center">
+              <h2 className="text-balance text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-[3.4rem] sm:leading-[0.98]">
+                {dictionary.authPage.title}
+              </h2>
+              <p className="mx-auto max-w-xl text-base leading-7 text-[hsl(var(--muted-foreground))]">
+                {dictionary.authPage.description}
+              </p>
+            </div>
+
+            <AuthTabs initialTab={initialTab} locale={locale} />
+          </div>
+        </section>
       </div>
     </LaunchPage>
   );

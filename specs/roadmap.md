@@ -216,6 +216,7 @@ Goal: Merge the UI pass safely and make the live manual workflow feel coherent.
 - [x] Review UI sandbox handoff and separate sandbox-only notes from main-repo truth
 - [x] Merge the first production-ready UI surfaces into the main repo
 - [x] Re-run `lint`, `build`, `typecheck`, `test:properties`
+- [x] Rework landing, auth, and dashboard into a clearer product-facing MVP shell
 - [ ] Select and document one default production theme for the remaining polish pass
 - [ ] Run a mobile and desktop QA pass on landing, auth, dashboard, and workspace
 - [ ] Add a short release checkpoint update to `HANDOFF.md` after hosted-env decisions are made
@@ -226,11 +227,13 @@ Exit criteria:
 
 ### Sprint 2 - Productized MVP
 
-Status: `planned`
+Status: `in progress`
 
 Goal: Make the manual product self-explanatory and easier to adopt.
 
-- [ ] Add onboarding and first-workspace setup guidance
+- [x] Add onboarding and first-workspace setup guidance on dashboard empty state
+- [x] Make landing, auth, and dashboard copy more self-explanatory
+- [ ] Expand dashboard into a stronger filter + KPI + control-desk surface
 - [ ] Improve checklist detail flow and deliverable UX
 - [ ] Improve export readability and usefulness
 - [ ] Expand the current settings helper into a fuller settings surface
