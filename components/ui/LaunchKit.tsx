@@ -659,16 +659,14 @@ export function LaunchPillList({ items, className }: LaunchPillListProps) {
   );
 }
 
-interface LaunchButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  tone?: keyof typeof launchButtonStyles;
-}
-
 export function LaunchButton({
   tone = "primary",
   className,
   children,
   ...props
-}: LaunchButtonProps) {
+}: {
+  tone?: keyof typeof launchButtonStyles;
+} & import("react").ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       data-tone={tone}
@@ -683,3 +681,178 @@ export function LaunchButton({
     </button>
   );
 }
+
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+
+interface LaunchSidebarProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function LaunchSidebar({ children, className }: LaunchSidebarProps) {
+  return (
+    <aside
+      className={cn(
+        "flex h-full w-[220px] shrink-0 flex-col border-r bg-[hsl(var(--sidebar-bg))] border-[hsl(var(--sidebar-border))]",
+        className
+      )}
+    >
+      {children}
+    </aside>
+  );
+}
+
+interface LaunchSidebarSectionProps {
+  children: ReactNode;
+  label?: string;
+  className?: string;
+}
+
+export function LaunchSidebarSection({
+  children,
+  label,
+  className
+}: LaunchSidebarSectionProps) {
+  return (
+    <div className={cn("px-3 py-3", className)}>
+      {label ? (
+        <p className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--muted-foreground)/0.6)]">
+          {label}
+        </p>
+      ) : null}
+      <div className="flex flex-col gap-px">{children}</div>
+    </div>
+  );
+}
+
+interface LaunchSidebarItemProps {
+  children: ReactNode;
+  href?: string;
+  active?: boolean;
+  icon?: ReactNode;
+  badge?: string | number;
+  className?: string;
+}
+
+export function LaunchSidebarItem({
+  children,
+  active,
+  icon,
+  badge,
+  className
+}: LaunchSidebarItemProps) {
+  return (
+    <span
+      data-state={active ? "active" : "idle"}
+      className={cn(
+        "group flex w-full items-center gap-2.5 rounded-[0.65rem] px-2.5 py-2 text-sm font-medium transition-colors duration-150",
+        active
+          ? "bg-[hsl(var(--sidebar-item-active))] text-[hsl(var(--sidebar-item-active-text))]"
+          : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--sidebar-item-hover))] hover:text-foreground",
+        className
+      )}
+    >
+      {icon ? (
+        <span className="flex h-4 w-4 items-center justify-center opacity-70 group-data-[state=active]:opacity-100">
+          {icon}
+        </span>
+      ) : null}
+      <span className="flex-1 truncate">{children}</span>
+      {badge !== undefined ? (
+        <span className="rounded-full bg-[hsl(var(--muted))] px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-[hsl(var(--muted-foreground))]">
+          {badge}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+// ─── Top Bar ──────────────────────────────────────────────────────────────────
+
+interface LaunchTopBarProps {
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
+  className?: string;
+}
+
+export function LaunchTopBar({
+  title,
+  subtitle,
+  actions,
+  className
+}: LaunchTopBarProps) {
+  return (
+    <header
+      className={cn(
+        "flex items-center justify-between border-b border-[hsl(var(--border)/0.7)] bg-[hsl(var(--background)/0.8)] px-6 py-4 backdrop-blur-sm",
+        className
+      )}
+    >
+      <div className="space-y-0.5">
+        <h1 className="text-[0.95rem] font-semibold tracking-[-0.02em] text-foreground">
+          {title}
+        </h1>
+        {subtitle ? (
+          <p className="text-xs text-[hsl(var(--muted-foreground))]">{subtitle}</p>
+        ) : null}
+      </div>
+      {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
+    </header>
+  );
+}
+
+// ─── KPI Band ─────────────────────────────────────────────────────────────────
+
+interface KPIItem {
+  label: string;
+  value: ReactNode;
+  change?: string;
+  tone?: BadgeTone;
+}
+
+interface LaunchKPIBandProps {
+  items: KPIItem[];
+  className?: string;
+}
+
+export function LaunchKPIBand({ items, className }: LaunchKPIBandProps) {
+  return (
+    <div
+      className={cn(
+        "grid gap-3",
+        items.length === 2 && "grid-cols-2",
+        items.length === 3 && "grid-cols-3",
+        items.length === 4 && "grid-cols-2 md:grid-cols-4",
+        className
+      )}
+    >
+      {items.map((item) => {
+        const tone = item.tone ?? "neutral";
+        return (
+          <div
+            key={item.label}
+            data-tone={tone}
+            className={cn(
+              "launch-mini-stat relative overflow-hidden rounded-[1rem] border p-4",
+              metricToneClasses[tone]
+            )}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--muted-foreground))]">
+              {item.label}
+            </p>
+            <p className="mt-2.5 text-[1.65rem] font-semibold tracking-[-0.04em] text-foreground leading-none">
+              {item.value}
+            </p>
+            {item.change ? (
+              <p className="mt-1.5 text-[11px] text-[hsl(var(--muted-foreground))]">
+                {item.change}
+              </p>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
