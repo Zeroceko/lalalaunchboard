@@ -5,15 +5,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { useToast } from "@/components/shared/ToastProvider";
 import {
-  LaunchActionBar,
-  LaunchBadge,
   LaunchButton,
   LaunchFieldShell,
   LaunchInput,
   LaunchNotice
 } from "@/components/ui/LaunchKit";
-import { authMessages } from "@/lib/auth/messages";
-import { flattenFieldErrors, loginSchema } from "@/lib/auth/validation";
+import { getAuthMessages } from "@/lib/auth/messages";
+import { getLoginSchema, flattenFieldErrors } from "@/lib/auth/validation";
+import type { Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/dictionaries";
 import type { AuthActionResult } from "@/types";
 
 const initialState = {
@@ -21,10 +21,17 @@ const initialState = {
   password: ""
 };
 
-export function LoginForm() {
+interface LoginFormProps {
+  locale: Locale;
+}
+
+export function LoginForm({ locale }: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { pushToast } = useToast();
+  const dictionary = getDictionary(locale);
+  const authMessages = getAuthMessages(locale);
+  const loginSchema = getLoginSchema(locale);
   const [form, setForm] = useState(initialState);
   const [fieldErrors, setFieldErrors] = useState<
     AuthActionResult["fieldErrors"]
@@ -69,7 +76,7 @@ export function LoginForm() {
         const message = result.message ?? authMessages.invalidCredentials;
         setStatusMessage(message);
         pushToast({
-          title: "Giris basarisiz",
+          title: dictionary.authForm.loginErrorTitle,
           description: message,
           variant: "destructive"
         });
@@ -85,7 +92,7 @@ export function LoginForm() {
     } catch {
       setStatusMessage(authMessages.genericError);
       pushToast({
-        title: "Giris basarisiz",
+        title: dictionary.authForm.loginErrorTitle,
         description: authMessages.genericError,
         variant: "destructive"
       });
@@ -96,25 +103,9 @@ export function LoginForm() {
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-2">
-          <LaunchBadge tone="info">Return to board</LaunchBadge>
-          <LaunchBadge tone="neutral">Email sign-in</LaunchBadge>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-3xl font-semibold tracking-tight text-foreground">
-            Kaldigin yerden devam et
-          </h3>
-          <p className="max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
-            Giris yaptiktan sonra dashboard ekraninda aktif launch boardlarini,
-            tarihlerini ve siradaki hamlelerini ayni yerden gormeye devam edersin.
-          </p>
-        </div>
-      </div>
-
       <LaunchFieldShell
-        label="Email"
-        hint="Workspace ve launch boardlarina bagli ana hesap bilgisi."
+        label={dictionary.authForm.emailLabel}
+        hint={dictionary.authForm.emailHint}
         error={fieldErrors?.email}
         fieldId="login-email"
       >
@@ -126,13 +117,13 @@ export function LoginForm() {
           onChange={(event) =>
             setForm((current) => ({ ...current, email: event.target.value }))
           }
-          placeholder="ornek@mail.com"
+          placeholder={dictionary.authForm.emailPlaceholder}
         />
       </LaunchFieldShell>
 
       <LaunchFieldShell
-        label="Sifre"
-        hint="Bu hesapla iliskili boardlara guvenli sekilde erismek icin kullanilir."
+        label={dictionary.authForm.passwordLabel}
+        hint={dictionary.authForm.loginPasswordHint}
         error={fieldErrors?.password}
         fieldId="login-password"
       >
@@ -147,28 +138,27 @@ export function LoginForm() {
               password: event.target.value
             }))
           }
-          placeholder="En az 8 karakter"
+          placeholder={dictionary.authForm.passwordPlaceholder}
         />
       </LaunchFieldShell>
 
       {!isConfigured ? (
         <LaunchNotice tone="warning">
-          Giris akisini calistirmak icin once <code>NEXT_PUBLIC_SUPABASE_URL</code>{" "}
-          ve bir Supabase public key tanimlanmali.
+          {dictionary.authForm.loginConfigNotice}
         </LaunchNotice>
       ) : null}
 
       {statusMessage ? <LaunchNotice tone="danger">{statusMessage}</LaunchNotice> : null}
 
-      <LaunchActionBar
-        eyebrow="Resume launch"
-        title="Boarduna guvenli sekilde don"
-        description="Giris tamamlandiginda urun seni dogrudan dashboard akisina geri tasir."
+      <LaunchButton
+        type="submit"
+        disabled={isSubmitting || !isConfigured}
+        className="w-full"
       >
-        <LaunchButton type="submit" disabled={isSubmitting || !isConfigured}>
-          {isSubmitting ? "Giris yapiliyor..." : "Giris yap"}
-        </LaunchButton>
-      </LaunchActionBar>
+        {isSubmitting
+          ? dictionary.authForm.loginSubmitting
+          : dictionary.authForm.loginSubmit}
+      </LaunchButton>
     </form>
   );
 }

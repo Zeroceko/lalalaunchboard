@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { authMessages } from "@/lib/auth/messages";
-import { flattenFieldErrors, registerSchema } from "@/lib/auth/validation";
+import { getAuthMessages } from "@/lib/auth/messages";
+import { flattenFieldErrors, getRegisterSchema } from "@/lib/auth/validation";
 import { readJsonBody } from "@/lib/api/request";
 import { verifyCaptchaToken } from "@/lib/auth/hcaptcha";
 import { getAppUrl, hasSignupCaptchaEnv, hasSupabaseEnv } from "@/lib/env";
+import { resolveRequestLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import type { AuthActionResult } from "@/types";
 
@@ -17,6 +18,8 @@ function isDuplicateUserResponse(identityCount: number | undefined) {
 }
 
 export async function POST(request: Request) {
+  const locale = resolveRequestLocale();
+  const authMessages = getAuthMessages(locale);
   const body = await readJsonBody(request);
 
   if (!body.ok) {
@@ -30,7 +33,7 @@ export async function POST(request: Request) {
   }
 
   const payload = body.data;
-  const parsed = registerSchema.safeParse(payload);
+  const parsed = getRegisterSchema(locale).safeParse(payload);
 
   if (!parsed.success) {
     return json(
@@ -63,7 +66,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const captchaResult = await verifyCaptchaToken(parsed.data.captchaToken);
+  const captchaResult = await verifyCaptchaToken(parsed.data.captchaToken, locale);
 
   if (!captchaResult.ok) {
     return json(
@@ -80,7 +83,7 @@ export async function POST(request: Request) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${getAppUrl()}/dashboard`,
+      emailRedirectTo: `${getAppUrl()}/app/new`,
       captchaToken: parsed.data.captchaToken
     }
   });
@@ -111,7 +114,7 @@ export async function POST(request: Request) {
   return json(
     {
       ok: true,
-      redirectTo: "/dashboard"
+      redirectTo: "/app/new"
     },
     200
   );

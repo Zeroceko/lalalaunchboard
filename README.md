@@ -1,185 +1,121 @@
 # Lalalaunchboard
 
-Lalalaunchboard is a web application for indie builders who want a structured system for pre-launch execution, progress tracking, post-launch routines, and reporting.
+Lalalaunchboard, bir yazilim gelistiricisinin urununu pazara hazirlarken ve
+pazara ciktiktan sonraki ilk growth islerini takip ederken kullanacagi operasyon
+yuzeyidir.
 
-Prep, launch, and grow — all on one board.
+Calisan urun mesaji su anda su eksende kilitli:
 
-## Source of Truth
+- pazardan once ve pazarda tek yardimcin
+- launch prep, marketing ve growth tek board mantigi icinde
+- bugun launch odakli, yarin daha genis app operations tarafina genisleyebilir
 
-The official project specs live in [`specs/`](./specs):
+## Bu repo ne durumda?
+
+Ana akisin ilk urunlestirilmis versiyonu hazir:
+
+- pazarlama odakli landing sayfasi
+- sade login / register deneyimi
+- signed-in user icin dogrudan dashboard yonlendirmesi
+- uygulama varsa ozet gosteren dashboard
+- uygulama yoksa onboarding gosteren dashboard
+- internal `ops` route'u ve yonetim yuzeyleri
+- checklist, routine ve export omurgasi
+
+Kisacasi:
+
+- landing artik bir marketing page
+- auth artik yalnizca giris / kayit deneyimi
+- dashboard artik yalnizca app listesi degil, bir control desk
+
+## Source of truth
+
+Resmi urun ve teknik kapsam `specs/` altindadir:
 
 - `specs/requirements.md`
 - `specs/design.md`
 - `specs/tasks.md`
 - `specs/roadmap.md`
+- `specs/flows.md`
 
-These files are the source of truth for product scope, architecture, and implementation order.
+Operasyonel durum ozeti icin:
 
-## Current Status
+- `HANDOFF.md`
 
-The codebase currently includes:
+## Onemli rotalar
 
-- Next.js 14 App Router foundation
-- Tailwind setup
-- Supabase and Contentful client scaffolding
-- Auth UI shell with register/login flows
-- Auth API routes for sign-up, sign-in, and sign-out
-- Supabase migrations for core app data and RLS
-- Local Supabase smoke test for auth sync and ownership policies
-- Protected app shell with dashboard and new app flows
-- `apps` CRUD endpoints with plan-limit enforcement
-- CMS fallback content plus Contentful-backed API routes
-- First checklist screen with progress, countdown, and toggle flow
-- Deliverable routes plus item detail panel for link, note, and file-first workflow
-- Post-launch routine screen with weekly log tracking
-- Markdown and PDF export flow for workspace reports
-- Middleware-protected app routes and smarter auth redirects
-- Global toast notifications plus workspace section navigation
-- First visible frontend pass across landing, auth, dashboard, new-app, and workspace screens
-- Property-based test foundation with `vitest` and `fast-check`
-- Docker-based dev/test workflow
+- `/` -> landing
+- `/auth?tab=login` -> giris
+- `/auth?tab=register` -> kayit
+- `/dashboard` -> ana panel
+- `/app/new` -> yeni uygulama / board olusturma
+- `/ops` -> internal control tower
+- `/admin` -> portfoy / yonetim paneli
 
-## Project Structure
+## Guncel urun davranisi
 
-- `app/` - Next.js routes and API handlers
-- `components/` - UI building blocks
-- `lib/` - shared helpers and integration clients
-- `types/` - shared TypeScript types
-- `specs/` - official project specifications
-- `vault/` - Obsidian-friendly working memory, decisions, and dev notes
-- `HANDOFF.md` - current project state and next recommended steps
+Landing:
 
-## Local Setup
+- login olmayan kullanici dashboard butonu gormez
+- ustte TR / EN secici vardir
+- primary CTA auth akisina gider
 
-1. Copy `.env.local.example` to `.env.local`
-2. Fill in the required environment variables
-3. Install dependencies:
+Auth:
+
+- yalnizca form gorunur
+- login altinda `Uye degil misin? Uye ol`
+- register altinda `Zaten uye misin? Giris yap`
+
+Dashboard:
+
+- uygulama varsa:
+  - en ustte mevcut uygulama ve operasyon ozeti gorunur
+  - launch + marketing + growth control desk mantigi kullanilir
+- uygulama yoksa:
+  - onboarding adimlari ve `Simdi basla` gorunur
+
+## Proje yapisi
+
+- `app/` -> route'lar ve API handler'lari
+- `components/` -> UI ve ekran bileşenleri
+- `lib/` -> servisler, validation, auth ve entegrasyon yardimcilari
+- `types/` -> paylasilan TypeScript tipleri
+- `specs/` -> resmi plan ve kapsam
+- `vault/` -> notlar ve calisma hafizasi
+
+Workspace seviyesi:
+
+- `LALALaunchBoard/Development` -> aktif uygulama kodu
+- `LALALaunchBoard/Product` -> urun calismalari icin ayrilan alan
+- `LALALaunchBoard/Design - UI:UX` -> tasarim sandbox / handoff alani
+
+## Lokal kurulum
+
+1. `.env.local.example` dosyasini `.env.local` olarak kopyala
+2. gerekli env degiskenlerini doldur
+3. dependency kur
 
 ```bash
 npm install
 ```
 
-4. Start the app locally:
+4. uygulamayi calistir
 
 ```bash
 npm run dev
 ```
 
-## Docker Workflow
+## Gerekli env degiskenleri
 
-Start the dev container:
-
-```bash
-docker compose up web
-```
-
-Run the containerized verification flow:
-
-```bash
-docker compose run --rm web-test
-```
-
-This test service runs:
-
-- `npm run lint`
-- `npm run typecheck`
-- `npm run build`
-
-## Test Workflow
-
-Run the property-based test suite:
-
-```bash
-npm run test:properties
-```
-
-Current property coverage includes:
-
-- export filename formatting
-- progress calculation correctness
-- export content integrity
-- deliverable URL validation
-- deliverable file-size boundary enforcement
-- deliverable-to-checklist merge integrity
-- routine log to CMS task merge integrity
-
-Current frontend coverage includes:
-
-- landing page with product positioning
-- auth experience with marketing/context panel
-- dashboard and new-app setup flows
-- workspace hero layouts for prep, routine, and export
-
-## Go-Live Readiness
-
-Check the current hosted/live blockers:
-
-```bash
-npm run go-live:check
-```
-
-Current go-live expectations:
-
-- Hosted Supabase cutover needs `SUPABASE_ACCESS_TOKEN` or an authenticated `supabase login`
-- Hosted smoke needs `SUPABASE_SERVICE_ROLE_KEY`
-- Public signup needs `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` and `HCAPTCHA_SECRET_KEY`
-- `NEXT_PUBLIC_APP_URL` must be changed from localhost to the real deployed domain before public launch
-- Contentful stays optional because the app can fall back to local CMS data
-
-Recommended hosted cutover sequence:
-
-```bash
-npx supabase link --project-ref ivklsffslobgjiicziuj
-npx supabase db push
-SUPABASE_URL=... \
-SUPABASE_PUBLISHABLE_KEY=... \
-SUPABASE_SERVICE_ROLE_KEY=... \
-npm run smoke:db:hosted
-```
-
-## Local Supabase Workflow
-
-Start the local Supabase stack:
-
-```bash
-npm run supabase:start
-```
-
-Reapply the local database from migrations:
-
-```bash
-npx supabase db reset --local --yes
-```
-
-Run the local database smoke test:
-
-```bash
-SUPABASE_URL=http://127.0.0.1:54321 \
-SUPABASE_PUBLISHABLE_KEY=... \
-SUPABASE_SERVICE_ROLE_KEY=... \
-npm run smoke:db:local
-```
-
-This smoke test verifies:
-
-- auth signup creates a matching `public.users` row
-- authenticated users can only read their own profile
-- authenticated users cannot escalate their own `plan`
-- app-owned tables enforce cross-user isolation
-- routine logs reject duplicate entries for the same app, task, and week
-- export and routine additions did not break the existing DB-backed app flow
-
-## Required Env Vars For Real Auth Testing
-
-These are needed when we want the auth flow to work against a real project:
+Gercek auth akisi icin:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` or a publishable key
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` veya publishable key
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` veya `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
 - `NEXT_PUBLIC_HCAPTCHA_SITE_KEY`
 - `HCAPTCHA_SECRET_KEY`
 
-## Optional Env Vars For Live CMS
+Canli CMS icin opsiyonel:
 
 - `CONTENTFUL_SPACE_ID`
 - `CONTENTFUL_DELIVERY_TOKEN`
@@ -187,13 +123,51 @@ These are needed when we want the auth flow to work against a real project:
 - `CONTENTFUL_ENVIRONMENT`
 - `CONTENTFUL_REVALIDATE_SECRET`
 
-Without these, the app uses local fallback checklist and routine content so UI development can continue.
+## Dogrulama
 
-## Working Notes
+Son guncel kod turlarinda dogrulananlar:
 
-- `specs/` stays authoritative
-- `vault/` is for decisions, notes, handoff context, and working memory
-- `HANDOFF.md` should always reflect where we last stopped
-- hosted Supabase pushes require `SUPABASE_ACCESS_TOKEN` or a linked CLI session
-- if `.env.local` still points to hosted Supabase, dashboard/app/routine/export routes need a remote `db push` before they can use the new schema
-- Next manages `.next/types` automatically; the verified stable local flow is `npm run lint`, `npm run build`, then `npm run typecheck`
+- `npm run lint`
+- `npm run typecheck`
+
+Bu repo gecmisinde ayrica asagidaki akislari gecen turlar oldu:
+
+- `npm run build`
+- `npm run test:properties`
+- `npm run smoke:db:local`
+- Docker tabanli `web-test` akisi
+
+## Simdi neredeyiz?
+
+Urun, `ilk UI pass` asamasindan cikti ve su an `productized MVP` evresine girdi.
+
+Bu ne demek:
+
+- bilgi mimarisi daha net
+- copy daha bilincli
+- dashboard daha operasyonel
+- onboarding daha gorunur
+
+Ama sunlar hala acik:
+
+- dashboard filtre bandi ve KPI sistemi
+- tum app shell'de TR / EN yayilimi
+- analytics / event tracking
+- mobile + desktop UI QA
+- hosted env cutover
+
+## Ekip devir notu
+
+Bu repo su anda baska bir developer, tasarimci veya urun ekibine devredilebilir durumdadir.
+
+Baslangic noktasi olarak sirasi:
+
+1. `HANDOFF.md` oku
+2. `specs/tasks.md` icindeki isaretli durumlari kontrol et
+3. `specs/flows.md` ile ana urun akislarini hizala
+4. ilgili route'u lokal calistir ve UI / davranisi dogrula
+
+## Not
+
+- Aktif branch son calismalarda `feat/workspace-surfaces-flow-docs` idi
+- `main` korumali olabilir; push ve release akisinda branch / PR mantigi korunmali

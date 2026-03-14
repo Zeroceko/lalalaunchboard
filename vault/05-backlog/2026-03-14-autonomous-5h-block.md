@@ -2,37 +2,39 @@
 
 This note defines the next uninterrupted work block for Codex.
 
-- [ ] CMS foundation and fallback content
-  - strengthen `lib/contentful/client.ts`
-  - add typed mappers for checklist and routine data
-  - add local fallback content for zero-credential progress
+- [ ] Landing acquisition clarity
+  - tighten the value proposition for non-technical users
+  - make the primary CTA into `/auth` unmistakable
+  - validate the new explicit `Flow 0` against the landing copy and hierarchy
 
-- [ ] CMS API routes and cache behavior
-  - `GET /api/cms/checklist-items`
-  - `GET /api/cms/routine-tasks`
-  - `POST /api/cms/revalidate`
-  - ISR + safe fallback behavior
+- [ ] Checklist interaction polish
+  - refine `ChecklistItem`, `ItemDetailPanel`, and `DeliverableForm`
+  - complete loading/empty/error/retry states
+  - improve mobile detail-panel readability and control density
 
-- [ ] Progress and countdown utilities
-  - implement `lib/progress.ts`
-  - reusable countdown and shaping helpers
+- [ ] Dashboard and app-shell consistency pass
+  - align dashboard, checklist, export, and settings surfaces
+  - tighten spacing and CTA hierarchy on mobile
+  - improve blocker and empty-state messaging
 
-- [ ] Checklist backend layer
-  - `GET /api/apps/[id]/checklist`
-  - `PATCH /api/apps/[id]/checklist/[itemId]`
-  - CMS + DB merge logic
+- [ ] Remaining property-test backlog
+  - cover auth properties (`3.2`, `3.3`, `3.5`, `3.6`, `3.7`, `3.8`)
+  - cover app/CMS/checklist gaps (`2.3`, `5.2`, `5.3`, `6.3`, `7.4`, `7.6`)
 
-- [ ] First checklist UI pass
-  - `components/checklist/ProgressBar.tsx`
-  - `components/shared/CountdownBadge.tsx`
-  - `components/checklist/ChecklistCategory.tsx`
-  - `components/checklist/ChecklistItem.tsx`
-  - `app/(app)/app/[id]/page.tsx`
+- [ ] Hosted env and cutover prep
+  - decide whether `.env.local` should target local or hosted Supabase next
+  - keep `supabase link`, `db push`, and hosted smoke steps ready
+  - verify every hosted blocker is explicit and user-friendly
 
 - [ ] Verification and notes
   - `npm run lint`
   - `npm run typecheck`
   - `npm run build`
+  - `npm run test:properties`
+  - `npm run supabase:status`
+  - `npm run smoke:db:local`
   - update `specs/tasks.md`
+  - update `specs/roadmap.md`
+  - update `specs/flows.md`
   - update `HANDOFF.md`
   - update `vault/04-devlog`

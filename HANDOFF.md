@@ -2,170 +2,190 @@
 
 Last updated: 2026-03-14
 
-## Current State
+## Bu sprintte ne oldu?
 
-We have a clean project foundation with:
+Bu repo artik yalnizca bir teknik iskelet degil; urunun ilk anlasilir MVP akisi olusmus durumda.
 
-- Next.js 14 app scaffold
-- Tailwind and shared utility setup
-- Supabase and Contentful integration scaffolding
-- Auth page with login/register tabs
-- Auth API routes for sign-in, sign-up, and sign-out
-- Supabase migrations for `users`, `apps`, `checklist_item_statuses`, `deliverables`, and `routine_logs`
-- RLS policies and auth-to-profile sync triggers
-- Local smoke test that validates auth sync, plan lock-down, and cross-user ownership
-- App shell layout with protected dashboard routes
-- `apps` CRUD API routes with Zod validation and free-vs-pro limit checks
-- Dashboard list, delete flow, sign-out flow, and new app form
-- Contentful-backed CMS layer with local fallback checklist/routine content
-- CMS API routes and revalidation hook
-- Checklist merge layer, progress helpers, checkbox toggle route, and first `/app/[id]` screen
-- Deliverable CRUD routes, item detail slide-over, and first file-upload storage bucket migration
-- Post-launch routine routes, weekly log flow, and `/app/[id]/post-launch`
-- Markdown/PDF export utilities, export API route, and `/app/[id]/export`
-- Middleware-based route protection and auth redirect flow
-- Global toast layer, fallback notices, and workspace section navigation
-- Property-based test foundation with `vitest` + `fast-check`
-- First visible frontend pass across landing, auth, dashboard, new-app, and workspace screens
-- Checklist interaction polish started: item cards, detail panel, deliverable form, and app-shell header now follow the new visual language
-- Checklist workspace surfaces now align further with the LaunchKit design language (`WorkspaceHero`, lane summary cards, category wrappers, and checklist item row styling)
-- Property coverage now also includes deliverable validation/merge, routine merge, and export content integrity
-- Shared blocker/empty states now use a common `WorkspaceNotice` pattern across dashboard and workspace pages
-- Docker test flow that passes lint, typecheck, and build
+Bu turda tamamlanan ana isler:
 
-Current product name:
+- [x] Landing sayfasi pazarlama odakli hale getirildi
+- [x] Hero copy ve CTA hiyerarsisi yeniden kuruldu
+- [x] `Sign in` / `Sign up` akisi netlestirildi
+- [x] Login olmayan kullanici icin dashboard aksiyonlari landing'den kaldirildi
+- [x] Login olan kullanici icin `/` -> `/dashboard` yonlendirmesi eklendi
+- [x] Auth sayfasi sadeletildi; yalnizca giris/kayit deneyimine indirildi
+- [x] Login altina `Uye degil misin? Uye ol`, register altina ters gecis eklendi
+- [x] Turkce copy duzeltildi; Turkce karakter ve yazim kurallari uygulandi
+- [x] TR / EN dil secici landing ve auth akisina eklendi
+- [x] Auth form kopyalari ve API hata mesajlari locale-aware hale getirildi
+- [x] Dashboard iki moda ayrildi:
+  - uygulama varsa `control desk` + mevcut urun ozeti
+  - uygulama yoksa onboarding + `Simdi basla`
+- [x] Dashboard kart dili, yalnizca launch prep degil marketing + growth takibini de kapsayacak sekilde guncellendi
+- [x] Internal `ops` / control tower route'u ana repo icinde korunmaya devam etti
 
-- `Lalalaunchboard`
-- slogan: `Prep, launch, and grow - all on one board.`
+## Urun vizyonu su anda nasil kilitlendi?
 
-## Source Of Truth
+Lalalaunchboard su anda:
 
-- Official specs: `specs/`
-- Working memory and notes: `vault/`
+- yazilim gelistiricisinin urununu pazara hazirlarken
+- pazarlama, launch ve ilk growth islerini
+- tek bir operasyon yuzeyinden takip etmesini saglayan bir urun
 
-Do not duplicate spec content into `vault/`. Link to the spec files instead.
+Mesaj artik su eksende:
 
-## What Was Verified
+- landing'de: `Pazardan once ve pazarda tek yardimcin`
+- urun davranisinda: `hazirlik + launch + growth ayni board mantigi icinde`
+- vaat tarafinda: bugun launch odakli, yarin daha genis app operations tarafina evrilebilecek
 
-The following passed locally:
+Overpromise etmemek icin:
 
-- `npm run lint`
-- `npm run typecheck`
-- `npm run build`
-- `npm run test:properties`
-- `npx supabase db reset --local --yes`
-- `npx supabase db lint --local`
-- `npm run smoke:db:local` against local Supabase
+- hero alani bugunku net degeri anlatiyor
+- gelecek vizyonu alt bolumlerde ve dashboard yapisinda sezdiriliyor
 
-The following also passed in Docker:
+## Su an repo icinde gorunur durum
 
-- `docker compose build web-test`
-- `docker compose run --rm web-test`
+Ana on yuzeyler:
 
-Latest visual/frontend pass also re-verified:
+- `/` -> pazarlama odakli landing
+- `/auth?tab=login` -> sade giris ekrani
+- `/auth?tab=register` -> sade kayit ekrani
+- `/dashboard` -> ana uygulama paneli
+- `/ops` -> internal control tower
+- `/admin` -> portfoy / yonetim paneli
 
-- `npm run lint`
-- `npm run build`
-- `npm run typecheck`
+Dashboard davranisi:
 
-Note:
+- kullanicinin uygulamasi varsa:
+  - en ustte mevcut urun ve launch ozeti gorunur
+  - launch tarihi, platform, mevcut odak ve control desk bloklari gorunur
+  - alt kisimda tum uygulamalar kartlar halinde listelenir
+- hic uygulama yoksa:
+  - onboarding odakli bos durum gorunur
+  - `Uygulamani ekle -> pazara hazirlik ritmini kur -> launch ve growth takibini baslat` akisi anlatilir
+  - `Simdi basla` CTA'si verilir
 
-- `npm run smoke:db:local` in this exact session did not run because local Supabase env vars were not loaded into the shell
-- the local smoke flow itself had already passed earlier against local Supabase and remains the expected DB verification path
+Auth davranisi:
 
-## What Still Needs Real Credentials
+- auth sayfasinda artik landing benzeri ekstra pazarlama panelleri yok
+- yalnizca giris / kayit formu ve form alti gecis aksiyonlari var
+- form metinleri secilen dile gore degisiyor
 
-Auth can be wired to the real backend as soon as these are provided:
+## Kaynak dosyalar
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` or a publishable key
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
-- `NEXT_PUBLIC_HCAPTCHA_SITE_KEY`
-- `HCAPTCHA_SECRET_KEY`
+Bu sprintte en kritik degisen dosyalar:
 
-Contentful credentials are still optional for the current milestone because the app now has local fallback CMS data.
+- `app/page.tsx`
+- `app/(auth)/auth/page.tsx`
+- `app/(app)/dashboard/page.tsx`
+- `components/auth/AuthTabs.tsx`
+- `components/auth/LoginForm.tsx`
+- `components/auth/RegisterForm.tsx`
+- `components/dashboard/AppCard.tsx`
+- `components/i18n/LocaleSwitcher.tsx`
+- `lib/i18n/dictionaries.ts`
+- `lib/auth/messages.ts`
+- `lib/auth/validation.ts`
 
-Hosted Supabase migration push is currently blocked by one missing capability:
+## Verifikasyon
 
-- `SUPABASE_ACCESS_TOKEN` for the CLI, or an already logged-in `supabase` CLI session
+Bu turda tekrar dogrulananlar:
 
-Important runtime note:
+- [x] `npm run lint`
+- [x] `npm run typecheck`
 
-- The repo currently points to the hosted Supabase URL in `.env.local`
-- Because hosted DB migrations are not pushed yet, `/dashboard`, `/app/new`, `/app/[id]`, `/app/[id]/post-launch`, and `/app/[id]/export` will show schema/setup blockers until `db push` is done, or until env vars are switched to local Supabase
+Not:
 
-## Recommended Next Step
+- Bu handoff guncellemesi sirasinda `npm run build` tekrar kosulmadi.
+- Dev server son calismada `localhost:3001` uzerinden kullaniliyordu.
 
-There are now three sensible tracks:
+## Hangi noktadayiz?
 
-1. Frontend track: continue the current visible MVP pass by polishing checklist interactions, item detail panels, deliverable forms, and app-shell consistency
-2. Infra track: obtain `SUPABASE_ACCESS_TOKEN`, then run `npx supabase link --project-ref ivklsffslobgjiicziuj` and `npx supabase db push`
-3. Hardening track: expand the property-test suite (`10.2`, `11.4`, `8.2`, `8.3`, `8.4`) and then perform a hosted runtime QA pass
+Proje artik saf `UI first pass` asamasini gecip su evreye girdi:
 
-## Autonomous Multi-Block Queue
+- landing / auth / dashboard omurgasi urunlestirildi
+- onboarding mantigi dashboard tarafina tasindi
+- urun copy'si ve bilgi mimarisi daha bilincli hale geldi
 
-This is the next self-directed queue to continue without waiting for user confirmation.
+Kisaca:
 
-1. Workspace interaction polish — `90-120 min` — in progress
-   - refine `ChecklistItem`, `ItemDetailPanel`, and `DeliverableForm`
-   - reduce visual noise while keeping all current behaviors
-   - make the checklist workspace feel closer to a real product than a first-pass tool
+- `Sprint 1`: buyuk olcude tamamlandi, fakat resmi desktop/mobile QA ve tema karari acik
+- `Sprint 2`: fiilen basladi; onboarding, self-explanatory product flow ve adoption iyilestirmeleri uzerindeyiz
 
-2. App-shell consistency pass — `60-90 min`
-   - align dashboard, workspace, and export surfaces
-   - tighten mobile spacing and CTA hierarchy
-   - improve empty/blocker states where they still feel placeholder-like
+## Product, design ve dev ekipleri icin ozet
 
-3. Property-test expansion — `90-120 min`
-   - completed: RoutineLog round-trip property test (`10.2`)
-   - completed: export content integrity test (`11.4`)
-   - completed: deliverable validation and round-trip tests (`8.2`, `8.3`, `8.4`)
+### Product
 
-4. Hosted Supabase live cutover prep — `45-60 min`
-   - keep remote push commands ready
-   - document the exact hosted smoke sequence
-   - verify every hosted schema blocker is explicit and user-friendly
+Karar verilmis urun cizgisi:
 
-5. Live integration pass — `45-90 min`
-   - wire real Contentful credentials when available
-   - verify auth and CMS behavior against hosted runtime
-   - confirm fallback-vs-live copy still reads clearly
+- landing net olmali, kalabalik olmamali
+- CTA ilk olarak auth'a goturmeli
+- login olmayan kisi dashboard aksiyonu gormemeli
+- dashboard sadece app listesi degil, bir `operating desk` gibi calismali
+- urun launch prep kadar marketing ve growth takibini de ayni yuzeyde gostermeli
 
-6. MVP QA and release-prep pass — `45-75 min`
-   - bug-bash happy path and obvious edge cases
-   - final copy cleanup
-   - update `README.md`, `HANDOFF.md`, `specs/tasks.md`, and dev log again
+Acik product kararlar:
 
-Target outcome after this queue:
+- hangi growth KPI'lari ilk dashboard KPI bandina girecek?
+- hangi event'ler `Flow 0` ve onboarding olcumu icin zorunlu olacak?
+- free / pro ayrimi dashboard UX'inde ne kadar belirgin olacak?
 
-- the app should look and feel like a coherent first MVP, not just a backend-connected scaffold
-- remaining work should skew toward hardening and live environment cutover
-- frontend work can continue immediately without waiting for backend foundation changes
+### Design
 
-## Important Decisions Already Made
+Tasarim yoresi:
 
-- `specs/` is the source of truth
-- `vault/` exists for Obsidian-based working notes
-- Docker is part of the default verification flow
-- Typed route strictness is currently not enabled to keep the early workflow stable
-- `users.plan` is server-managed and not writable by authenticated clients
-- `routine_logs` are unique per `app_id + cms_task_id + week_number`
-- Dashboard/new-app pages fail gracefully when the remote schema is not available yet
-- Checklist page also fails gracefully when hosted schema is missing and can render with fallback CMS content
-- Deliverable file uploads now expect a `deliverables` storage bucket/policies from the latest local migration
-- Post-launch routine and export screens also fail gracefully when hosted schema is missing
-- Export file generation now depends on `@react-pdf/renderer`
-- Middleware now protects `/dashboard`, `/app/*`, and redirects `/auth` away for signed-in users
-- Toast notifications are available app-wide from the root layout
+- landing marketing page gibi davranmali
+- fazla cerceve / kutu / panel goruntusu azaltildi; bu yon korunmali
+- dashboard referanslari:
+  - sol-nav + KPI + control desk mantigi
+  - tek bakista okunabilen karar bloklari
+  - operasyonu yoneten bir masa hissi
 
-## Notes For Future Me
+Acik design isleri:
 
-- Auth routes intentionally return clear config-related messages when env vars are missing
-- hCaptcha is integrated as a real client/server slot, not a fake placeholder
-- Supabase CLI can run locally, but hosted project commands currently fail without an access token
-- App CRUD is implemented locally and verified at build/lint/type level, but hosted runtime still needs `db push`
-- Checklist/CMS first pass is in place and now connected to deliverables, routine, and export screens
-- A property-based test foundation now exists via `vitest` + `fast-check`
-- Next manages `.next/types` automatically; the currently verified stable verification order is `npm run lint`, `npm run build`, then `npm run typecheck`
-- If another agent is working in the same repo, avoid editing the same files at the same time
-- Frontend work has now moved beyond placeholders: landing, auth, dashboard, new-app, and workspace hero surfaces all have a first-pass product UI
+- dashboard ustunde filter bar / tarih / kanal / kategori secicileri
+- desktop/mobile spacing QA
+- app shell genelinde daha rafine tipografi ve ritim
+
+### Development
+
+Teknik notlar:
+
+- locale secimi cookie ile tutuluyor
+- auth validation ve auth API mesajlari locale-aware
+- landing server component olarak session kontrolu yapiyor
+- Supabase env varsa signed-in user `/dashboard`'a yonlendiriliyor
+- middleware korumasi dashboard/app/settings/admin/ops/auth tarafinda aktif
+
+Acik dev isleri:
+
+- dashboard'un ic verileri bugun hala launch-centric; gercek growth KPI alanlari sonra eklenmeli
+- TR/EN ceviri sistemi landing ve auth'ta aktif, dashboard/app shell'e yayilmasi gerekiyor
+- analytics event tracking henuz eklenmedi
+
+## Siradaki en mantikli isler
+
+Bir sonraki blok icin en yuksek getirili sira:
+
+1. Dashboard filter bar ve KPI bandini netlestir
+2. Dashboard / app shell genelinde tam TR/EN locale yayilimi yap
+3. `Flow 0` ve onboarding icin analytics event'leri ekle
+4. Mobile + desktop UI QA yap
+5. Checklist detail / deliverable UX polish turune geri don
+
+## Kritik eksikler / blocker olmayan ama bilinmesi gerekenler
+
+- Hosted Supabase cutover henuz yapilmadi
+- Gercek live env smoke henuz tamamlanmadi
+- Hosted taraf icin `.env.local` ve CLI access token hala gerekli
+- HCaptcha ve Supabase key'leri olmadan auth fallback notice'lari normal davranis
+- Dashboard'taki growth takibi bugun daha cok copy / bilgi mimarisi duzeyinde; gercek analytics katmani sonraki asama
+
+## README ile iliski
+
+Bu dosya ekip ici operasyonel handoff'tur.
+
+- teknik onboarding ve calistirma adimlari icin: `README.md`
+- resmi kapsam ve plan icin: `specs/`
+- urun akislari icin: `specs/flows.md`
+- gorev listesi ve isaretli ilerleme icin: `specs/tasks.md`

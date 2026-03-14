@@ -1,16 +1,10 @@
 import Link from "next/link";
 
-import { ChecklistCategory } from "@/components/checklist/ChecklistCategory";
-import { ProgressBar } from "@/components/checklist/ProgressBar";
+import { ChecklistWorkspaceClient } from "@/components/checklist/ChecklistWorkspaceClient";
 import { ToastTrigger } from "@/components/shared/ToastTrigger";
-import { WorkspaceHero } from "@/components/shared/WorkspaceHero";
 import { WorkspaceNotice } from "@/components/shared/WorkspaceNotice";
-import { WorkspaceSectionNav } from "@/components/shared/WorkspaceSectionNav";
-import { LaunchMetricCard } from "@/components/ui/LaunchKit";
-import { formatLaunchDate, formatPlatformLabel } from "@/lib/apps/service";
 import { requireSessionContext } from "@/lib/auth/session";
 import { getChecklistWorkspace } from "@/lib/checklist/service";
-import { groupChecklistItems } from "@/lib/progress";
 
 export default async function AppChecklistPage({
   params
@@ -37,18 +31,6 @@ export default async function AppChecklistPage({
     }
 
     const app = workspace.app;
-    const groupedItems = groupChecklistItems(workspace.items);
-    const deliverableCount = workspace.items.reduce(
-      (total, item) => total + item.deliverables.length,
-      0
-    );
-    const resourceCount = workspace.items.reduce(
-      (total, item) => total + item.toolLinks.length,
-      0
-    );
-    const remainingCount =
-      workspace.progress.totalCount - workspace.progress.completedCount;
-    const launchDateLabel = formatLaunchDate(app.launch_date);
 
     return (
       <main className="mx-auto max-w-7xl px-6 py-16">
@@ -61,131 +43,11 @@ export default async function AppChecklistPage({
           />
         ) : null}
 
-        <div className="space-y-8">
-          <WorkspaceSectionNav appId={app.id} />
-
-          <WorkspaceHero
-            eyebrow="Pre-launch board"
-            title={`${app.name} icin launch prep board`}
-            description={`${launchDateLabel} hedefi icin checklist, deliverable ve rehber linklerini tek yerde tut. Bu ekran prep akisinin merkezi gibi calisiyor ve acik kalan hamleleri netlestiriyor.`}
-            platformLabel={formatPlatformLabel(app.platform)}
-            launchDate={app.launch_date}
-            contentSource={workspace.contentSource}
-            actions={[
-              {
-                href: "/dashboard",
-                label: "Dashboard'a don"
-              },
-              {
-                href: `/app/${params.id}/post-launch`,
-                label: "Growth routine'a gec"
-              },
-              {
-                href: `/app/${params.id}/export`,
-                label: "Export hazirla",
-                variant: "primary"
-              }
-            ]}
-            stats={[
-              {
-                label: "Overall progress",
-                value: `%${workspace.progress.overall}`,
-                detail: `${workspace.progress.completedCount}/${workspace.progress.totalCount} item tamamlandi`
-              },
-              {
-                label: "Deliverables",
-                value: `${deliverableCount}`,
-                detail: "Checklist item'larina bagli somut cikti sayisi"
-              },
-              {
-                label: "Resource links",
-                value: `${resourceCount}`,
-                detail: "Board icinde acik rehber ve arac kaynagi"
-              }
-            ]}
-            panelEyebrow="Launch posture"
-            panelTitle={
-              remainingCount === 0
-                ? "Board launch-ready"
-                : `${remainingCount} acik hareket kaldi`
-            }
-            panelDescription={
-              remainingCount === 0
-                ? "Temel prep item'lari kapanmis durumda. Artik export alabilir ve sonraki ritim ekranina gecebilirsin."
-                : "Acik kalan item'lari kategori bazinda kapatip deliverable'lari tamamladikca board daha temiz bir launch durumuna geciyor."
-            }
-            panelBody={
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-4 text-sm">
-                    <span className="font-medium text-white/72">
-                      Prep completion
-                    </span>
-                    <span className="font-semibold text-white">
-                      %{workspace.progress.overall}
-                    </span>
-                  </div>
-                  <ProgressBar value={workspace.progress.overall} />
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-[1.2rem] border border-white/10 bg-white/7 p-3">
-                    <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-white/45">
-                      Categories
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold">
-                      {groupedItems.length}
-                    </p>
-                  </div>
-                  <div className="rounded-[1.2rem] border border-white/10 bg-white/7 p-3">
-                    <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-white/45">
-                      Open items
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold">
-                      {remainingCount}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            }
-            panelFootnote="Prep -> Launch -> Grow"
-          />
-
-          <section className="grid gap-4 xl:grid-cols-4">
-            {groupedItems.map((group) => (
-              <LaunchMetricCard
-                key={group.category}
-                label={group.label}
-                value={`%${group.progress}`}
-                detail={
-                  group.progress === 100
-                    ? "Bu lane tamamen hazir. Sonraki akisa gecmek icin iyi durumdasin."
-                    : `${group.completedCount}/${group.totalCount} tamamlandi ve lane icinde hala kapanmasi gereken acik item'lar var.`
-                }
-                tone={
-                  group.progress === 100
-                    ? "success"
-                    : group.progress >= 60
-                      ? "brand"
-                      : "warning"
-                }
-              />
-            ))}
-          </section>
-
-          <div className="grid gap-6">
-            {groupedItems.map((group) => (
-              <ChecklistCategory
-                key={group.category}
-                appId={app.id}
-                title={group.label}
-                progress={group.progress}
-                completedCount={group.completedCount}
-                totalCount={group.totalCount}
-                items={group.items}
-              />
-            ))}
-          </div>
-        </div>
+        <ChecklistWorkspaceClient
+          app={app}
+          initialItems={workspace.items}
+          contentSource={workspace.contentSource}
+        />
       </main>
     );
   } catch {
@@ -195,6 +57,8 @@ export default async function AppChecklistPage({
           eyebrow="Schema bekleniyor"
           title="Checklist workspace veritabanini bekliyor."
           description="Hosted Supabase projesine migration push tamamlandiginda bu ekran gercek checklist verisiyle calisacak."
+          actionHref={`/app/${params.id}`}
+          actionLabel="Yeniden dene"
         />
       </main>
     );

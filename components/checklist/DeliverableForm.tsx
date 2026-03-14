@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 
 import { useToast } from "@/components/shared/ToastProvider";
 import { deliverableMessages } from "@/lib/deliverables/messages";
+import { getMaxDeliverableFileSize } from "@/lib/deliverables/validation";
 import { cn } from "@/lib/utils";
-import type { DeliverableActionResult, DeliverableType } from "@/types";
+import type {
+  Deliverable,
+  DeliverableActionResult,
+  DeliverableType
+} from "@/types";
 
 interface DeliverableFormProps {
   appId: string;
   itemId: string;
+  onCreated?: (deliverable: Deliverable) => void;
 }
 
 type FormState = {
@@ -55,8 +60,11 @@ function formatFileSize(size: number) {
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
-  const router = useRouter();
+export function DeliverableForm({
+  appId,
+  itemId,
+  onCreated
+}: DeliverableFormProps) {
   const { pushToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -66,6 +74,19 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
   const [fieldErrors, setFieldErrors] = useState<
     DeliverableActionResult["fieldErrors"]
   >({});
+  const [contentTouched, setContentTouched] = useState(false);
+  const maxFileSize = getMaxDeliverableFileSize();
+
+  const linkValidationMessage =
+    form.type === "link" &&
+    form.content.trim().length > 0 &&
+    !form.content.trim().startsWith("https://")
+      ? "https:// ile başlamalı"
+      : null;
+  const fileValidationMessage =
+    form.type === "file" && form.file && form.file.size > maxFileSize
+      ? "Maksimum dosya boyutu aşıldı"
+      : null;
 
   function setType(type: DeliverableType) {
     setForm((current) => ({
@@ -78,12 +99,29 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
     }
     setStatusMessage(null);
     setFieldErrors({});
+    setContentTouched(false);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatusMessage(null);
     setFieldErrors({});
+    setContentTouched(true);
+
+    if (linkValidationMessage) {
+      setFieldErrors({
+        content: linkValidationMessage
+      });
+      return;
+    }
+
+    if (fileValidationMessage) {
+      setFieldErrors({
+        file: fileValidationMessage
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -136,14 +174,19 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
 
       setForm(initialState);
       setFileInputKey((current) => current + 1);
+      setContentTouched(false);
       pushToast({
         title: "Deliverable eklendi",
         description: "Checklist item'i icin yeni bir cikti kaydedildi.",
         variant: "success"
       });
-      startTransition(() => {
-        router.refresh();
-      });
+      const createdDeliverable = result.deliverable;
+
+      if (createdDeliverable) {
+        startTransition(() => {
+          onCreated?.(createdDeliverable);
+        });
+      }
     } catch {
       setStatusMessage(deliverableMessages.genericError);
       pushToast({
@@ -204,12 +247,20 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
             <input
               key={fileInputKey}
               type="file"
-              onChange={(event) =>
+              onChange={(event) => {
+                const nextFile = event.target.files?.[0] ?? null;
                 setForm((current) => ({
                   ...current,
-                  file: event.target.files?.[0] ?? null
-                }))
-              }
+                  file: nextFile
+                }));
+                setFieldErrors((current) => ({
+                  ...current,
+                  file:
+                    nextFile && nextFile.size > maxFileSize
+                      ? "Maksimum dosya boyutu aşıldı"
+                      : undefined
+                }));
+              }}
               className="block w-full rounded-[1rem] border border-foreground/10 bg-white px-4 py-3 text-sm"
             />
             <p className="mt-3 text-xs leading-6 text-muted-foreground">
@@ -226,8 +277,10 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
               </div>
             ) : null}
           </div>
-          {fieldErrors?.file ? (
-            <p className="text-sm text-destructive">{fieldErrors.file}</p>
+          {fileValidationMessage || fieldErrors?.file ? (
+            <p className="text-sm text-destructive">
+              {fileValidationMessage ?? fieldErrors?.file}
+            </p>
           ) : null}
         </label>
       ) : (
@@ -245,6 +298,7 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
                   content: event.target.value
                 }))
               }
+              onBlur={() => setContentTouched(true)}
               placeholder="https://example.com"
               className="w-full rounded-[1.4rem] border border-foreground/10 bg-white px-4 py-3.5 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
             />
@@ -257,6 +311,7 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
                   content: event.target.value
                 }))
               }
+              onBlur={() => setContentTouched(true)}
               placeholder="Bu item icin onemli notlarini buraya ekle"
               rows={5}
               className="w-full rounded-[1.4rem] border border-foreground/10 bg-white px-4 py-3.5 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
@@ -267,8 +322,10 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
               ? "Dis kaynaga acilan, paylasilabilir ve gecerli bir URL kaydet."
               : "Bu deliverable'a bagli karar, not veya teslim baglamini ekle."}
           </p>
-          {fieldErrors?.content ? (
-            <p className="text-sm text-destructive">{fieldErrors.content}</p>
+          {((contentTouched && linkValidationMessage) || fieldErrors?.content) ? (
+            <p className="text-sm text-destructive">
+              {(contentTouched && linkValidationMessage) ?? fieldErrors?.content}
+            </p>
           ) : null}
         </label>
       )}
@@ -281,7 +338,12 @@ export function DeliverableForm({ appId, itemId }: DeliverableFormProps) {
 
       <button
         type="submit"
-        disabled={isSubmitting || isPending}
+        disabled={
+          isSubmitting ||
+          isPending ||
+          Boolean(linkValidationMessage) ||
+          Boolean(fileValidationMessage)
+        }
         className="w-full rounded-[1.4rem] bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting || isPending ? "Kaydediliyor..." : submitLabel}

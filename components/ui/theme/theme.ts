@@ -9,6 +9,32 @@ export interface ThemeState {
   colorMode: ColorMode;
 }
 
+export const VISUAL_THEME_OPTIONS = [
+  {
+    value: "warm-premium",
+    label: "Warm Premium",
+    description: "Daha sicak, sade ve production-ready varsayilan tema."
+  },
+  {
+    value: "liquid-glass",
+    label: "Liquid Glass",
+    description: "Daha parlak, katmanli ve deneysel gorunum paketi."
+  }
+] as const;
+
+export const COLOR_MODE_OPTIONS = [
+  {
+    value: "light",
+    label: "Acik mod",
+    description: "Gunluk kullanim icin daha ferah ve okunakli gorunum."
+  },
+  {
+    value: "dark",
+    label: "Koyu mod",
+    description: "Daha dusuk isikta kontrasti koruyan gorunum."
+  }
+] as const;
+
 export const DEFAULT_THEME_STATE: ThemeState = {
   visualTheme: "warm-premium",
   colorMode: "light"
@@ -25,6 +51,52 @@ export function isVisualTheme(value: string | null | undefined): value is Visual
 
 export function isColorMode(value: string | null | undefined): value is ColorMode {
   return COLOR_MODES.includes(value as ColorMode);
+}
+
+function normalizeVisualTheme(value: string | null | undefined): VisualTheme {
+  return isVisualTheme(value) ? value : DEFAULT_THEME_STATE.visualTheme;
+}
+
+function normalizeColorMode(value: string | null | undefined): ColorMode {
+  return isColorMode(value) ? value : DEFAULT_THEME_STATE.colorMode;
+}
+
+export function getStoredThemeState(): ThemeState {
+  if (typeof window === "undefined") {
+    return DEFAULT_THEME_STATE;
+  }
+
+  try {
+    return {
+      visualTheme: normalizeVisualTheme(
+        window.localStorage.getItem(THEME_STORAGE_KEYS.visualTheme)
+      ),
+      colorMode: normalizeColorMode(
+        window.localStorage.getItem(THEME_STORAGE_KEYS.colorMode)
+      )
+    };
+  } catch {
+    return DEFAULT_THEME_STATE;
+  }
+}
+
+export function applyThemeState(state: ThemeState) {
+  const visualTheme = normalizeVisualTheme(state.visualTheme);
+  const colorMode = normalizeColorMode(state.colorMode);
+
+  if (typeof document !== "undefined") {
+    const root = document.documentElement;
+    root.dataset.visualTheme = visualTheme;
+    root.dataset.colorMode = colorMode;
+    root.style.colorScheme = colorMode;
+  }
+
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEYS.visualTheme, visualTheme);
+      window.localStorage.setItem(THEME_STORAGE_KEYS.colorMode, colorMode);
+    } catch {}
+  }
 }
 
 export function buildThemeInitScript() {

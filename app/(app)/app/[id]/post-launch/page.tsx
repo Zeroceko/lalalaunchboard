@@ -163,6 +163,8 @@ export default async function PostLaunchPage({
           eyebrow="Schema bekleniyor"
           title="Post-launch routine veritabanini bekliyor."
           description="Hosted Supabase projesine migration push tamamlandiginda bu ekran gercek routine verisiyle calisacak."
+          actionHref={`/app/${params.id}/post-launch`}
+          actionLabel="Yeniden dene"
         />
       </main>
     );

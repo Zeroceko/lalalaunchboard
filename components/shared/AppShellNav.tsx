@@ -18,6 +18,21 @@ const navItems = [
     href: "/app/new",
     label: "Yeni workspace",
     matches: (pathname: string) => pathname === "/app/new"
+  },
+  {
+    href: "/admin",
+    label: "Portfoy paneli",
+    matches: (pathname: string) => pathname.startsWith("/admin")
+  },
+  {
+    href: "/ops",
+    label: "Control tower",
+    matches: (pathname: string) => pathname.startsWith("/ops")
+  },
+  {
+    href: "/settings",
+    label: "Ayarlar",
+    matches: (pathname: string) => pathname.startsWith("/settings")
   }
 ];
 

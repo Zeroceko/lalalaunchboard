@@ -1,295 +1,255 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { ChecklistPreview } from "@/components/checklist/ChecklistPreview";
+import { LocaleSwitcher } from "@/components/i18n/LocaleSwitcher";
 import {
   LaunchBadge,
-  LaunchHero,
-  LaunchMetricCard,
   LaunchPage,
-  LaunchPanel,
-  LaunchRailList,
-  LaunchSectionHeader,
   launchButtonStyles
 } from "@/components/ui/LaunchKit";
+import { getSessionContext } from "@/lib/auth/session";
+import { hasSupabaseEnv } from "@/lib/env";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { resolveRequestLocale } from "@/lib/i18n/server";
 
-const productModules = [
-  {
-    title: "Dashboard",
-    description:
-      "Tum launch boardlarini, tarihlerini ve odak alanlarini tek bakista gorursun."
-  },
-  {
-    title: "New App Setup",
-    description:
-      "Yeni bir uygulama icin isim, platform ve tarih kararlarini hizlica sabitlersin."
-  },
-  {
-    title: "Pre-launch Checklist",
-    description:
-      "Store prep, kreatif teslimler ve yayin hazirliklari board mantiginda ilerler."
-  },
-  {
-    title: "Progress",
-    description:
-      "Tamamlanan isler ile acik riskler ayni sistem icinde gorunur olur."
-  },
-  {
-    title: "Countdown",
-    description:
-      "Launch tarihi uzak bir hedef degil, gunluk karar ritmini belirleyen merkez olur."
-  },
-  {
-    title: "Post-launch Routine",
-    description:
-      "Lansman sonrasi buyume gorevleri urunun devam eden akisina baglanir."
+export default async function HomePage() {
+  if (hasSupabaseEnv()) {
+    try {
+      const { user } = await getSessionContext();
+      if (user) {
+        redirect("/dashboard");
+      }
+    } catch (error) {
+      console.warn("HomePage session check failed; rendering landing.", error);
+    }
   }
-];
 
-const flowItems = [
-  {
-    title: "Boardu kur",
-    description:
-      "Isim, platform ve lansman tarihiyle operasyon yuzeyini baslat.",
-    badge: "01",
-    tone: "info" as const
-  },
-  {
-    title: "Lansmani calistir",
-    description:
-      "Checklist, progress ve countdown ile uygulamayi kontrollu bicimde hazirla.",
-    badge: "02",
-    tone: "warning" as const
-  },
-  {
-    title: "Buyumeyi surdur",
-    description:
-      "Post-launch rutinleri ve export ile boardu yasayan bir sisteme donustur.",
-    badge: "03",
-    tone: "success" as const
-  }
-];
+  const locale = resolveRequestLocale();
+  const dictionary = getDictionary(locale);
+  const { common, landing } = dictionary;
 
-export default function HomePage() {
   return (
-    <LaunchPage className="min-h-screen py-8 sm:py-10">
-      <div className="space-y-8 sm:space-y-10">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-xl font-semibold tracking-tight text-foreground">
+    <LaunchPage className="min-h-screen max-w-[1180px] py-6 sm:py-8">
+      <div className="space-y-16 sm:space-y-20">
+        <header className="flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-2">
+            <p className="text-xl font-semibold tracking-tight text-foreground">
               Lalalaunchboard
-            </span>
-            <LaunchBadge tone="brand">Prep, launch, grow</LaunchBadge>
-            <LaunchBadge tone="warning">Board-first product</LaunchBadge>
+            </p>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">
+              {landing.topTagline}
+            </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/auth" className={launchButtonStyles.secondary}>
-              Auth
+
+          <div className="flex flex-wrap items-center gap-3">
+            <LocaleSwitcher locale={locale} />
+            <Link href="/auth?tab=login" className={launchButtonStyles.secondary}>
+              {common.signInLabel}
             </Link>
-            <Link href="/dashboard" className={launchButtonStyles.secondary}>
-              Dashboard
+            <Link href="/auth?tab=register" className={launchButtonStyles.primary}>
+              {common.signUpLabel}
             </Link>
           </div>
-        </div>
+        </header>
 
-        <LaunchHero
-          eyebrow="Launch Operating System"
-          title="App lansmanini daginik notlardan cikar, tek board uzerinde yonet."
-          description="Lalalaunchboard, indie gelistiriciler icin setup, checklist, countdown, progress ve post-launch rutinlerini tek bir urun ritmi icinde toplar. Amac daha cok kart degil, daha net karar almak."
-          actions={
-            <>
-              <Link href="/app/new" className={launchButtonStyles.primary}>
-                Yeni workspace baslat
-              </Link>
-              <Link href="/dashboard" className={launchButtonStyles.secondary}>
-                Dashboardu gor
-              </Link>
-            </>
-          }
-          aside={
-            <LaunchPanel tone="default" className="space-y-6">
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-2">
-                  <LaunchBadge tone="info">Live board preview</LaunchBadge>
-                  <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                    FocusFlow
-                  </h2>
-                </div>
-                <LaunchBadge tone="warning">14 gun kaldi</LaunchBadge>
+        <section className="grid gap-10 xl:grid-cols-[minmax(0,1.05fr)_410px] xl:items-center">
+          <div className="space-y-8">
+            <div className="space-y-5">
+              <LaunchBadge tone="brand">{landing.heroEyebrow}</LaunchBadge>
+              <div className="space-y-5">
+                <h1 className="max-w-4xl text-balance text-[3.1rem] font-semibold tracking-[-0.07em] text-foreground sm:text-[4.4rem] sm:leading-[0.95]">
+                  {landing.heroTitle}
+                </h1>
+                <p className="max-w-2xl text-lg leading-8 text-[hsl(var(--muted-foreground))]">
+                  {landing.heroDescription}
+                </p>
               </div>
+            </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div
-                  data-tone="brand"
-                  className="launch-glass-widget rounded-[1.45rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--brand-soft))/0.56] p-5"
-                >
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
-                    Ilerleme
-                  </p>
-                  <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
-                    %68
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                    Hazirlik islerinin cogu tamamlandi, kritik kalanlar gorunur
-                    durumda.
-                  </p>
-                </div>
-                <div
-                  data-tone="warning"
-                  className="launch-glass-widget rounded-[1.45rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--amber-soft))/0.64] p-5"
-                >
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">
-                    Siradaki hamle
-                  </p>
-                  <p className="mt-3 text-lg font-semibold tracking-tight text-foreground">
-                    App Store kreatif paketi
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                    Son teslim listesi ve ekran goruntuleri bu asamada netlesir.
-                  </p>
-                </div>
-              </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/auth?tab=register" className={launchButtonStyles.primary}>
+                {landing.heroPrimaryCta}
+              </Link>
+              <Link href="/auth?tab=login" className={launchButtonStyles.secondary}>
+                {landing.heroSecondaryCta}
+              </Link>
+            </div>
 
-              <div className="grid gap-3">
-                {["Checklist", "Countdown", "Routine"].map((item, index) => (
-                  <div
-                    key={item}
-                    data-tone="neutral"
-                    className="launch-glass-widget flex items-center gap-3 rounded-[1.2rem] border border-[hsl(var(--border))/0.58] bg-[hsl(var(--card))/0.92] px-4 py-3.5"
-                  >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[hsl(var(--primary))/0.12] text-sm font-semibold text-[hsl(var(--primary))]">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{item}</p>
-                      <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                        Ayni board sisteminin parcasi olarak calisir.
+            <ul className="grid gap-3 text-sm text-[hsl(var(--muted-foreground))] sm:grid-cols-3">
+              {landing.heroPoints.map((point) => (
+                <li
+                  key={point}
+                  className="rounded-[1.4rem] bg-[hsl(var(--card))/0.46] px-4 py-4 shadow-[0_14px_34px_hsl(var(--shadow-color)/0.04)] backdrop-blur"
+                >
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="relative">
+            <div className="pointer-events-none absolute -left-6 top-8 h-24 w-24 rounded-full bg-[hsl(var(--bg-glow-clay))/0.18] blur-3xl" />
+            <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-[hsl(var(--bg-glow-brand))/0.18] blur-3xl" />
+
+            <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--border))/0.5] bg-[linear-gradient(160deg,hsl(var(--surface-dark-start)/0.96),hsl(var(--surface-dark-mid)/0.98)_50%,hsl(var(--surface-dark-end)/0.96))] p-6 text-[hsl(var(--surface-dark-foreground))] shadow-[0_30px_90px_hsl(var(--shadow-color)/0.18)]">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[hsl(var(--surface-dark-muted))]">
+                      {landing.showcasePreviewLabel}
+                    </p>
+                    <h2 className="text-2xl font-semibold tracking-[-0.04em]">
+                      FocusFlow
+                    </h2>
+                  </div>
+                  <span className="rounded-full border border-[hsl(var(--surface-dark-foreground))/0.16] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[hsl(var(--surface-dark-muted))]">
+                    {landing.showcaseStats[1]?.value}
+                  </span>
+                </div>
+
+                <div className="h-2 overflow-hidden rounded-full bg-[hsl(var(--surface-dark-foreground))/0.08]">
+                  <div className="h-full w-[68%] rounded-full bg-[linear-gradient(90deg,hsl(var(--primary)),hsl(var(--accent)))]" />
+                </div>
+
+                <div className="space-y-3">
+                  {landing.showcaseStats.map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="grid gap-1 rounded-[1.45rem] bg-[hsl(var(--surface-dark-foreground))/0.05] px-4 py-4"
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--surface-dark-muted))]">
+                        {stat.label}
+                      </p>
+                      <p className="text-xl font-semibold tracking-[-0.04em]">
+                        {stat.value}
+                      </p>
+                      <p className="text-sm leading-6 text-[hsl(var(--surface-dark-muted))]">
+                        {stat.detail}
                       </p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </LaunchPanel>
-          }
-        />
-
-        <div className="grid gap-4 lg:grid-cols-3">
-          <LaunchMetricCard
-            label="Urun yaklasimi"
-            value="Board-first"
-            detail="Her app tekil kart degil, kendi operasyon yuzeyi gibi ele alinir."
-            tone="brand"
-          />
-          <LaunchMetricCard
-            label="Hedef kullanici"
-            value="Indie makers"
-            detail="Daginik araclar yerine tek akis isteyen gelistiriciler icin tasarlanir."
-            tone="warning"
-          />
-          <LaunchMetricCard
-            label="Ana fayda"
-            value="Daha net karar"
-            detail="Hazirlik, tarih ve siradaki hamle ayni anda gorunur olur."
-            tone="success"
-          />
-        </div>
-
-        <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-5">
-            <LaunchSectionHeader
-              eyebrow="Problem"
-              title="Launch sureci genelde araclar arasinda parcalanir"
-              description="Notlar bir yerde, tarih baska yerde, yapilacaklar baska yerde kalinca ekipler degil solo gelistiriciler bile ritmi kaybeder. Lalalaunchboard bunu tek board mantigina indirger."
-            />
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  title: "Tek gorunur ritim",
-                  description:
-                    "Tarih, ilerleme ve odak alani ayni ekranda gorunur kalir."
-                },
-                {
-                  title: "Daha az context switch",
-                  description:
-                    "Farkli notlar ve tablar arasinda gezinmek yerine ayni board uzerinde kalirsin."
-                },
-                {
-                  title: "Daha guclu hafiza",
-                  description:
-                    "Her app kendi boardu ile tekrar kullanilabilir bir launch hafizasi birakir."
-                }
-              ].map((item) => (
-                <LaunchPanel key={item.title} tone="default" className="space-y-3">
-                  <LaunchBadge tone="neutral">Value</LaunchBadge>
-                  <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                    {item.description}
-                  </p>
-                </LaunchPanel>
-              ))}
             </div>
           </div>
-
-          <LaunchRailList
-            eyebrow="Flow"
-            title="Urun nasil calisir?"
-            description="Lalalaunchboard'un kullanim amaci tek launch gununu degil, tum hazirlik ve sonrasi sureci ayni board uzerinde isletmektir."
-            items={flowItems}
-          />
         </section>
 
-        <section className="space-y-5">
-          <LaunchSectionHeader
-            eyebrow="Modules"
-            title="Birbirine bagli launch modulleri"
-            description="Her modul tek basina feature gibi gorunse de aslinda ayni board mantiginin farkli asamalaridir."
-          />
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {productModules.map((module) => (
-              <LaunchPanel key={module.title} tone="default" className="space-y-3 p-5">
-                <LaunchBadge tone="info">Module</LaunchBadge>
-                <h3 className="text-xl font-semibold tracking-tight text-foreground">
-                  {module.title}
-                </h3>
-                <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                  {module.description}
+        <section className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <div className="space-y-3">
+            <LaunchBadge tone="neutral">{landing.journeyEyebrow}</LaunchBadge>
+            <h2 className="text-3xl font-semibold tracking-[-0.05em] text-foreground sm:text-[2.7rem]">
+              {landing.journeyTitle}
+            </h2>
+            <p className="text-base leading-7 text-[hsl(var(--muted-foreground))]">
+              {landing.journeyDescription}
+            </p>
+          </div>
+
+          <div className="divide-y divide-[hsl(var(--border))/0.58]">
+            {landing.journeySteps.map((step) => (
+              <article
+                key={step.label}
+                className="grid gap-4 py-6 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-8"
+              >
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[hsl(var(--muted-foreground))]">
+                  {step.label}
                 </p>
-              </LaunchPanel>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
+                    {step.title}
+                  </h3>
+                  <p className="max-w-2xl text-base leading-7 text-[hsl(var(--muted-foreground))]">
+                    {step.description}
+                  </p>
+                </div>
+              </article>
             ))}
           </div>
         </section>
 
-        <ChecklistPreview />
-
-        <LaunchPanel tone="dark" className="space-y-5 overflow-hidden">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_220px] xl:items-end">
+        <section className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
+          <div className="space-y-8">
             <div className="space-y-3">
-              <LaunchBadge
-                tone="warning"
-                className="bg-[hsl(var(--card))/0.12] text-[hsl(var(--surface-dark-foreground))]"
-              >
-                Start here
-              </LaunchBadge>
-              <h2 className="max-w-3xl text-4xl font-semibold tracking-tight text-[hsl(var(--surface-dark-foreground))]">
-                Ilk uygulaman icin boardu kur ve tum launch akisini ayni yerden yonet.
+              <LaunchBadge tone="clay">{landing.productEyebrow}</LaunchBadge>
+              <h2 className="max-w-3xl text-3xl font-semibold tracking-[-0.05em] text-foreground sm:text-[2.7rem]">
+                {landing.productTitle}
               </h2>
-              <p className="max-w-2xl text-sm leading-7 text-[hsl(var(--surface-dark-muted))]">
-                Dashboard, setup, checklist ve growth yuzeyleri artik ortak bir UI kit
-                ve daha net urun dili ile sekilleniyor.
+              <p className="max-w-2xl text-base leading-7 text-[hsl(var(--muted-foreground))]">
+                {landing.productDescription}
               </p>
             </div>
+
+            <div className="divide-y divide-[hsl(var(--border))/0.58]">
+              {landing.productHighlights.map((item) => (
+                <article key={item.title} className="space-y-2 py-6">
+                  <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
+                    {item.title}
+                  </h3>
+                  <p className="max-w-2xl text-base leading-7 text-[hsl(var(--muted-foreground))]">
+                    {item.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2.2rem] border border-[hsl(var(--border))/0.52] bg-[linear-gradient(180deg,hsl(var(--card))/0.84),hsl(var(--surface-default-end))/0.9)] p-6 shadow-[0_24px_70px_hsl(var(--shadow-color)/0.08)]">
+            <div className="space-y-4">
+              <LaunchBadge tone="info">{landing.showcaseEyebrow}</LaunchBadge>
+              <div className="space-y-3">
+                <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
+                  {landing.showcaseTitle}
+                </h3>
+                <p className="text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+                  {landing.showcaseDescription}
+                </p>
+              </div>
+
+              <div className="space-y-3 pt-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[hsl(var(--muted-foreground))]">
+                  {landing.showcaseListTitle}
+                </p>
+                <ul className="space-y-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+                  {landing.showcaseList.map((item) => (
+                    <li key={item} className="rounded-[1.2rem] bg-[hsl(var(--surface-inset))/0.72] px-4 py-3">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="overflow-hidden rounded-[2.6rem] bg-[linear-gradient(145deg,hsl(var(--surface-dark-start)),hsl(var(--surface-dark-mid))_55%,hsl(var(--surface-dark-end)))] px-6 py-8 shadow-[0_34px_90px_hsl(var(--shadow-color)/0.2)] sm:px-8 sm:py-10 lg:px-10">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-end">
+            <div className="space-y-4">
+              <LaunchBadge
+                tone="warning"
+                className="border-[hsl(var(--surface-dark-foreground))/0.16] bg-[hsl(var(--surface-dark-foreground))/0.08] text-[hsl(var(--surface-dark-foreground))]"
+              >
+                {landing.ctaEyebrow}
+              </LaunchBadge>
+              <div className="space-y-3">
+                <h2 className="max-w-3xl text-balance text-4xl font-semibold tracking-[-0.05em] text-[hsl(var(--surface-dark-foreground))]">
+                  {landing.ctaTitle}
+                </h2>
+                <p className="max-w-2xl text-base leading-7 text-[hsl(var(--surface-dark-muted))]">
+                  {landing.ctaDescription}
+                </p>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-3">
-              <Link href="/app/new" className={launchButtonStyles.primary}>
-                Workspace olustur
+              <Link href="/auth?tab=register" className={launchButtonStyles.primary}>
+                {common.signUpLabel}
               </Link>
-              <Link href="/auth" className={launchButtonStyles.secondary}>
-                Auth akisina bak
+              <Link href="/auth?tab=login" className={launchButtonStyles.secondary}>
+                {common.signInLabel}
               </Link>
             </div>
           </div>
-        </LaunchPanel>
+        </section>
       </div>
     </LaunchPage>
   );

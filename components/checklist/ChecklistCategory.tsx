@@ -1,5 +1,4 @@
-import type { ChecklistItemWithStatus } from "@/types";
-
+import type { Deliverable, ChecklistItemWithStatus } from "@/types";
 import { ChecklistItem } from "@/components/checklist/ChecklistItem";
 import { ProgressBar } from "@/components/checklist/ProgressBar";
 import { LaunchBadge, LaunchPanel } from "@/components/ui/LaunchKit";
@@ -11,6 +10,9 @@ interface ChecklistCategoryProps {
   completedCount: number;
   totalCount: number;
   items: ChecklistItemWithStatus[];
+  pendingItemIds: string[];
+  onToggleItem: (itemId: string) => void;
+  onDeliverablesChange: (itemId: string, deliverables: Deliverable[]) => void;
 }
 
 export function ChecklistCategory({
@@ -19,7 +21,10 @@ export function ChecklistCategory({
   progress,
   completedCount,
   totalCount,
-  items
+  items,
+  pendingItemIds,
+  onToggleItem,
+  onDeliverablesChange
 }: ChecklistCategoryProps) {
   return (
     <LaunchPanel className="overflow-hidden p-0">
@@ -47,7 +52,16 @@ export function ChecklistCategory({
 
       <div className="grid gap-4 p-6 lg:p-7">
         {items.map((item) => (
-          <ChecklistItem key={item.id} appId={appId} item={item} />
+          <ChecklistItem
+            key={item.id}
+            appId={appId}
+            item={item}
+            isPending={pendingItemIds.includes(item.id)}
+            onToggle={() => onToggleItem(item.id)}
+            onDeliverablesChange={(deliverables) =>
+              onDeliverablesChange(item.id, deliverables)
+            }
+          />
         ))}
       </div>
     </LaunchPanel>

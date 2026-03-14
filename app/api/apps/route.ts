@@ -141,7 +141,7 @@ export async function POST(request: Request) {
         message: appMessages.appCreated,
         app: result.app,
         limit: result.limit,
-        redirectTo: "/dashboard"
+        redirectTo: `/app/${result.app.id}`
       },
       201
     );

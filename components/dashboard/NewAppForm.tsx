@@ -71,7 +71,7 @@ const activationFlow = [
   {
     title: "Board goes live",
     description:
-      "Dashboard, checklist ve sonraki routine katmanlari ayni workspace mantigiyla acilir.",
+      "Dashboard, checklist ve sonraki routine bolumleri ayni workspace mantigiyla acilir.",
     badge: "Step 03",
     tone: "success" as const
   }
@@ -200,7 +200,7 @@ export function NewAppForm({ limit }: NewAppFormProps) {
 
       pushToast({
         title: "Workspace hazir",
-        description: "Yeni app workspace'i dashboard'a eklendi.",
+        description: "Ilk checklist ekranina yonlendiriliyorsun.",
         variant: "success"
       });
 
@@ -391,7 +391,7 @@ export function NewAppForm({ limit }: NewAppFormProps) {
           <LaunchBadge tone="neutral">Default stack</LaunchBadge>
           <div className="space-y-2">
             <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
-              Ilk gun acilacak katmanlar
+              Ilk gun acilacak bolumler
             </h3>
             <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
               Bu ekran bittiginde su alanlar ayni board mantigiyla birlikte

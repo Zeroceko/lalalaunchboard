@@ -1,21 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { HCaptchaField } from "@/components/auth/HCaptchaField";
 import { useToast } from "@/components/shared/ToastProvider";
 import {
-  LaunchActionBar,
-  LaunchBadge,
   LaunchButton,
   LaunchFieldShell,
   LaunchInput,
-  LaunchMiniStat,
   LaunchNotice
 } from "@/components/ui/LaunchKit";
-import { authMessages } from "@/lib/auth/messages";
-import { flattenFieldErrors, registerSchema } from "@/lib/auth/validation";
+import { getAuthMessages } from "@/lib/auth/messages";
+import { getRegisterSchema, flattenFieldErrors } from "@/lib/auth/validation";
+import type { Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/dictionaries";
 import type { AuthActionResult } from "@/types";
 
 const initialState = {
@@ -25,10 +24,16 @@ const initialState = {
   captchaToken: ""
 };
 
-export function RegisterForm() {
+interface RegisterFormProps {
+  locale: Locale;
+}
+
+export function RegisterForm({ locale }: RegisterFormProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { pushToast } = useToast();
+  const dictionary = getDictionary(locale);
+  const authMessages = getAuthMessages(locale);
+  const registerSchema = getRegisterSchema(locale);
   const [form, setForm] = useState(initialState);
   const [fieldErrors, setFieldErrors] = useState<
     AuthActionResult["fieldErrors"]
@@ -85,23 +90,19 @@ export function RegisterForm() {
         const message = result.message ?? authMessages.genericError;
         setStatusMessage(message);
         pushToast({
-          title: "Kayit tamamlanamadi",
+          title: dictionary.authForm.registerErrorTitle,
           description: message,
           variant: "destructive"
         });
         return;
       }
 
-      const nextPath = searchParams.get("next");
-
-      router.push(
-        nextPath && nextPath.startsWith("/") ? nextPath : "/dashboard"
-      );
+      router.push("/app/new");
       router.refresh();
     } catch {
       setStatusMessage(authMessages.genericError);
       pushToast({
-        title: "Kayit tamamlanamadi",
+        title: dictionary.authForm.registerErrorTitle,
         description: authMessages.genericError,
         variant: "destructive"
       });
@@ -112,46 +113,9 @@ export function RegisterForm() {
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-2">
-          <LaunchBadge tone="brand">Create account</LaunchBadge>
-          <LaunchBadge tone="success">Start your first board</LaunchBadge>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-3xl font-semibold tracking-tight text-foreground">
-            Ilk launch boardunu ac
-          </h3>
-          <p className="max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">
-            Kayit tamamlandiginda yeni app setup ekrani, dashboard kartlari ve
-            gelecekteki checklist akisi ayni sistem icinde calismaya baslar.
-          </p>
-        </div>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        <LaunchMiniStat
-          label="Baslangic"
-          value="Free"
-          detail="Ilk board ile sisteme gir."
-          tone="brand"
-        />
-        <LaunchMiniStat
-          label="Yapi"
-          value="Guided"
-          detail="Kurulum ekrani seni yonlendirir."
-          tone="warning"
-        />
-        <LaunchMiniStat
-          label="Guvenlik"
-          value="Protected"
-          detail="CAPTCHA ile korunur."
-          tone="success"
-        />
-      </div>
-
       <LaunchFieldShell
-        label="Email"
-        hint="Tum launch boardlarin bu hesabin altinda toplanir."
+        label={dictionary.authForm.emailLabel}
+        hint={dictionary.authForm.emailHint}
         error={fieldErrors?.email}
         fieldId="register-email"
       >
@@ -161,14 +125,14 @@ export function RegisterForm() {
           autoComplete="email"
           value={form.email}
           onChange={(event) => updateField("email", event.target.value)}
-          placeholder="ornek@mail.com"
+          placeholder={dictionary.authForm.emailPlaceholder}
         />
       </LaunchFieldShell>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <LaunchFieldShell
-          label="Sifre"
-          hint="Hesabina guvenli sekilde geri donmek icin kullanilir."
+          label={dictionary.authForm.passwordLabel}
+          hint={dictionary.authForm.registerPasswordHint}
           error={fieldErrors?.password}
           fieldId="register-password"
         >
@@ -178,13 +142,13 @@ export function RegisterForm() {
             autoComplete="new-password"
             value={form.password}
             onChange={(event) => updateField("password", event.target.value)}
-            placeholder="En az 8 karakter"
+            placeholder={dictionary.authForm.passwordPlaceholder}
           />
         </LaunchFieldShell>
 
         <LaunchFieldShell
-          label="Sifre tekrari"
-          hint="Hesap kurulmadan once sifrenin dogrulugunu netlestir."
+          label={dictionary.authForm.confirmPasswordLabel}
+          hint={dictionary.authForm.confirmPasswordHint}
           error={fieldErrors?.confirmPassword}
           fieldId="register-confirm-password"
         >
@@ -196,14 +160,14 @@ export function RegisterForm() {
             onChange={(event) =>
               updateField("confirmPassword", event.target.value)
             }
-            placeholder="Sifreyi tekrar yaz"
+            placeholder={dictionary.authForm.confirmPasswordPlaceholder}
           />
         </LaunchFieldShell>
       </div>
 
       <LaunchFieldShell
-        label="CAPTCHA"
-        hint="Kayit akisini korumak icin dogrulama gerekir."
+        label={dictionary.authForm.captchaLabel}
+        hint={dictionary.authForm.captchaHint}
         error={fieldErrors?.captchaToken}
       >
         <HCaptchaField
@@ -216,22 +180,21 @@ export function RegisterForm() {
 
       {!authConfigured ? (
         <LaunchNotice tone="warning">
-          Kayit akisini acmak icin once <code>NEXT_PUBLIC_SUPABASE_URL</code> ve
-          bir Supabase public key tanimlanmali.
+          {dictionary.authForm.registerConfigNotice}
         </LaunchNotice>
       ) : null}
 
       {statusMessage ? <LaunchNotice tone="danger">{statusMessage}</LaunchNotice> : null}
 
-      <LaunchActionBar
-        eyebrow="Start launch OS"
-        title="Hesabini olustur ve boardunu baslat"
-        description="Kaydi tamamladiginda urun seni dogrudan dashboard ve kurulum akisina tasiyacak."
+      <LaunchButton
+        type="submit"
+        disabled={isSubmitting || !signupEnabled}
+        className="w-full"
       >
-        <LaunchButton type="submit" disabled={isSubmitting || !signupEnabled}>
-          {isSubmitting ? "Hesap olusturuluyor..." : "Kayit ol"}
-        </LaunchButton>
-      </LaunchActionBar>
+        {isSubmitting
+          ? dictionary.authForm.registerSubmitting
+          : dictionary.authForm.registerSubmit}
+      </LaunchButton>
     </form>
   );
 }
