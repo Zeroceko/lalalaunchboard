@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
@@ -20,9 +20,19 @@ const tabs = [
   }
 ] as const;
 
-export function AuthTabs() {
+type AuthTabId = (typeof tabs)[number]["id"];
+
+interface AuthTabsProps {
+  initialTab?: AuthTabId;
+}
+
+export function AuthTabs({ initialTab = "login" }: AuthTabsProps) {
   const [activeTab, setActiveTab] =
-    useState<(typeof tabs)[number]["id"]>("login");
+    useState<AuthTabId>(initialTab);
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   const activeTabData = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
 

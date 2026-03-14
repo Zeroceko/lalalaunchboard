@@ -1,16 +1,18 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { ChecklistPreview } from "@/components/checklist/ChecklistPreview";
 import {
   LaunchBadge,
   LaunchHero,
-  LaunchMetricCard,
   LaunchPage,
   LaunchPanel,
   LaunchRailList,
   LaunchSectionHeader,
   launchButtonStyles
 } from "@/components/ui/LaunchKit";
+import { getSessionContext } from "@/lib/auth/session";
+import { hasSupabaseEnv } from "@/lib/env";
 
 const productModules = [
   {
@@ -93,10 +95,21 @@ const lifecycleLayers = [
   }
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  if (hasSupabaseEnv()) {
+    try {
+      const { user } = await getSessionContext();
+      if (user) {
+        redirect("/dashboard");
+      }
+    } catch (error) {
+      console.warn("HomePage session check failed; rendering landing.", error);
+    }
+  }
+
   return (
-    <LaunchPage className="min-h-screen py-6 sm:py-8">
-      <div className="space-y-6 sm:space-y-8">
+    <LaunchPage className="min-h-screen max-w-[1240px] py-6 sm:py-8">
+      <div className="space-y-5 sm:space-y-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-xl font-semibold tracking-tight text-foreground">
@@ -106,9 +119,14 @@ export default function HomePage() {
             <LaunchBadge tone="info">Launch & grow</LaunchBadge>
             <LaunchBadge tone="warning">Tek ekranda takip</LaunchBadge>
           </div>
-          <Link href="/dashboard" className={launchButtonStyles.secondary}>
-            Dashboard
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/auth?tab=login" className={launchButtonStyles.secondary}>
+              Sign in
+            </Link>
+            <Link href="/auth?tab=register" className={launchButtonStyles.primary}>
+              Sign up
+            </Link>
+          </div>
         </div>
 
         <LaunchHero
@@ -117,16 +135,16 @@ export default function HomePage() {
           description="Lalalaunchboard, indie builder'lar icin checklist, deliverable, countdown ve routine akisini tek yerde toplar. Bugun ne satildigi net, sonra neyin eksik oldugu net, sonraki hamle de tek ekranda okunur."
           actions={
             <>
-              <Link href="/auth" className={launchButtonStyles.primary}>
-                Ilk boardunu kur
+              <Link href="/auth?tab=register" className={launchButtonStyles.primary}>
+                Sign up
               </Link>
-              <Link href="/dashboard" className={launchButtonStyles.secondary}>
-                Ornek board&apos;u incele
+              <Link href="/auth?tab=login" className={launchButtonStyles.secondary}>
+                Sign in
               </Link>
             </>
           }
           aside={
-            <LaunchPanel tone="default" className="space-y-6">
+            <LaunchPanel tone="default" className="space-y-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-2">
                   <LaunchBadge tone="info">Ornek calisma alani</LaunchBadge>
@@ -191,38 +209,34 @@ export default function HomePage() {
           }
         />
 
-        <div className="grid gap-4 lg:grid-cols-3">
-          <LaunchMetricCard
-            label="Kime uygun"
-            value="Solo ekipler"
-            detail="Tek kisi veya kucuk ekiplerle urun cikaranlar icin tasarlandi."
-            tone="brand"
-          />
-          <LaunchMetricCard
-            label="Kurulum suresi"
-            value="~2 dakika"
-            detail="Hesap acip ilk workspace olusturman cok kisa surer."
-            tone="warning"
-          />
-          <LaunchMetricCard
-            label="En buyuk kazanc"
-            value="Zihin rahatligi"
-            detail="Neyi ne zaman yapacagin netlesir, son dakika stresi azalir."
-            tone="success"
-          />
-        </div>
+        <LaunchPanel tone="tint" className="space-y-6">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:items-start">
+            <div className="space-y-4">
+              <LaunchBadge tone="neutral">Ozet</LaunchBadge>
+              <h2 className="max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl">
+                Ilk boardunu kur. Lansmanini calistir. Buyumeyi takip et.
+              </h2>
+              <p className="max-w-2xl text-sm leading-7 text-[hsl(var(--muted-foreground))] sm:text-base">
+                Bugun launch odakli bir board ile baslarsin: checklist, deliverable,
+                countdown ve routine tek yerde. Ileride ayni duzen, daha genis app
+                operasyonuna dogru genisler.
+              </p>
+            </div>
 
-        <section className="space-y-4">
-          <LaunchSectionHeader
-            eyebrow="Lifecycle"
-            title="Tek launch gunu degil, butun urun ritmi"
-            description="Board mantigi yalnizca checklist'i degil, launch sonrasi ritmi de tasir. Bu yuzden urun tek kullan-at ekran gibi degil, tekrar donulen bir operasyon duzeni gibi calisir."
-          />
+            <LaunchRailList
+              eyebrow="3 Adim"
+              title="Nasil calisir?"
+              description="Ilk board'u kur, adimlari kapat, raporu paylas. Ozet bu kadar net."
+              items={flowItems}
+              className="p-0"
+            />
+          </div>
+
           <div className="grid gap-4 lg:grid-cols-3">
             {lifecycleLayers.map((layer) => (
               <LaunchPanel key={layer.title} tone="default" className="space-y-3 p-5">
                 <LaunchBadge tone={layer.tone}>{layer.badge}</LaunchBadge>
-                <h3 className="text-2xl font-semibold tracking-tight text-foreground">
+                <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
                   {layer.title}
                 </h3>
                 <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
@@ -231,66 +245,19 @@ export default function HomePage() {
               </LaunchPanel>
             ))}
           </div>
-        </section>
-
-        <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-5">
-            <LaunchSectionHeader
-              eyebrow="Problem"
-              title="Lansman sureci karmasik olmak zorunda degil"
-              description="Notlarin bir yerde, dosyalarin baska yerde oldugu duzende herkes gecikir. Lalalaunchboard, butun sureci tek bir akisa indirerek kafa karisikligini azaltir."
-            />
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  title: "Neyi yapacagin acik",
-                  description:
-                    "Tarih, ilerleme ve oncelik ayni ekranda oldugu icin karar vermek kolaylasir."
-                },
-                {
-                  title: "Daha az daginiklik",
-                  description:
-                    "Farkli tablar arasinda kaybolmadan tum sureci tek yerden yonetirsin."
-                },
-                {
-                  title: "Tekrar kullanilabilir sistem",
-                  description:
-                    "Her yeni urunde sifirdan dusunmek yerine ayni duzeni tekrar kullanirsin."
-                }
-              ].map((item) => (
-                <LaunchPanel key={item.title} tone="default" className="space-y-3">
-                  <LaunchBadge tone="neutral">Fayda</LaunchBadge>
-                  <h3 className="text-2xl font-semibold tracking-tight text-foreground">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                    {item.description}
-                  </p>
-                </LaunchPanel>
-              ))}
-            </div>
-          </div>
-
-          <LaunchRailList
-            eyebrow="3 Adim"
-            title="Nasil calisir?"
-            description="Ilk projeyi ac, adimlari tamamla, raporu paylas. Butun yol haritasi bu kadar net."
-            items={flowItems}
-          />
-        </section>
+        </LaunchPanel>
 
         <section className="space-y-4">
           <LaunchSectionHeader
-            eyebrow="Ozellikler"
-            title="Tek tek arac degil, tek bir sistem"
-            description="Butun bolumler birbirine bagli calisir. Bu sayede sureci parcalamadan ilerlersin."
+            eyebrow="Ne var?"
+            title="Tek ekranda calisan launch sistemi"
+            description="Parca parca araclar yerine, tek bir ritim veren board yuzeyi."
           />
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             {productModules.map((module) => (
-              <LaunchPanel key={module.title} tone="default" className="space-y-3 p-5">
-                <LaunchBadge tone="info">Ozellik</LaunchBadge>
-                <h3 className="text-xl font-semibold tracking-tight text-foreground">
+              <LaunchPanel key={module.title} tone="subtle" className="space-y-3 p-5">
+                <LaunchBadge tone="info">Modul</LaunchBadge>
+                <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
                   {module.title}
                 </h3>
                 <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
@@ -304,7 +271,7 @@ export default function HomePage() {
         <ChecklistPreview />
 
         <LaunchPanel tone="dark" className="space-y-5 overflow-hidden">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_220px] xl:items-end">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px] xl:items-end">
             <div className="space-y-3">
               <LaunchBadge
                 tone="warning"
@@ -320,11 +287,11 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              <Link href="/auth" className={launchButtonStyles.primary}>
-                Ilk workspace&apos;i ac
+              <Link href="/auth?tab=register" className={launchButtonStyles.primary}>
+                Sign up
               </Link>
-              <Link href="/dashboard" className={launchButtonStyles.secondary}>
-                Ornek board&apos;u incele
+              <Link href="/auth?tab=login" className={launchButtonStyles.secondary}>
+                Sign in
               </Link>
             </div>
           </div>

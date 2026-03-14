@@ -39,12 +39,17 @@ const authFlow = [
 export default function AuthPage({
   searchParams
 }: {
-  searchParams?: { reason?: string; next?: string };
+  searchParams?: { reason?: string; next?: string; tab?: string };
 }) {
   const redirectedToProtectedRoute =
     searchParams?.reason === "auth" &&
     typeof searchParams.next === "string" &&
     searchParams.next.startsWith("/");
+
+  const initialTab =
+    searchParams?.tab === "register" || searchParams?.tab === "signup"
+      ? "register"
+      : "login";
 
   return (
     <LaunchPage className="min-h-screen py-8 sm:py-10">
@@ -65,8 +70,8 @@ export default function AuthPage({
             </Link>
             <LaunchBadge tone="brand">Launch access</LaunchBadge>
           </div>
-          <Link href="/dashboard" className={launchButtonStyles.secondary}>
-            Dashboard onizlemesi
+          <Link href="/" className={launchButtonStyles.secondary}>
+            Ana sayfa
           </Link>
         </div>
 
@@ -127,7 +132,7 @@ export default function AuthPage({
             </section>
           </div>
 
-          <AuthTabs />
+          <AuthTabs initialTab={initialTab} />
         </div>
       </div>
     </LaunchPage>
