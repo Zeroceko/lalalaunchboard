@@ -1,0 +1,2 @@
+-- Seed data is intentionally empty for now.
+-- CMS-backed checklist content will be sourced from Contentful later.

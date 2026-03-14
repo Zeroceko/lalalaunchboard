@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: .
+      target: dev
+    command: npm run dev
+    environment:
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-https://example.supabase.co}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-demo-anon-key}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-demo-service-role-key}
+      CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID:-demo-space}
+      CONTENTFUL_DELIVERY_TOKEN: ${CONTENTFUL_DELIVERY_TOKEN:-demo-delivery-token}
+      CONTENTFUL_PREVIEW_TOKEN: ${CONTENTFUL_PREVIEW_TOKEN:-demo-preview-token}
+      CONTENTFUL_ENVIRONMENT: ${CONTENTFUL_ENVIRONMENT:-master}
+      HCAPTCHA_SITE_KEY: ${HCAPTCHA_SITE_KEY:-demo-site-key}
+      HCAPTCHA_SECRET_KEY: ${HCAPTCHA_SECRET_KEY:-demo-secret-key}
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+
+  web-test:
+    build:
+      context: .
+      target: tester
+    environment:
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-https://example.supabase.co}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-demo-anon-key}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-demo-service-role-key}
+      CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID:-demo-space}
+      CONTENTFUL_DELIVERY_TOKEN: ${CONTENTFUL_DELIVERY_TOKEN:-demo-delivery-token}
+      CONTENTFUL_PREVIEW_TOKEN: ${CONTENTFUL_PREVIEW_TOKEN:-demo-preview-token}
+      CONTENTFUL_ENVIRONMENT: ${CONTENTFUL_ENVIRONMENT:-master}
+      HCAPTCHA_SITE_KEY: ${HCAPTCHA_SITE_KEY:-demo-site-key}
+      HCAPTCHA_SECRET_KEY: ${HCAPTCHA_SECRET_KEY:-demo-secret-key}
+      HOSTNAME: 0.0.0.0
+    profiles:
+      - test

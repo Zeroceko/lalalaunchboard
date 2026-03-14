@@ -1,0 +1,240 @@
+# Uygulama Planı: Lalalaunchboard
+
+## Genel Bakış
+
+Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboard web uygulaması adım adım inşa edilecektir. Her görev bir öncekinin üzerine inşa edilir; son adımda tüm bileşenler birbirine bağlanır.
+
+## Görevler
+
+- [x] 1. Proje altyapısı ve temel yapılandırma
+  - Next.js 14 App Router projesi oluştur, Tailwind CSS ve shadcn/ui kur
+  - Supabase istemcisini yapılandır (`lib/supabase/client.ts`, `lib/supabase/server.ts`)
+  - Contentful istemcisini yapılandır (`lib/contentful/client.ts`)
+  - Ortam değişkenlerini tanımla (`.env.local.example`)
+  - TypeScript tip tanımlarını oluştur (`types/index.ts`) — `User`, `App`, `ChecklistItemStatus`, `Deliverable`, `RoutineLog`, `CmsChecklistItem`, `CmsRoutineTask`, `WorkspaceProgress`
+  - _Gereksinimler: 1, 2, 3, 4, 8, 10_
+
+- [x] 2. Veritabanı şeması ve RLS politikaları
+  - [x] 2.1 Supabase migration dosyalarını oluştur
+    - `users`, `apps`, `checklist_item_statuses`, `deliverables`, `routine_logs` tablolarını tanımla
+    - Her tablo için RLS'i etkinleştir
+    - _Gereksinimler: 3, 4, 5, 8_
+  - [x] 2.2 RLS politikalarını uygula
+    - `apps`, `checklist_item_statuses`, `deliverables`, `routine_logs` tabloları için `auth.uid() = user_id` politikalarını yaz
+    - _Gereksinimler: 3.6, 5.6_
+  - [ ]* 2.3 RLS politikaları için özellik testi yaz
+    - **Özellik 9: App Silme Sonrası Erişilemezlik**
+    - **Doğrular: Gereksinim 3.6**
+
+- [x] 3. Kimlik doğrulama (Auth) akışı
+  - [x] 3.1 Kayıt ve giriş form bileşenlerini oluştur
+    - `components/auth/RegisterForm.tsx` — email, şifre, şifre tekrarı alanları, hCaptcha entegrasyonu
+    - `components/auth/LoginForm.tsx` — email, şifre alanları
+    - Client-side validasyon: şifre uzunluğu (≥8 karakter), şifre eşleşmesi, email formatı
+    - _Gereksinimler: 1.1, 1.5, 1.6, 2.1_
+  - [ ]* 3.2 Şifre uzunluğu doğrulaması için özellik testi yaz
+    - **Özellik 2: Şifre Uzunluğu Doğrulaması**
+    - **Doğrular: Gereksinim 1.6**
+  - [ ]* 3.3 Şifre eşleşme doğrulaması için özellik testi yaz
+    - **Özellik 3: Şifre Eşleşme Doğrulaması**
+    - **Doğrular: Gereksinim 1.5**
+  - [x] 3.4 Auth API route'larını ve Supabase Auth entegrasyonunu uygula
+    - Kayıt: CAPTCHA token doğrulaması, duplicate email kontrolü, kullanıcı oluşturma
+    - Giriş: kimlik doğrulama, 30 günlük oturum
+    - Çıkış: oturum temizleme
+    - _Gereksinimler: 1.2, 1.3, 1.4, 2.1, 2.3, 2.4_
+  - [ ]* 3.5 CAPTCHA olmadan kayıt reddi için özellik testi yaz
+    - **Özellik 1: CAPTCHA Olmadan Kayıt Reddedilir**
+    - **Doğrular: Gereksinim 1.2**
+  - [ ]* 3.6 Duplicate email reddi için özellik testi yaz
+    - **Özellik 4: Duplicate Email Reddedilir**
+    - **Doğrular: Gereksinim 1.4**
+  - [ ]* 3.7 Auth round-trip için özellik testi yaz
+    - **Özellik 5: Auth Round-Trip (Kayıt → Giriş)**
+    - **Doğrular: Gereksinim 1.3, 2.1, 2.2**
+  - [ ]* 3.8 Çıkış sonrası oturum temizleme için özellik testi yaz
+    - **Özellik 6: Çıkış Sonrası Oturum Temizlenir**
+    - **Doğrular: Gereksinim 2.4**
+  - [x] 3.9 Auth sayfasını oluştur (`app/(auth)/auth/page.tsx`)
+    - Giriş/Kayıt sekme yapısı, başarılı işlem sonrası Dashboard'a yönlendirme
+    - _Gereksinimler: 1.3, 2.1_
+
+- [x] 4. Kontrol noktası — Tüm testlerin geçtiğinden emin ol
+  - Tüm testlerin geçtiğini doğrula, sorular varsa kullanıcıya sor.
+
+- [x] 5. Uygulama (App) yönetimi
+  - [x] 5.1 App CRUD API route'larını uygula
+    - `GET /api/apps` — kullanıcıya ait app listesi
+    - `POST /api/apps` — yeni app oluşturma; Free Plan limiti server-side kontrolü (`checkAppLimit`)
+    - `DELETE /api/apps/[id]` — app ve ilgili tüm verileri silme
+    - `PATCH /api/apps/[id]` — lansman tarihi güncelleme
+    - Zod şema validasyonu tüm route'larda uygulanmalı
+    - _Gereksinimler: 3.1, 3.2, 3.3, 3.4, 3.6_
+  - [ ]* 5.2 App oluşturma round-trip için özellik testi yaz
+    - **Özellik 7: App Oluşturma Round-Trip**
+    - **Doğrular: Gereksinim 3.2, 3.5**
+  - [ ]* 5.3 Plan limiti koruması için özellik testi yaz
+    - **Özellik 8: Plan Limiti Koruması**
+    - **Doğrular: Gereksinim 3.3, 3.4**
+  - [x] 5.4 Dashboard sayfasını ve bileşenlerini oluştur
+    - `app/(app)/dashboard/page.tsx` — app listesi, yeni app butonu
+    - `components/dashboard/AppCard.tsx` — app adı, platform, lansman tarihi, silme butonu
+    - `components/dashboard/AppList.tsx` — app kartlarını listele
+    - Silme onay diyaloğu
+    - _Gereksinimler: 3.5, 3.6_
+  - [x] 5.5 Yeni app oluşturma sayfasını oluştur (`app/(app)/app/new/page.tsx`)
+    - Uygulama adı, platform seçimi (iOS/Android/Web), hedef lansman tarihi alanları
+    - Free Plan kullanıcısı için limit uyarısı ve Pro Plan yükseltme mesajı
+    - _Gereksinimler: 3.1, 3.2, 3.3_
+
+- [x] 6. CMS entegrasyonu ve içerik önbellekleme
+  - [x] 6.1 Contentful API entegrasyonunu uygula
+    - `lib/contentful/client.ts` — ChecklistItem ve RoutineTask içeriklerini çek
+    - Next.js `fetch()` ile `revalidate: 86400` (24 saat) ISR cache
+    - `unstable_cache` ile CMS erişilemez olduğunda fallback
+    - _Gereksinimler: 10.1, 10.2, 10.3, 10.4_
+  - [x] 6.2 CMS API route'larını uygula
+    - `GET /api/cms/checklist-items` — ISR cache ile ChecklistItem listesi
+    - `GET /api/cms/routine-tasks` — ISR cache ile RoutineTask listesi
+    - `POST /api/cms/revalidate` — Contentful webhook handler, `revalidatePath()` ile cache invalidation
+    - _Gereksinimler: 10.3, 10.4_
+  - [ ]* 6.3 CMS içerik round-trip için özellik testi yaz
+    - **Özellik 10: CMS İçerik Round-Trip**
+    - **Doğrular: Gereksinim 4.2, 8.1, 10.1, 10.2**
+
+- [x] 7. Pre-Launch Checklist
+  - [x] 7.1 Checklist API route'larını uygula
+    - `GET /api/apps/[id]/checklist` — CMS item'larını DB durumlarıyla birleştir (`ChecklistItemWithStatus[]`)
+    - `PATCH /api/apps/[id]/checklist/[itemId]` — tamamlanma durumunu güncelle
+    - _Gereksinimler: 4.2, 4.3, 4.4_
+  - [x] 7.2 `calculateProgress` fonksiyonunu uygula (`lib/progress.ts`)
+    - Genel progress ve kategori bazlı progress hesaplama
+    - `round(tamamlanan / toplam * 100)` formülü
+    - _Gereksinimler: 6.1, 6.4_
+  - [ ]* 7.3 Progress hesaplama doğruluğu için özellik testi yaz
+  - [x]* 7.3 Progress hesaplama doğruluğu için özellik testi yaz
+    - **Özellik 12: Progress Hesaplama Doğruluğu**
+    - **Doğrular: Gereksinim 6.1, 6.4, 4.5**
+  - [ ]* 7.4 Checklist toggle round-trip için özellik testi yaz
+    - **Özellik 11: Checklist Toggle Round-Trip**
+    - **Doğrular: Gereksinim 4.3, 4.4**
+  - [x] 7.5 Checklist bileşenlerini oluştur
+    - `components/checklist/ChecklistCategory.tsx` — kategori başlığı, tamamlanan/toplam sayısı, kategori progress yüzdesi
+    - `components/checklist/ChecklistItem.tsx` — checkbox, item başlığı, tıklama ile panel açma
+    - `components/checklist/ProgressBar.tsx` — genel progress göstergesi
+    - `components/shared/CountdownBadge.tsx` — lansman tarihine kalan gün sayısı
+    - _Gereksinimler: 4.1, 4.5, 6.2, 6.3, 7.1_
+  - [ ]* 7.6 Countdown hesaplama doğruluğu için özellik testi yaz
+    - **Özellik 16: Countdown Hesaplama Doğruluğu**
+    - **Doğrular: Gereksinim 7.1, 7.2, 7.3, 7.4**
+  - [x] 7.7 Pre-Launch Checklist sayfasını oluştur (`app/(app)/app/[id]/page.tsx`)
+    - 4 kategori (Store Prep, ASO, Creative, Legal) altında item listesi
+    - Genel progress bar, countdown badge
+    - _Gereksinimler: 4.1, 4.2, 6.2, 7.1_
+
+- [ ] 8. Item Detay Paneli ve Deliverable yönetimi
+  - [x] 8.1 Deliverable API route'larını uygula
+    - `GET /api/apps/[id]/checklist/[itemId]/deliverables`
+    - `POST /api/apps/[id]/checklist/[itemId]/deliverables` — URL validasyonu, dosya boyutu kontrolü
+    - `DELETE /api/apps/[id]/deliverables/[deliverableId]`
+    - Supabase Storage entegrasyonu (dosya yükleme, 10 MB limit)
+    - _Gereksinimler: 5.2, 5.3, 5.4, 5.5, 5.6_
+  - [x]* 8.2 URL doğrulaması için özellik testi yaz
+    - **Özellik 14: URL Doğrulaması**
+    - **Doğrular: Gereksinim 5.3**
+  - [x]* 8.3 Dosya boyutu sınırı için özellik testi yaz
+    - **Özellik 15: Dosya Boyutu Sınırı**
+    - **Doğrular: Gereksinim 5.4**
+  - [x]* 8.4 Deliverable round-trip için özellik testi yaz
+    - **Özellik 13: Deliverable Round-Trip**
+    - **Doğrular: Gereksinim 5.2, 5.5, 5.6**
+  - [x] 8.5 Item Detay Paneli bileşenlerini oluştur
+    - `components/checklist/ItemDetailPanel.tsx` — slide-over panel, CMS rehber metni, araç linkleri, deliverable listesi
+    - `components/checklist/DeliverableForm.tsx` — link/not/dosya ekleme formu, client-side validasyon
+    - Silme onay diyaloğu
+    - _Gereksinimler: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
+
+- [x] 9. Kontrol noktası — Tüm testlerin geçtiğinden emin ol
+  - Tüm testlerin geçtiğini doğrula, sorular varsa kullanıcıya sor.
+
+- [x] 10. Post-Launch haftalik rutin
+  - [x] 10.1 Rutin API route'larını uygula
+    - `GET /api/apps/[id]/routine` — CMS'ten RoutineTask listesi
+    - `GET /api/apps/[id]/routine/logs?week=N` — belirli haftanın log kayıtları
+    - `POST /api/apps/[id]/routine/logs` — RoutineLog oluşturma
+    - _Gereksinimler: 8.1, 8.2, 8.3, 8.4_
+  - [x]* 10.2 RoutineLog round-trip için özellik testi yaz
+    - **Özellik 17: RoutineLog Round-Trip**
+    - **Doğrular: Gereksinim 8.2, 8.3, 8.4**
+  - [x] 10.3 Post-Launch rutin bileşenlerini ve sayfasını oluştur
+    - `components/post-launch/RoutineWeekView.tsx` — haftalık görünüm, tamamlanan/toplam sayısı
+    - `components/post-launch/RoutineTaskItem.tsx` — görev checkbox'ı
+    - `app/(app)/app/[id]/post-launch/page.tsx`
+    - _Gereksinimler: 8.1, 8.2, 8.3, 8.4_
+
+- [x] 11. PDF ve Markdown export
+  - [x] 11.1 `buildExportFileName` fonksiyonunu uygula (`lib/export.ts`)
+    - `{slug}-pre-launch-raporu.{format}` formatı
+    - Slug: küçük harf, boşluklar tire, özel karakterler temizlenir
+    - _Gereksinimler: 9.4_
+  - [x]* 11.2 Export dosya adı formatı için özellik testi yaz
+    - **Özellik 19: Export Dosya Adı Formatı**
+    - **Doğrular: Gereksinim 9.4**
+  - [x] 11.3 Export API route'larını uygula
+    - `GET /api/apps/[id]/export?format=pdf` — `@react-pdf/renderer` ile PDF oluşturma ve stream
+    - `GET /api/apps/[id]/export?format=markdown` — Markdown oluşturma ve stream
+    - Her iki format: workspace adı, genel progress, tüm item durumları, deliverable listesi
+    - Hata durumunda 500 yanıtı
+    - _Gereksinimler: 9.1, 9.2, 9.3, 9.5_
+  - [x]* 11.4 Export içerik bütünlüğü için özellik testi yaz
+    - **Özellik 18: Export İçerik Bütünlüğü**
+    - **Doğrular: Gereksinim 9.2, 9.3**
+  - [x] 11.5 Export sayfasını ve bileşenini oluştur
+    - `app/(app)/app/[id]/export/page.tsx` — format seçimi (PDF / Markdown)
+    - `components/shared/ExportButton.tsx` — indirme tetikleyici, hata toast'u
+    - _Gereksinimler: 9.1, 9.5_
+
+- [x] 12. Bileşenleri birbirine bağlama ve son entegrasyon
+  - [x] 12.1 Route korumasını ve middleware'i uygula
+    - `middleware.ts` — oturum doğrulaması, korumalı route'lara yetkisiz erişimi engelle
+    - _Gereksinimler: 2.4_
+  - [x] 12.2 Hata yönetimini tüm katmanlarda tamamla
+    - API route'larında Zod validasyon hataları için tutarlı hata yanıtları
+    - Client'ta toast bildirimleri (CMS fallback, export hatası, genel hatalar)
+    - _Gereksinimler: 5.3, 5.4, 9.5, 10.4_
+  - [x] 12.3 Navigasyon ve sayfa geçişlerini bağla
+    - Dashboard → Yeni App → Checklist → Post-Launch → Export akışını doğrula
+    - Checklist sayfasında Item Detay Paneli slide-over entegrasyonu
+    - _Gereksinimler: 3.2, 4.6_
+
+- [x] 13. Son kontrol noktası — Tüm testlerin geçtiğinden emin ol
+  - Tüm testlerin geçtiğini doğrula, sorular varsa kullanıcıya sor.
+
+- [ ] 14. MVP polish ve release hazirlik gecisi
+  - [x] 14.1 Ilk gorunen frontend pass'ini tamamla
+    - Landing, auth, dashboard, new app ve workspace ust alanlarini daha urun hissi veren bir arayuze tasarla
+    - Ortak workspace hero / section-nav dili kur
+    - _Gereksinimler: 4.1, 6.2, 7.1, 9.1_
+  - [ ] 14.2 Checklist interaction polish'i derinlestir
+    - `ChecklistItem`, `ItemDetailPanel`, `DeliverableForm` ve ilgili bos/hata durumlarini gelistir
+    - _Gereksinimler: 5.1, 5.2, 5.5, 12.2_
+  - [ ] 14.3 Hosted Supabase live cutover'u tamamla
+    - `supabase link`, `db push` ve hosted smoke sequence'i calistir
+    - _Gereksinimler: 2.1, 2.2, 3.4, 12.1_
+  - [ ]* 14.4 Kalan property-test backlog'unu kapat
+    - `10.2`, `11.4`, `8.2`, `8.3`, `8.4` ve uygun gorulen auth/app-limit property testlerini ekle
+    - _Gereksinimler: 3.3, 3.4, 5.3, 5.4, 8.2, 8.3, 9.2, 9.3_
+  - [ ] 14.5 Live CMS ve runtime entegrasyonunu sertlestir
+    - Gercek Contentful credential'lariyla fallback/live davranisini dogrula
+    - _Gereksinimler: 10.1, 10.2, 10.3, 10.4_
+  - [ ] 14.6 MVP QA ve release hazirligini tamamla
+    - Uctan uca mutlu yol kontrolu, blocker kopyalari, son README/HANDOFF/devlog guncellemeleri
+    - _Gereksinimler: 1.3, 3.2, 4.6, 8.4, 9.5, 12.3_
+
+## Notlar
+
+- `*` ile işaretli görevler isteğe bağlıdır; hızlı MVP için atlanabilir
+- Her görev, izlenebilirlik için ilgili gereksinimlere referans verir
+- Özellik tabanlı testler `fast-check` kütüphanesi ile yazılır (`npm install --save-dev fast-check`)
+- Her özellik testi en az 100 iterasyon çalıştırmalıdır
+- Test etiket formatı: `// Feature: pre-post-launch-os, Property {N}: {özellik_metni}`
