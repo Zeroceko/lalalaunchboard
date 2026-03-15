@@ -20,98 +20,80 @@ export function AppList({ apps, canCreateApp = true }: AppListProps) {
   if (apps.length === 0) {
     return (
       <div className="space-y-6">
-        <LaunchPanel className="overflow-hidden p-0">
-          <div className="grid gap-0 xl:grid-cols-[minmax(0,1fr)_360px]">
-            <div className="space-y-6 bg-[linear-gradient(180deg,hsl(var(--card))/0.98,hsl(var(--surface-default-end))/0.94)] p-8 sm:p-10">
-              <LaunchBadge tone="clay">First workspace</LaunchBadge>
-              <div className="space-y-3">
-                <h3 className="max-w-2xl text-[2.6rem] font-semibold tracking-[-0.06em] text-foreground">
-                  Ilk launch board&apos;unu burada ac.
-                </h3>
-                <p className="max-w-2xl text-base leading-8 text-[hsl(var(--muted-foreground))]">
-                  Ilk app eklendiginde bu alan sadece listeye donusmez. Launch date,
-                  prep ritmi, next move ve board stack&apos;i ayni yuzeyde okunur hale
-                  gelir.
+        <section className="relative overflow-hidden rounded-[2rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-10 backdrop-blur-sm">
+          {/* Subtle background glow */}
+          <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-[100px]" />
+          <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-warning/10 blur-[100px]" />
+
+          <div className="relative grid gap-12 xl:grid-cols-[1fr_360px]">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary uppercase tracking-widest">
+                  İlk Workspace
+                </span>
+                <h1 className="text-4xl font-black tracking-[-0.06em] text-foreground sm:text-5xl">
+                   Lalalaunchboard&apos;a <br />
+                   Hoş Geldin.
+                </h1>
+                <p className="max-w-xl text-base leading-relaxed text-muted-foreground">
+                  Burası senin ürün hazırlık üssün. İlk ürününü eklediğinde; 
+                  checklist hızını, varlık yoğunluğunu ve büyüme ritmini buradan 
+                  izlemeye başlayacaksın.
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {["Prep", "Countdown", "Progress", "Routine"].map((item) => (
-                  <LaunchBadge
-                    key={item}
-                    tone="neutral"
-                    className="bg-[hsl(var(--card))/0.96]"
-                  >
-                    {item}
-                  </LaunchBadge>
-                ))}
-              </div>
-
-              {canCreateApp ? (
-                <Link href="/app/new" className={launchButtonStyles.primary}>
-                  Ilk workspace&apos;i olustur
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/products/new"
+                  className="rounded-xl bg-primary px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] hover:shadow-primary/40 active:scale-[0.98]"
+                >
+                  İlk Board&apos;u Oluştur →
                 </Link>
-              ) : (
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="inline-flex rounded-full border border-[hsl(var(--warning))/0.22] bg-[hsl(var(--amber-soft))/0.95] px-5 py-3 text-sm font-semibold text-[hsl(var(--warning-foreground))]">
-                    Free plan limiti dolu
-                  </div>
-                  <Link href="/pricing" className={launchButtonStyles.secondary}>
-                    Planlari gor
-                  </Link>
-                </div>
-              )}
+                <Link
+                  href="/docs"
+                  className="rounded-xl border border-[hsl(var(--border)/0.8)] bg-[hsl(var(--card)/0.5)] px-8 py-3.5 text-sm font-bold text-foreground transition hover:bg-muted/50"
+                >
+                  Nasıl Çalışır?
+                </Link>
+              </div>
             </div>
 
-            <div className="border-t border-[hsl(var(--border))/0.68] bg-[linear-gradient(180deg,hsl(var(--surface-brand-start))/0.96,hsl(var(--surface-clay-start))/0.92)] p-6 sm:p-8 xl:border-l xl:border-t-0">
-              <LaunchRailList
-                eyebrow="What comes with it"
-                title="Bos degil, hazir bir sistem"
-                description="Ilk board acildigi anda checklist, progress ve post-launch tarafina tasinacak ortak urun yapisi da netlesir."
-                items={[
-                  {
-                    title: "Prep layer",
-                    description:
-                      "Store prep, aciklamalar, gorseller ve son teslimler tek workflow akisinda toplanir.",
-                    badge: "Core",
-                    tone: "brand"
-                  },
-                  {
-                    title: "Timing layer",
-                    description:
-                      "Launch date etrafinda countdown ve oncelik duzeni dogrudan gorunur olur.",
-                    badge: "Momentum",
-                    tone: "warning"
-                  },
-                  {
-                    title: "Growth layer",
-                    description:
-                      "Routine ve export sonradan eklenmis eklenti gibi degil, boardun dogal devami gibi davranir.",
-                    badge: "Next",
-                    tone: "success"
-                  }
-                ]}
-                className="h-full border-none bg-transparent p-0 shadow-none"
-              />
+            <div className="hidden space-y-6 xl:block">
+              <div className="rounded-2xl border border-[hsl(var(--border)/0.4)] bg-muted/20 p-6 backdrop-blur-sm">
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Hazırlık Kiti</p>
+                 <div className="space-y-4">
+                    {[
+                      { icon: "📦", title: "Product Hub", desc: "Tüm varlıkların merkezi" },
+                      { icon: "📈", title: "Growth OS", desc: "Büyüme metrikleri takibi" },
+                      { icon: "🎯", title: "Launch Check", desc: "Hazırlık hızı analizi" }
+                    ].map(i => (
+                      <div key={i.title} className="flex gap-3">
+                         <span className="text-xl">{i.icon}</span>
+                         <div>
+                            <p className="text-xs font-bold">{i.title}</p>
+                            <p className="text-[10px] text-muted-foreground">{i.desc}</p>
+                         </div>
+                      </div>
+                    ))}
+                 </div>
+              </div>
             </div>
           </div>
-        </LaunchPanel>
+        </section>
 
-        <LaunchActionBar
-          eyebrow="Start clean"
-          title="Ilk board ile urunun asil hissini ac"
-          description="Lalalaunchboard'un degeri yeni bir kayit olusturmak degil; launch surecini tek bir komuta alanina cevirmek."
-        >
-          {canCreateApp ? (
-            <Link href="/app/new" className={launchButtonStyles.primary}>
-              Yeni board baslat
-            </Link>
-          ) : (
-            <Link href="/pricing" className={launchButtonStyles.secondary}>
-              Ust pakete gec
-            </Link>
-          )}
-        </LaunchActionBar>
+        <div className="rounded-2xl border border-warning/10 bg-warning/5 p-6 flex items-center justify-between gap-6">
+           <div className="space-y-1">
+              <h3 className="text-sm font-bold text-warning-foreground">Start Clean</h3>
+              <p className="text-xs text-muted-foreground">Lalalaunchboard&apos;un değeri yeni bir kayıt oluşturmak değil; launch sürecini tek bir komuta alanına çevirmek.</p>
+           </div>
+           {canCreateApp ? (
+              <Link href="/app/new" className="rounded-lg bg-warning/10 px-4 py-2 text-xs font-bold text-warning transition hover:bg-warning/20 shrink-0">
+                Hızlı Başlat
+              </Link>
+           ) : (
+             <Link href="/pricing" className="text-xs font-bold text-warning underline">Yükselt</Link>
+           )}
+        </div>
       </div>
     );
   }

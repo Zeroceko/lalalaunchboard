@@ -83,158 +83,153 @@ export default async function AdminPage() {
   }
 
   return (
-    <LaunchPage>
-      <LaunchHero
-        eyebrow="Portfoy yonetim paneli"
-        title="Kullanicinin tum uygulama ilerlemesini tek komuta ekraninda izle."
-        description="Bu yuzey artik Lalalaunchboard'un kendi backlog'unu gostermiyor. Onun yerine platformu kullanan kisinin checklist hizi, deliverable yogunlugu, launch takvimi ve haftalik routine ritmi board bazinda okunuyor."
-        actions={
-          <>
-            <Link href="/dashboard" className={launchButtonStyles.secondary}>
-              Dashboard&apos;a don
-            </Link>
-            <Link href="/app/new" className={launchButtonStyles.primary}>
-              Yeni board olustur
-            </Link>
-          </>
-        }
-        aside={
-          <LaunchRailList
-            eyebrow="Panel mantigi"
-            title="Ic backlog degil, gercek musteri board'lari"
-            description="Bu panel kullanicinin hangi uygulamasina ne zaman mudahale etmesi gerektigini one cikarir."
-            items={managementRail}
-            className="h-full"
-          />
-        }
-      />
-
-      <div className="grid gap-4 lg:grid-cols-4">
-        <LaunchMetricCard
-          label="Active boards"
-          value={snapshot.totals.activeBoards}
-          detail="Panelde izlenen toplam aktif workspace sayisi."
-          tone="brand"
-        />
-        <LaunchMetricCard
-          label="Avg checklist"
-          value={`%${snapshot.totals.averageChecklistProgress}`}
-          detail="Tum board'larin ortalama prep ilerlemesi."
-          tone="success"
-        />
-        <LaunchMetricCard
-          label="Due soon"
-          value={snapshot.totals.dueSoonCount}
-          detail="14 gun veya daha az kalan launch board sayisi."
-          tone="warning"
-        />
-        <LaunchMetricCard
-          label="At risk"
-          value={snapshot.totals.atRiskCount}
-          detail="Takvim ve ilerleme birlikte risk sinyali veren board sayisi."
-          tone={snapshot.totals.atRiskCount > 0 ? "danger" : "clay"}
-        />
+    <div className="h-full overflow-y-auto bg-background">
+      {/* ── Internal Page Header ── */}
+      <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-[hsl(var(--border)/0.55)] bg-[hsl(var(--background)/0.9)] px-6 py-4 backdrop-blur-md">
+        <div>
+          <h1 className="text-[0.9375rem] font-semibold tracking-[-0.025em] text-foreground flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 text-primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 14V8l7-5 7 5v6a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><path d="M8 15v-5h4v5"/></svg>
+            </span>
+            Portföy Yönetimi
+          </h1>
+          <p className="mt-0.5 text-[11.5px] text-[hsl(var(--muted-foreground))] uppercase tracking-tight font-medium">
+             Tüm Uygulama İlerlemeleri · Komuta Merkezi
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+           <Link href="/dashboard" className="rounded-[0.55rem] border border-[hsl(var(--border)/0.7)] bg-[hsl(var(--card)/0.8)] px-3.5 py-1.5 text-[0.8rem] font-medium text-foreground transition hover:bg-[hsl(var(--muted)/0.7)]">
+            Dashboard
+          </Link>
+          <Link href="/app/new" className="flex items-center gap-1.5 rounded-[0.55rem] bg-[hsl(var(--primary))] px-3.5 py-1.5 text-[0.8rem] font-semibold text-white transition hover:bg-[hsl(var(--primary-strong))]">
+            + Yeni Board
+          </Link>
+        </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
-        <LaunchPanel tone="subtle" className="space-y-4">
-          <div className="space-y-2">
-            <LaunchBadge tone="neutral">Deliverables</LaunchBadge>
-            <h2 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
-              Toplanan cikti yogunlugu
-            </h2>
-          </div>
-          <p className="text-4xl font-semibold tracking-[-0.05em] text-foreground">
-            {snapshot.totals.totalDeliverables}
-          </p>
-          <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-            Tum board&apos;larda biriken link, not ve dosya sayisi.
-          </p>
-        </LaunchPanel>
+      <div className="space-y-6 px-6 py-6 max-w-[1600px] mx-auto">
+        <section className="rounded-[1.25rem] border border-[hsl(var(--border)/0.5)] bg-primary/[0.02] p-8 mb-8 backdrop-blur-sm">
+           <div className="max-w-3xl space-y-3">
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase tracking-widest">
+                Portföy Vizyonu
+              </span>
+              <h2 className="text-2xl font-black tracking-[-0.05em] text-foreground">Kullanıcı ilerlemesini tek komuta ekranından izle.</h2>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">
+                Bu yüzey Lalalaunchboard platformundaki tüm ürünlerinizin hazırlık hızını, 
+                varlık yoğunluğunu ve büyüme ritmini tek bir ekranda birleştirir.
+              </p>
+           </div>
+        </section>
 
-        <LaunchPanel tone="subtle" className="space-y-4">
-          <div className="space-y-2">
-            <LaunchBadge tone="neutral">Weekly rhythm</LaunchBadge>
-            <h2 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
-              Routine ortalamasi
-            </h2>
-          </div>
-          <p className="text-4xl font-semibold tracking-[-0.05em] text-foreground">
-            %{snapshot.totals.averageRoutineProgress}
-          </p>
-          <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-            Hafta {snapshot.weekNumber} icin tum board&apos;larin ortalama routine tamamlanma orani.
-          </p>
-        </LaunchPanel>
-
-        <LaunchPanel tone="subtle" className="space-y-4">
-          <div className="space-y-2">
-            <LaunchBadge tone="neutral">Data source</LaunchBadge>
-            <h2 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
-              Icerik kaynagi
-            </h2>
-          </div>
-          <p className="text-sm leading-7 text-[hsl(var(--muted-foreground))]">
-            Checklist:{" "}
-            <span className="font-semibold text-foreground">
-              {snapshot.checklistSource}
-            </span>
-            {"  "}
-            Routine:{" "}
-            <span className="font-semibold text-foreground">
-              {snapshot.routineSource}
-            </span>
-          </p>
-          <p className="text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-            Contentful bagli degilse panel fallback icerikle calismaya devam eder.
-          </p>
-        </LaunchPanel>
-      </div>
-
-      {!snapshot.limit.canCreateApp ? (
-        <LaunchNotice tone="warning">
-          Free plan kapasitesi dolu. Bu panel yeni board acmaktan cok mevcut
-          board&apos;larin onceligini yonetmek icin calisiyor.
-        </LaunchNotice>
-      ) : null}
-
-      <section className="space-y-5">
-        <LaunchSectionHeader
-          eyebrow="Board queue"
-          title="Oncelik sirasiyla portfoy gorunumu"
-          description="Kartlar launch takvimi, checklist ilerlemesi, deliverable yogunlugu ve haftalik routine sinyallerine gore siralanir. En ustteki board genellikle en hizli aksiyon isteyen board'dur."
-          action={
-            <Link href="/dashboard" className={launchButtonStyles.secondary}>
-              Ana dashboard
-            </Link>
-          }
-        />
-
-        {snapshot.boards.length === 0 ? (
-          <LaunchPanel tone="clay" className="space-y-4">
-            <LaunchBadge tone="clay">Portfoy bos</LaunchBadge>
-            <h3 className="text-3xl font-semibold tracking-[-0.04em] text-foreground">
-              Yonetim paneli ilk board ile anlam kazanir.
-            </h3>
-            <p className="max-w-2xl text-base leading-7 text-[hsl(var(--muted-foreground))]">
-              Yeni bir uygulama eklendiginde burasi checklist ilerlemesini,
-              deliverable birikimini ve routine ritmini board bazinda gostermeye
-              baslar.
-            </p>
-            <div>
-              <Link href="/app/new" className={launchButtonStyles.primary}>
-                Ilk board&apos;u olustur
-              </Link>
+        <div className="grid gap-4 lg:grid-cols-4">
+          {[
+            { label: "Active boards", value: snapshot.totals.activeBoards, hint: "Toplam aktif workspace", color: "hsl(var(--primary))" },
+            { label: "Avg checklist", value: `%${snapshot.totals.averageChecklistProgress}`, hint: "Ortalama prep ilerlemesi", color: "hsl(152,58%,42%)" },
+            { label: "Due soon", value: snapshot.totals.dueSoonCount, hint: "14 gün altı kalan board", color: "hsl(38,92%,52%)" },
+            { label: "At risk", value: snapshot.totals.atRiskCount, hint: "Riskli board sayısı", color: "hsl(350,78%,56%)" }
+          ].map((m) => (
+            <div key={m.label} className="flex flex-col gap-2 rounded-[1rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-5 backdrop-blur-sm">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--muted-foreground))]">{m.label}</p>
+              <p className="text-2xl font-black tracking-[-0.06em] text-foreground" style={{ color: m.color }}>{m.value}</p>
+              <p className="text-[10px] text-muted-foreground">{m.hint}</p>
             </div>
-          </LaunchPanel>
-        ) : (
-          <div className="grid gap-6">
-            {snapshot.boards.map((board) => (
-              <PortfolioBoardCard key={board.app.id} board={board} />
-            ))}
+          ))}
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-3">
+          <div className="flex flex-col justify-between rounded-[1rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-6 backdrop-blur-sm">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </span>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Deliverables</p>
+              </div>
+              <h3 className="text-lg font-bold">Toplanan çıktı yoğunluğu</h3>
+              <p className="text-[2.2rem] font-black tracking-[-0.06em]">{snapshot.totals.totalDeliverables}</p>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">Tüm boardlarda biriken link, not ve dosya sayısı.</p>
+          </div>
+
+          <div className="flex flex-col justify-between rounded-[1rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-6 backdrop-blur-sm">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-success-soft text-success">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </span>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Rhythm</p>
+              </div>
+              <h3 className="text-lg font-bold">Routine ortalaması</h3>
+              <p className="text-[2.2rem] font-black tracking-[-0.06em]">%{snapshot.totals.averageRoutineProgress}</p>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">Hafta {snapshot.weekNumber} için tüm boardların ortalama tamamlama oranı.</p>
+          </div>
+
+          <div className="flex flex-col justify-between rounded-[1rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] p-6 backdrop-blur-sm">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Data Source</p>
+              </div>
+              <h3 className="text-lg font-bold">İçerik kaynağı</h3>
+              <div className="space-y-1 py-1">
+                 <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">Checklist</span>
+                    <span className="font-bold">{snapshot.checklistSource}</span>
+                 </div>
+                 <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">Routine</span>
+                    <span className="font-bold">{snapshot.routineSource}</span>
+                 </div>
+              </div>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">Fallback içerik aktif olabilir.</p>
+          </div>
+        </div>
+
+        {!snapshot.limit.canCreateApp && (
+          <div className="rounded-xl border border-warning/20 bg-warning/5 p-4 text-xs text-warning-foreground font-medium flex items-center gap-3">
+             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+             Free plan kapasitesi dolu. Mevcut boardların önceliğini yönetebilirsiniz.
           </div>
         )}
-      </section>
-    </LaunchPage>
+
+        <section className="space-y-6 pt-4">
+          <div className="flex items-end justify-between px-2">
+            <div className="space-y-1">
+               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Board Queue</p>
+               <h3 className="text-xl font-black tracking-[-0.04em]">Öncelik sırasıyla portföy görünümü</h3>
+            </div>
+            <Link href="/dashboard" className="text-xs font-bold text-muted-foreground hover:text-foreground">
+               Ana Dashboard →
+            </Link>
+          </div>
+
+          {snapshot.boards.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-[hsl(var(--border)/0.5)] bg-muted/10 p-20 text-center">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-muted/50 text-muted-foreground">
+                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+              <h3 className="text-2xl font-bold tracking-tight">Yönetim paneli ilk board ile anlam kazanır.</h3>
+              <p className="max-w-md mt-2 text-sm text-muted-foreground">
+                Yeni bir uygulama eklendiğinde burası verileri bazında göstermeye başlar.
+              </p>
+              <Link href="/app/new" className="mt-8 rounded-xl bg-primary px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:scale-[1.02]">
+                İlk board&apos;u oluştur
+              </Link>
+            </div>
+          ) : (
+            <div className="grid gap-6">
+              {snapshot.boards.map((board) => (
+                <PortfolioBoardCard key={board.app.id} board={board} />
+              ))}
+            </div>
+          )}
+        </section>
+
+      </div>
+    </div>
   );
 }

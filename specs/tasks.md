@@ -255,10 +255,16 @@ Next.js 14 (App Router), Supabase ve Contentful CMS kullanılarak Lalalaunchboar
     - [ ] Landing sayfasinda net deger onermesi, sade 3-adim anlatim ve birincil CTA hiyerarsisini analytics ile dogrula
     - Landing'den auth'a gecis olcumlerini event olarak takip et (`landing_to_auth_click_rate`, `auth_start_rate`)
     - _Gereksinimler: 1.3, 2.1, 12.3_
-  - [ ] 15.6 Teknik olmayan kullanici anlama testi (smoke UX)
-    - 3 kisilik hizli testte "urun ne yapiyor?" sorusuna 10 saniye icinde dogru cevap verilebilmesini dogrula
-    - test sonucuna gore landing bilgi yogunlugunu ve CTA copy'sini tekrar duzenle
-    - _Gereksinimler: 12.3_
+  - [x] 16. Growth Tracker & Visual Harmonization
+  - [x] 16.1 Growth Tracker Dashboard (AARRR Metrics)
+    - Veri tablosu, KPI kartları ve funnel görselleştirmesi.
+  - [x] 16.2 Growth Tracker Onboarding
+    - Metrik tanımlama ve başlangıç verisi girişi akışı.
+  - [x] 16.3 Platform Visual Refactor
+    - Admin (Portföy), Ops (Control Tower) ve AppList (Onboarding) sayfalarının yeni premium UI'a taşınması.
+    - Growth Tracker'ın uygulama ana layout'una (AppShell) tam entegrasyonu.
+  - [x] 16.4 Deployment
+    - Vercel build hatalarının (unescaped entities) giderilmesi ve canlıya çıkış.
 
 ## Notlar
 

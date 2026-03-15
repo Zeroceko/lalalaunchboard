@@ -96,8 +96,8 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md">
-      <LaunchPanel tone="tint" className="w-full max-w-2xl shadow-[0_32px_100px_hsl(var(--shadow-color)/0.15)] border-[hsl(var(--border)/0.55)] p-0 overflow-hidden">
+    <div className="flex min-h-[calc(100vh-200px)] items-center justify-center p-4">
+      <LaunchPanel tone="tint" className="w-full max-w-2xl border-[hsl(var(--border)/0.55)] p-0 overflow-hidden shadow-lg">
         
         {/* Header (Internal Style) */}
         <div className="bg-muted/30 px-8 py-5 border-b border-[hsl(var(--border)/0.55)] flex items-center justify-between">
