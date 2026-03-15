@@ -56,26 +56,17 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!hasSignupCaptchaEnv()) {
-    return json(
-      {
-        ok: false,
-        message: authMessages.captchaUnavailable
-      },
-      503
-    );
-  }
-
-  const captchaResult = await verifyCaptchaToken(parsed.data.captchaToken, locale);
-
-  if (!captchaResult.ok) {
-    return json(
-      {
-        ok: false,
-        message: captchaResult.message ?? authMessages.captchaRequired
-      },
-      400
-    );
+  if (hasSignupCaptchaEnv()) {
+    const captchaResult = await verifyCaptchaToken(parsed.data.captchaToken, locale);
+    if (!captchaResult.ok) {
+      return json(
+        {
+          ok: false,
+          message: captchaResult.message ?? authMessages.captchaRequired
+        },
+        400
+      );
+    }
   }
 
   const supabase = createClient();
@@ -84,7 +75,7 @@ export async function POST(request: Request) {
     password: parsed.data.password,
     options: {
       emailRedirectTo: `${getAppUrl()}/app/new`,
-      captchaToken: parsed.data.captchaToken
+      ...(hasSignupCaptchaEnv() && { captchaToken: parsed.data.captchaToken })
     }
   });
 

@@ -13,6 +13,10 @@ function isProtectedRoute(pathname: string) {
   );
 }
 
+function isOnboardingRoute(pathname: string) {
+  return pathname.startsWith("/onboarding");
+}
+
 function isAuthRoute(pathname: string) {
   return pathname.startsWith("/auth");
 }
@@ -73,6 +77,23 @@ export async function updateSession(request: NextRequest) {
     redirectUrl.searchParams.set("next", pathname);
 
     return NextResponse.redirect(redirectUrl);
+  }
+
+  // Workspace kontrolü: auth varsa ama workspace yoksa onboarding'e yönlendir
+  if (user && isProtectedRoute(pathname) && !isOnboardingRoute(pathname)) {
+    const { data: workspaceData } = await supabase
+      .from("workspaces")
+      .select("id")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (!workspaceData) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/onboarding";
+      redirectUrl.search = "";
+      return NextResponse.redirect(redirectUrl);
+    }
   }
 
   if (user && isAuthRoute(pathname)) {

@@ -191,9 +191,51 @@ export async function createAppForUser(
     throw new Error(error.message);
   }
 
+  const app = data as App;
+
+  // Mirror to products table (same UUID) so the product-based UI can find it
+  try {
+    // Ensure workspace exists
+    const { data: ws } = await supabase
+      .from("workspaces")
+      .select("id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    let workspaceId: string | null = ws?.id ?? null;
+
+    if (!workspaceId) {
+      const { data: newWs } = await supabase
+        .from("workspaces")
+        .insert({ user_id: userId })
+        .select("id")
+        .single();
+      workspaceId = newWs?.id ?? null;
+    }
+
+    if (workspaceId) {
+      // Check if product with this ID already exists
+      const { data: existing } = await supabase
+        .from("products")
+        .select("id")
+        .eq("id", app.id)
+        .maybeSingle();
+
+      if (!existing) {
+        await supabase.from("products").insert({
+          id: app.id,
+          workspace_id: workspaceId,
+          product_name: app.name,
+          primary_platform: [app.platform],
+          launch_date: app.launch_date,
+        });
+      }
+    }
+  } catch { /* non-critical — app was created successfully */ }
+
   return {
     ok: true as const,
-    app: data as App,
+    app,
     limit: buildAppLimitState(profile.plan, limit.appCount + 1)
   };
 }

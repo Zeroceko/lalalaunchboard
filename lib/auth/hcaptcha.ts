@@ -12,17 +12,15 @@ export async function verifyCaptchaToken(
   const authMessages = getAuthMessages(locale);
   const secret = getHcaptchaSecretKey();
 
+  if (!secret) {
+    // Local development: captcha env yok, bypass et
+    return { ok: true };
+  }
+
   if (!token) {
     return {
       ok: false,
       message: authMessages.captchaRequired
-    };
-  }
-
-  if (!secret) {
-    return {
-      ok: false,
-      message: authMessages.captchaUnavailable
     };
   }
 
