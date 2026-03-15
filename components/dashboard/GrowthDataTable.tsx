@@ -34,15 +34,39 @@ export function GrowthDataTable({ data, config }: GrowthDataTableProps) {
           <thead className="sticky top-0 z-20 bg-[hsl(var(--card))] text-[9px] font-bold uppercase tracking-widest text-muted-foreground border-b border-[hsl(var(--border)/0.55)]">
             <tr>
                <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">Periyot</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.awareness}</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.acquisition}</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.activation}</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.retention}</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
-               <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.referral}</th>
+               {config.enabledMetrics.awareness && (
+                 <>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.awareness}</th>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
+                 </>
+               )}
+               {config.enabledMetrics.acquisition && (
+                 <>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.acquisition}</th>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
+                 </>
+               )}
+               {config.enabledMetrics.activation && (
+                 <>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.activation}</th>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
+                 </>
+               )}
+               {config.enabledMetrics.retention && (
+                 <>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.retention}</th>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
+                 </>
+               )}
+               {config.enabledMetrics.referral && (
+                 <>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.referral}</th>
+                  <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm border-r border-[hsl(var(--border))/0.3]">Conv.</th>
+                 </>
+               )}
+               {config.enabledMetrics.revenue && (
+                 <th className="px-5 py-3 whitespace-nowrap bg-[hsl(var(--card)/0.95)] backdrop-blur-sm">{config.metricNames.revenue}</th>
+               )}
             </tr>
           </thead>
           <tbody className="divide-y divide-[hsl(var(--border))/0.3]">
@@ -52,27 +76,54 @@ export function GrowthDataTable({ data, config }: GrowthDataTableProps) {
                    {config.interval === "weekly" ? "Hafta" : "Ay"} {row.week}
                 </td>
                 
-                <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.awareness)}</td>
-                <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
-                   {formatPercent(row.conversions.toAcquisition)}
-                </td>
-                
-                <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.acquisition)}</td>
-                <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
-                   {formatPercent(row.conversions.toActivation)}
-                </td>
-                
-                <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.activation)}</td>
-                <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
-                   {formatPercent(row.conversions.toRetention)}
-                </td>
- 
-                 <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.retention)}</td>
-                 <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
-                   {formatPercent(row.conversions.toReferral)}
-                </td>
- 
-                 <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.referral)}</td>
+                 {config.enabledMetrics.awareness && (
+                   <>
+                    <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.awareness)}</td>
+                    <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
+                       {formatPercent(row.conversions.toAcquisition)}
+                    </td>
+                   </>
+                 )}
+                 
+                 {config.enabledMetrics.acquisition && (
+                   <>
+                    <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.acquisition)}</td>
+                    <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
+                       {formatPercent(row.conversions.toActivation)}
+                    </td>
+                   </>
+                 )}
+                 
+                 {config.enabledMetrics.activation && (
+                   <>
+                    <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.activation)}</td>
+                    <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
+                       {formatPercent(row.conversions.toRetention)}
+                    </td>
+                   </>
+                 )}
+  
+                 {config.enabledMetrics.retention && (
+                   <>
+                    <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.retention)}</td>
+                    <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
+                      {formatPercent(row.conversions.toReferral)}
+                    </td>
+                   </>
+                 )}
+  
+                 {config.enabledMetrics.referral && (
+                   <>
+                    <td className="px-5 py-2.5 text-foreground/80">{formatNumber(row.referral)}</td>
+                    <td className="px-5 py-2.5 text-[hsl(var(--primary))] font-bold border-r border-[hsl(var(--border))/0.3]">
+                      {formatPercent(row.conversions.toRevenue)}
+                    </td>
+                   </>
+                 )}
+
+                 {config.enabledMetrics.revenue && (
+                   <td className="px-5 py-2.5 text-foreground/80 font-bold text-success">{formatNumber(row.revenue)}</td>
+                 )}
               </tr>
             ))}
           </tbody>

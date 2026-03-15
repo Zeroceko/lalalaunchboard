@@ -23,11 +23,12 @@ interface GrowthTrendChartProps {
 export function GrowthTrendChart({ data, config }: GrowthTrendChartProps) {
   // Smart Filtering: Only show weeks that have at least one numeric value > 0
   const filteredData = data.filter(item => 
-    item.awareness > 0 || 
-    item.acquisition > 0 || 
-    item.activation > 0 || 
-    item.retention > 0 || 
-    item.referral > 0
+    (config.enabledMetrics.awareness && item.awareness > 0) || 
+    (config.enabledMetrics.acquisition && item.acquisition > 0) || 
+    (config.enabledMetrics.activation && item.activation > 0) || 
+    (config.enabledMetrics.retention && item.retention > 0) || 
+    (config.enabledMetrics.referral && item.referral > 0) ||
+    (config.enabledMetrics.revenue && item.revenue > 0)
   );
 
   // Format data for Recharts
@@ -38,6 +39,7 @@ export function GrowthTrendChart({ data, config }: GrowthTrendChartProps) {
     [config.metricNames.activation]: item.activation,
     [config.metricNames.retention]: item.retention,
     [config.metricNames.referral]: item.referral,
+    [config.metricNames.revenue]: item.revenue,
   }));
 
   if (chartData.length === 0) {
@@ -82,6 +84,10 @@ export function GrowthTrendChart({ data, config }: GrowthTrendChartProps) {
                 <stop offset="5%" stopColor="hsl(var(--warning-foreground))" stopOpacity={0.3}/>
                 <stop offset="95%" stopColor="hsl(var(--warning-foreground))" stopOpacity={0}/>
               </linearGradient>
+              <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(142,71%,45%)" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="hsl(142,71%,45%)" stopOpacity={0}/>
+              </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border)/0.3)" vertical={false} />
             <XAxis 
@@ -116,44 +122,75 @@ export function GrowthTrendChart({ data, config }: GrowthTrendChartProps) {
               iconType="circle"
               wrapperStyle={{ paddingBottom: "20px", fontSize: "12px" }}
             />
-            <Area 
-              type="monotone" 
-              dataKey={config.metricNames.awareness} 
-              stroke="hsl(var(--primary))" 
-              strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#colorAwareness)" 
-              animationDuration={1500}
-            />
-            <Area 
-              type="monotone" 
-              dataKey={config.metricNames.acquisition} 
-              stroke="hsl(var(--info))" 
-              strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#colorAcquisition)" 
-              animationDuration={1500}
-              animationBegin={200}
-            />
-            <Area 
-              type="monotone" 
-              dataKey={config.metricNames.activation} 
-              stroke="hsl(var(--warning-foreground))" 
-              strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#colorActivation)" 
-              animationDuration={1500}
-              animationBegin={400}
-            />
-            <Area 
-              type="monotone" 
-              dataKey={config.metricNames.retention} 
-              stroke="hsl(var(--success))" 
-              strokeWidth={3}
-              fillOpacity={0} 
-              animationDuration={1500}
-              animationBegin={600}
-            />
+            {config.enabledMetrics.awareness && (
+              <Area 
+                type="monotone" 
+                dataKey={config.metricNames.awareness} 
+                stroke="hsl(var(--primary))" 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorAwareness)" 
+                animationDuration={1500}
+              />
+            )}
+            {config.enabledMetrics.acquisition && (
+              <Area 
+                type="monotone" 
+                dataKey={config.metricNames.acquisition} 
+                stroke="hsl(var(--info))" 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorAcquisition)" 
+                animationDuration={1500}
+                animationBegin={200}
+              />
+            )}
+            {config.enabledMetrics.activation && (
+              <Area 
+                type="monotone" 
+                dataKey={config.metricNames.activation} 
+                stroke="hsl(var(--warning-foreground))" 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorActivation)" 
+                animationDuration={1500}
+                animationBegin={400}
+              />
+            )}
+            {config.enabledMetrics.retention && (
+              <Area 
+                type="monotone" 
+                dataKey={config.metricNames.retention} 
+                stroke="hsl(var(--success))" 
+                strokeWidth={3}
+                fillOpacity={0} 
+                animationDuration={1500}
+                animationBegin={600}
+              />
+            )}
+            {config.enabledMetrics.referral && (
+              <Area 
+                type="monotone" 
+                dataKey={config.metricNames.referral} 
+                stroke="hsl(var(--secondary))" 
+                strokeWidth={3}
+                fillOpacity={0} 
+                animationDuration={1500}
+                animationBegin={800}
+              />
+            )}
+            {config.enabledMetrics.revenue && (
+              <Area 
+                type="monotone" 
+                dataKey={config.metricNames.revenue} 
+                stroke="hsl(142,71%,45%)" 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorRevenue)" 
+                animationDuration={1500}
+                animationBegin={1000}
+              />
+            )}
           </AreaChart>
         </ResponsiveContainer>
       </div>

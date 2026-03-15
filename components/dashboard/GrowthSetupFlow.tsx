@@ -31,6 +31,14 @@ export type GrowthConfig = {
     referral: string;
     revenue: string;
   };
+  enabledMetrics: {
+    awareness: boolean;
+    acquisition: boolean;
+    activation: boolean;
+    retention: boolean;
+    referral: boolean;
+    revenue: boolean;
+  };
   targetGrowth: number;
 };
 
@@ -81,6 +89,14 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
       referral: "Referral",
       revenue: "Revenue",
     },
+    enabledMetrics: {
+      awareness: true,
+      acquisition: true,
+      activation: true,
+      retention: true,
+      referral: true,
+      revenue: true,
+    },
     targetGrowth: 5
   });
 
@@ -93,6 +109,16 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
       metricNames: {
         ...prev.metricNames,
         [key]: value
+      }
+    }));
+  };
+
+  const toggleMetric = (key: keyof GrowthConfig["enabledMetrics"]) => {
+    setConfig(prev => ({
+      ...prev,
+      enabledMetrics: {
+        ...prev.enabledMetrics,
+        [key]: !prev.enabledMetrics[key]
       }
     }));
   };
@@ -156,52 +182,106 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
 
               <div className="divide-y divide-[hsl(var(--border)/0.4)]">
                 <FieldRow label="Awareness" hint="How do people first hear about you?">
-                  <LaunchInput 
-                    placeholder="e.g. Website Visits"
-                    value={config.metricNames.awareness} 
-                    onChange={(e) => handleMetricNameChange("awareness", e.target.value)}
-                    className="max-w-md"
-                  />
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="checkbox" 
+                      checked={config.enabledMetrics.awareness} 
+                      onChange={() => toggleMetric("awareness")}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <LaunchInput 
+                      placeholder="e.g. Website Visits"
+                      value={config.metricNames.awareness} 
+                      onChange={(e) => handleMetricNameChange("awareness", e.target.value)}
+                      disabled={!config.enabledMetrics.awareness}
+                      className="max-w-md"
+                    />
+                  </div>
                 </FieldRow>
                 <FieldRow label="Acquisition" hint="Who is actually checking you out?">
-                  <LaunchInput 
-                    placeholder="e.g. Signups"
-                    value={config.metricNames.acquisition} 
-                    onChange={(e) => handleMetricNameChange("acquisition", e.target.value)}
-                    className="max-w-md"
-                  />
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="checkbox" 
+                      checked={config.enabledMetrics.acquisition} 
+                      onChange={() => toggleMetric("acquisition")}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <LaunchInput 
+                      placeholder="e.g. Signups"
+                      value={config.metricNames.acquisition} 
+                      onChange={(e) => handleMetricNameChange("acquisition", e.target.value)}
+                      disabled={!config.enabledMetrics.acquisition}
+                      className="max-w-md"
+                    />
+                  </div>
                 </FieldRow>
                 <FieldRow label="Activation" hint="When do they see the core value?">
-                  <LaunchInput 
-                    placeholder="e.g. First Content Created"
-                    value={config.metricNames.activation} 
-                    onChange={(e) => handleMetricNameChange("activation", e.target.value)}
-                    className="max-w-md"
-                  />
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="checkbox" 
+                      checked={config.enabledMetrics.activation} 
+                      onChange={() => toggleMetric("activation")}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <LaunchInput 
+                      placeholder="e.g. First Content Created"
+                      value={config.metricNames.activation} 
+                      onChange={(e) => handleMetricNameChange("activation", e.target.value)}
+                      disabled={!config.enabledMetrics.activation}
+                      className="max-w-md"
+                    />
+                  </div>
                 </FieldRow>
                 <FieldRow label="Retention" hint="How many are coming back?">
-                  <LaunchInput 
-                    placeholder="e.g. 30-Day Active Users"
-                    value={config.metricNames.retention} 
-                    onChange={(e) => handleMetricNameChange("retention", e.target.value)}
-                    className="max-w-md"
-                  />
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="checkbox" 
+                      checked={config.enabledMetrics.retention} 
+                      onChange={() => toggleMetric("retention")}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <LaunchInput 
+                      placeholder="e.g. 30-Day Active Users"
+                      value={config.metricNames.retention} 
+                      onChange={(e) => handleMetricNameChange("retention", e.target.value)}
+                      disabled={!config.enabledMetrics.retention}
+                      className="max-w-md"
+                    />
+                  </div>
                 </FieldRow>
                 <FieldRow label="Referral" hint="Are they inviting others?">
-                  <LaunchInput 
-                    placeholder="e.g. Invites Sent"
-                    value={config.metricNames.referral} 
-                    onChange={(e) => handleMetricNameChange("referral", e.target.value)}
-                    className="max-w-md"
-                  />
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="checkbox" 
+                      checked={config.enabledMetrics.referral} 
+                      onChange={() => toggleMetric("referral")}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <LaunchInput 
+                      placeholder="e.g. Invites Sent"
+                      value={config.metricNames.referral} 
+                      onChange={(e) => handleMetricNameChange("referral", e.target.value)}
+                      disabled={!config.enabledMetrics.referral}
+                      className="max-w-md"
+                    />
+                  </div>
                 </FieldRow>
                 <FieldRow label="Revenue" hint="What is the financial metric?">
-                  <LaunchInput 
-                    placeholder="e.g. Monthly Recurring Revenue ($)"
-                    value={config.metricNames.revenue} 
-                    onChange={(e) => handleMetricNameChange("revenue", e.target.value)}
-                    className="max-w-md"
-                  />
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="checkbox" 
+                      checked={config.enabledMetrics.revenue} 
+                      onChange={() => toggleMetric("revenue")}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <LaunchInput 
+                      placeholder="e.g. Monthly Recurring Revenue ($)"
+                      value={config.metricNames.revenue} 
+                      onChange={(e) => handleMetricNameChange("revenue", e.target.value)}
+                      disabled={!config.enabledMetrics.revenue}
+                      className="max-w-md"
+                    />
+                  </div>
                 </FieldRow>
                 <FieldRow label="Target Growth (%)" hint="What is your desired week-over-week growth goal?">
                   <div className="flex items-center gap-4">

@@ -7,7 +7,7 @@ import {
   LaunchButton,
   launchButtonStyles
 } from "@/components/ui/LaunchKit";
-import { growthMetrics as initialData, type GrowthMetric } from "@/lib/data/growth-metrics";
+import { type GrowthMetric } from "@/lib/data/growth-metrics";
 import { GrowthFunnelCards } from "@/components/dashboard/GrowthFunnelCards";
 import { GrowthTrendChart } from "@/components/dashboard/GrowthTrendChart";
 import { GrowthDataTable } from "@/components/dashboard/GrowthDataTable";
@@ -15,56 +15,133 @@ import { GrowthInputForm } from "@/components/dashboard/GrowthInputForm";
 import { GrowthSetupFlow, type GrowthConfig } from "@/components/dashboard/GrowthSetupFlow";
 import { Plus, Calendar, Filter, Share2, Download as DownloadIcon, Zap, Target, TrendingUp, Info } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/shared/ToastProvider";
 
 export default function GrowthDashboardPage() {
-  const [data, setData] = useState<GrowthMetric[]>(initialData);
+  const supabase = createClient();
+  const { pushToast } = useToast();
+  
+  const [products, setProducts] = useState<{ id: string; name: string }[]>([]);
+  const [activeProductId, setActiveProductId] = useState<string | null>(null);
+  const [data, setData] = useState<GrowthMetric[]>([]);
   const [config, setConfig] = useState<GrowthConfig | null>(null);
   const [isInputOpen, setIsInputOpen] = useState(false);
   const [dateFilter, setDateFilter] = useState("all");
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load from localStorage on mount
+  // 1. Fetch products on mount
   useEffect(() => {
-    const savedConfig = localStorage.getItem("lala_growth_config");
-    const savedData = localStorage.getItem("lala_growth_data");
-    
-    if (savedConfig) {
-      try {
-        setConfig(JSON.parse(savedConfig));
-      } catch (e) {
-        console.error("Failed to parse growth config", e);
+    async function fetchProducts() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: productsData, error } = await supabase
+        .from("products")
+        .select("id, product_name")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching products:", error);
+        return;
+      }
+
+      if (productsData && productsData.length > 0) {
+        setProducts(productsData.map(p => ({ id: p.id, name: p.product_name })));
+        setActiveProductId(productsData[0].id);
       }
     }
-    
-    if (savedData) {
+    fetchProducts();
+  }, [supabase]);
+
+  // 2. Fetch Growth Config and Metrics when activeProductId changes
+  useEffect(() => {
+    if (!activeProductId) {
+      if (!isLoading) setIsLoading(false);
+      return;
+    }
+
+    async function fetchGrowthData() {
+      setIsLoading(true);
       try {
-        const parsedData = JSON.parse(savedData);
-        if (parsedData.length > 0) {
-          setData(parsedData);
+        // Fetch Config
+        const { data: configData, error: configError } = await supabase
+          .from("growth_configs")
+          .select("*")
+          .eq("product_id", activeProductId)
+          .maybeSingle();
+
+        if (configError) throw configError;
+        
+        if (configData) {
+          setConfig({
+            interval: configData.interval as "weekly" | "monthly",
+            metricNames: configData.metric_names,
+            enabledMetrics: configData.enabled_metrics,
+            targetGrowth: Number(configData.target_growth)
+          });
+        } else {
+          setConfig(null); // Trigger setup flow
         }
-      } catch (e) {
-        console.error("Failed to parse growth data", e);
+
+        // Fetch Metrics
+        const { data: metricsData, error: metricsError } = await supabase
+          .from("growth_metrics")
+          .select("*")
+          .eq("product_id", activeProductId)
+          .order("week", { ascending: true });
+
+        if (metricsError) throw metricsError;
+
+        if (metricsData) {
+          const transformed: GrowthMetric[] = metricsData.map(m => calculateWithConversions({
+            week: m.week,
+            awareness: m.awareness,
+            acquisition: m.acquisition,
+            activation: m.activation,
+            retention: m.retention,
+            referral: m.referral,
+            revenue: Number(m.revenue)
+          }));
+          setData(transformed);
+        } else {
+          setData([]);
+        }
+      } catch (err) {
+        console.error("Error fetching growth data:", err);
+        pushToast({ title: "Veriler yüklenemedi", variant: "destructive" });
+      } finally {
+        setIsLoading(false);
       }
     }
-    
-    setIsHydrated(true);
-  }, []);
 
-  // Save to localStorage whenever state changes
-  useEffect(() => {
-    if (isHydrated && config) {
-      localStorage.setItem("lala_growth_config", JSON.stringify(config));
+    fetchGrowthData();
+  }, [activeProductId, supabase, pushToast]);
+
+  const handleSetupComplete = async (newConfig: GrowthConfig) => {
+    if (!activeProductId) return;
+
+    try {
+      const { error } = await supabase
+        .from("growth_configs")
+        .upsert({
+          product_id: activeProductId,
+          interval: newConfig.interval,
+          metric_names: newConfig.metricNames,
+          enabled_metrics: newConfig.enabledMetrics,
+          target_growth: newConfig.targetGrowth,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+      setConfig(newConfig);
+      pushToast({ title: "Kurulum başarıyla tamamlandı", variant: "success" });
+    } catch (err) {
+      console.error("Error saving growth config:", err);
+      pushToast({ title: "Kurulum kaydedilemedi", variant: "destructive" });
     }
-  }, [config, isHydrated]);
-
-  useEffect(() => {
-    if (isHydrated && data.length > 0) {
-      localStorage.setItem("lala_growth_data", JSON.stringify(data));
-    }
-  }, [data, isHydrated]);
-
-  const handleSetupComplete = (newConfig: GrowthConfig) => {
-    setConfig(newConfig);
   };
 
   // Calculate conversions for new data entries
@@ -81,18 +158,42 @@ export default function GrowthDashboardPage() {
     };
   };
 
-  const handleSaveMetrics = (newMetrics: Omit<GrowthMetric, "conversions">) => {
-    const calculated = calculateWithConversions(newMetrics);
-    setData(prev => {
-      const existingIndex = prev.findIndex(item => item.week === calculated.week);
-      if (existingIndex >= 0) {
-        const updated = [...prev];
-        updated[existingIndex] = calculated;
-        return updated;
-      }
-      return [...prev, calculated].sort((a, b) => a.week - b.week);
-    });
-    setIsInputOpen(false);
+  const handleSaveMetrics = async (newMetrics: Omit<GrowthMetric, "conversions">) => {
+    if (!activeProductId) return;
+
+    try {
+      const { error } = await supabase
+        .from("growth_metrics")
+        .upsert({
+          product_id: activeProductId,
+          week: newMetrics.week,
+          awareness: newMetrics.awareness,
+          acquisition: newMetrics.acquisition,
+          activation: newMetrics.activation,
+          retention: newMetrics.retention,
+          referral: newMetrics.referral,
+          revenue: newMetrics.revenue,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      const calculated = calculateWithConversions(newMetrics);
+      setData(prev => {
+        const existingIndex = prev.findIndex(item => item.week === calculated.week);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = calculated;
+          return updated;
+        }
+        return [...prev, calculated].sort((a, b) => a.week - b.week);
+      });
+      setIsInputOpen(false);
+      pushToast({ title: "Veriler kaydedildi", variant: "success" });
+    } catch (err) {
+      console.error("Error saving growth metrics:", err);
+      pushToast({ title: "Veriler kaydedilemedi", variant: "destructive" });
+    }
   };
 
   const activeData = useMemo(() => {
@@ -101,30 +202,98 @@ export default function GrowthDashboardPage() {
   }, [data, dateFilter]);
 
   const latestData = useMemo(() => {
-    const sorted = [...activeData].sort((a, b) => b.week - a.week);
+    if (data.length === 0) return null;
+    const sorted = [...data].sort((a, b) => b.week - a.week);
     return sorted[0];
-  }, [activeData]);
+  }, [data]);
 
-  if (!isHydrated) {
-    return null; // or a skeleton loader
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest">Yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center bg-background px-6">
+        <LaunchPanel className="max-w-md text-center p-8 space-y-6 border-dashed border-2">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center">
+            <Plus className="w-8 h-8 text-muted-foreground/40" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-foreground">Henüz bir ürününüz yok</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Büyüme takibi yapabilmek için önce bir ürün (board) oluşturmanız gerekiyor.
+            </p>
+          </div>
+          <Link 
+            href="/products/new" 
+            className={cn(launchButtonStyles.primary, "w-full")}
+          >
+            Ürün Oluştur
+          </Link>
+        </LaunchPanel>
+      </div>
+    );
   }
 
   if (!config) {
-    return <GrowthSetupFlow onComplete={handleSetupComplete} />;
+    return (
+      <div className="relative h-full">
+        {products.length > 1 && (
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-card/80 backdrop-blur-md px-4 py-2 rounded-full border shadow-sm">
+             <span className="text-[10px] font-bold text-muted-foreground/60 uppercase">Kurulum Yapılan Ürün:</span>
+             <select 
+                value={activeProductId || ""} 
+                onChange={(e) => setActiveProductId(e.target.value)}
+                className="bg-transparent text-[11px] font-bold text-foreground focus:outline-none cursor-pointer"
+              >
+                {products.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+          </div>
+        )}
+        <GrowthSetupFlow onComplete={handleSetupComplete} />
+      </div>
+    );
   }
 
   return (
     <div className="h-full overflow-y-auto bg-background text-foreground">
       {/* ── Internal Page Header (Matching Dashboard) ── */}
       <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-[hsl(var(--border)/0.55)] bg-[hsl(var(--background)/0.9)] px-6 py-4 backdrop-blur-md">
-        <div>
-          <h1 className="text-[0.9375rem] font-semibold tracking-[-0.025em] text-foreground flex items-center gap-2">
-            <Target className="w-4 h-4 text-primary" />
-            Growth OS
-          </h1>
-          <p className="mt-0.5 text-[11.5px] text-[hsl(var(--muted-foreground))] uppercase tracking-tight font-medium">
-             Product Metrics · {config.interval.toUpperCase()} Tracking
-          </p>
+        <div className="flex items-center gap-6">
+          <div>
+            <h1 className="text-[0.9375rem] font-semibold tracking-[-0.025em] text-foreground flex items-center gap-2">
+              <Target className="w-4 h-4 text-primary" />
+              Growth OS
+            </h1>
+            <p className="mt-0.5 text-[11.5px] text-[hsl(var(--muted-foreground))] uppercase tracking-tight font-medium">
+               Product Metrics · {config.interval.toUpperCase()} Tracking
+            </p>
+          </div>
+
+          {/* Product Selector */}
+          {products.length > 1 && (
+            <div className="flex items-center gap-2 border-l border-[hsl(var(--border))/0.4] pl-6 h-8">
+              <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">Ürün:</span>
+              <select 
+                value={activeProductId || ""} 
+                onChange={(e) => setActiveProductId(e.target.value)}
+                className="bg-transparent text-[12px] font-semibold text-foreground focus:outline-none cursor-pointer border-b border-transparent hover:border-primary/40 transition-colors"
+              >
+                {products.map(p => (
+                  <option key={p.id} value={p.id} className="bg-background">{p.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {/* Internal-style Control Bar items integrated into header */}

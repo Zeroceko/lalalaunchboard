@@ -429,10 +429,11 @@ Her flow release oncesi su kontrollerden gecmeli:
 
 ## Git & Push Policy
 
-Tüm teknik geliştirmeler için geçerli kural:
+Tüm teknik geliştirmeler için %100 bağlayıcı kural:
 
-- **Özet Onayı**: GitHub'a herhangi bir push işlemi yapmadan önce, yapılan değişikliklerin kısa bir özeti (summary) sunulmalıdır.
-- **Kullanıcı Onayı**: Push işlemi ancak kullanıcının açık onayı alındıktan sonra gerçekleştirilebilir.
+- **Önce Lokal**: Tüm değişiklikler önce yerelde (localhost) hazırlanacak ve sunulacaktır.
+- **Yazılı Onay Şart**: Kullanıcı "Tamam, GitHub'a pushla" veya "Canlıya al" şeklinde **yazılı** bir mesaj göndermedikçe asla push işlemi yapılmayacaktır.
+- **Buton Onayı Yetmez**: Arayüzdeki "Accept" butonuna basılması veya planın onaylanması, push izni olarak kabul **edilmez**. Sadece yazılı komut beklenir.
 
 ## Product Ritual (Weekly)
 

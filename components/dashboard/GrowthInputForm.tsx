@@ -89,83 +89,95 @@ export function GrowthInputForm({ onSave, onCancel, initialWeek, config }: Growt
               />
             </FieldRow>
 
-            <FieldRow 
-              label="1. Awareness" 
-              hint={config.metricNames.awareness}
-            >
-              <LaunchInput 
-                name="awareness"
-                type="number"
-                value={formData.awareness}
-                onChange={handleChange}
-                className="max-w-[180px]"
-              />
-            </FieldRow>
+            {config.enabledMetrics.awareness && (
+              <FieldRow 
+                label="1. Awareness" 
+                hint={config.metricNames.awareness}
+              >
+                <LaunchInput 
+                  name="awareness"
+                  type="number"
+                  value={formData.awareness}
+                  onChange={handleChange}
+                  className="max-w-[180px]"
+                />
+              </FieldRow>
+            )}
 
-            <FieldRow 
-              label="2. Acquisition" 
-              hint={config.metricNames.acquisition}
-            >
-              <LaunchInput 
-                name="acquisition"
-                type="number"
-                value={formData.acquisition}
-                onChange={handleChange}
-                className="max-w-[180px]"
-              />
-            </FieldRow>
+            {config.enabledMetrics.acquisition && (
+              <FieldRow 
+                label="2. Acquisition" 
+                hint={config.metricNames.acquisition}
+              >
+                <LaunchInput 
+                  name="acquisition"
+                  type="number"
+                  value={formData.acquisition}
+                  onChange={handleChange}
+                  className="max-w-[180px]"
+                />
+              </FieldRow>
+            )}
 
-            <FieldRow 
-              label="3. Activation" 
-              hint={config.metricNames.activation}
-            >
-              <LaunchInput 
-                name="activation"
-                type="number"
-                value={formData.activation}
-                onChange={handleChange}
-                className="max-w-[180px]"
-              />
-            </FieldRow>
+            {config.enabledMetrics.activation && (
+              <FieldRow 
+                label="3. Activation" 
+                hint={config.metricNames.activation}
+              >
+                <LaunchInput 
+                  name="activation"
+                  type="number"
+                  value={formData.activation}
+                  onChange={handleChange}
+                  className="max-w-[180px]"
+                />
+              </FieldRow>
+            )}
 
-            <FieldRow 
-              label="4. Retention" 
-              hint={config.metricNames.retention}
-            >
-              <LaunchInput 
-                name="retention"
-                type="number"
-                value={formData.retention}
-                onChange={handleChange}
-                className="max-w-[180px]"
-              />
-            </FieldRow>
+            {config.enabledMetrics.retention && (
+              <FieldRow 
+                label="4. Retention" 
+                hint={config.metricNames.retention}
+              >
+                <LaunchInput 
+                  name="retention"
+                  type="number"
+                  value={formData.retention}
+                  onChange={handleChange}
+                  className="max-w-[180px]"
+                />
+              </FieldRow>
+            )}
 
-            <FieldRow 
-              label="5. Referral" 
-              hint={config.metricNames.referral}
-            >
-              <LaunchInput 
-                name="referral"
-                type="number"
-                value={formData.referral}
-                onChange={handleChange}
-                className="max-w-[180px]"
-              />
-            </FieldRow>
+            {config.enabledMetrics.referral && (
+              <FieldRow 
+                label="5. Referral" 
+                hint={config.metricNames.referral}
+              >
+                <LaunchInput 
+                  name="referral"
+                  type="number"
+                  value={formData.referral}
+                  onChange={handleChange}
+                  className="max-w-[180px]"
+                />
+              </FieldRow>
+            )}
 
-            <FieldRow 
-              label="Revenue ($)" 
-              hint="Haftalık toplam gelir."
-            >
-              <LaunchInput 
-                name="revenue"
-                type="number"
-                value={formData.revenue}
-                onChange={handleChange}
-                className="max-w-[180px]"
-              />
-            </FieldRow>
+            {config.enabledMetrics.revenue && (
+              <FieldRow 
+                label="Revenue ($)" 
+                hint={config.metricNames.revenue}
+              >
+                <LaunchInput 
+                  name="revenue"
+                  type="number"
+                  value={formData.revenue}
+                  onChange={handleChange}
+                  className="max-w-[180px]"
+                />
+              </FieldRow>
+            )}
           </div>
 
           <div className="mt-8 pt-4 border-t border-[hsl(var(--border)/0.3)] flex items-center justify-end gap-3">

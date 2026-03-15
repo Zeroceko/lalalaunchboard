@@ -10,7 +10,8 @@ import {
   Zap, 
   RotateCcw, 
   Share2,
-  TrendingUp 
+  TrendingUp,
+  CircleDollarSign 
 } from "lucide-react";
 
 interface GrowthFunnelCardsProps {
@@ -26,6 +27,7 @@ const funnelStages = [
   { id: "activation", label: "Activation", icon: Zap, color: "hsl(152,58%,42%)", convKey: "toActivation" },
   { id: "retention", label: "Retention", icon: RotateCcw, color: "hsl(38,92%,52%)", convKey: "toRetention" },
   { id: "referral", label: "Referral", icon: Share2, color: "hsl(350,78%,56%)", convKey: "toReferral" },
+  { id: "revenue", label: "Revenue", icon: CircleDollarSign, color: "hsl(142,71%,45%)", convKey: "toRevenue" },
 ];
 
 export function GrowthFunnelCards({ latestData, allData, config, className }: GrowthFunnelCardsProps) {
@@ -49,6 +51,10 @@ export function GrowthFunnelCards({ latestData, allData, config, className }: Gr
   };
 
   const growthStats = getGrowthStats();
+
+  const activeStages = funnelStages.filter(stage => 
+    config.enabledMetrics[stage.id as keyof typeof config.enabledMetrics]
+  );
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -84,8 +90,15 @@ export function GrowthFunnelCards({ latestData, allData, config, className }: Gr
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-        {funnelStages.map((stage, index) => {
+      <div className={cn(
+        "grid grid-cols-1 gap-4",
+        activeStages.length === 6 ? "md:grid-cols-3 lg:grid-cols-6" : 
+        activeStages.length === 5 ? "md:grid-cols-5" :
+        activeStages.length === 4 ? "md:grid-cols-4" :
+        activeStages.length === 3 ? "md:grid-cols-3" :
+        "md:grid-cols-2"
+      )}>
+        {activeStages.map((stage, index) => {
           const Icon = stage.icon;
           const value = latestData[stage.id as keyof GrowthMetric] as number;
           const conversion = stage.convKey ? latestData.conversions[stage.convKey as keyof typeof latestData.conversions] : null;
