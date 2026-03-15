@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { 
   LaunchBadge, 
   LaunchPanel, 
@@ -21,6 +21,47 @@ export default function GrowthDashboardPage() {
   const [config, setConfig] = useState<GrowthConfig | null>(null);
   const [isInputOpen, setIsInputOpen] = useState(false);
   const [dateFilter, setDateFilter] = useState("all");
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedConfig = localStorage.getItem("lala_growth_config");
+    const savedData = localStorage.getItem("lala_growth_data");
+    
+    if (savedConfig) {
+      try {
+        setConfig(JSON.parse(savedConfig));
+      } catch (e) {
+        console.error("Failed to parse growth config", e);
+      }
+    }
+    
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        if (parsedData.length > 0) {
+          setData(parsedData);
+        }
+      } catch (e) {
+        console.error("Failed to parse growth data", e);
+      }
+    }
+    
+    setIsHydrated(true);
+  }, []);
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    if (isHydrated && config) {
+      localStorage.setItem("lala_growth_config", JSON.stringify(config));
+    }
+  }, [config, isHydrated]);
+
+  useEffect(() => {
+    if (isHydrated && data.length > 0) {
+      localStorage.setItem("lala_growth_data", JSON.stringify(data));
+    }
+  }, [data, isHydrated]);
 
   const handleSetupComplete = (newConfig: GrowthConfig) => {
     setConfig(newConfig);
@@ -63,6 +104,10 @@ export default function GrowthDashboardPage() {
     const sorted = [...activeData].sort((a, b) => b.week - a.week);
     return sorted[0];
   }, [activeData]);
+
+  if (!isHydrated) {
+    return null; // or a skeleton loader
+  }
 
   if (!config) {
     return <GrowthSetupFlow onComplete={handleSetupComplete} />;
