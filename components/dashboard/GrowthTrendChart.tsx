@@ -42,8 +42,8 @@ export function GrowthTrendChart({ data, config }: GrowthTrendChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <LaunchPanel tone="subtle" className="flex items-center justify-center h-[400px]">
-        <p className="text-muted-foreground">No data logged yet. Start by logging your first week&apos;s metrics.</p>
+      <LaunchPanel tone="subtle" className="flex items-center justify-center h-[400px] border-dashed border-2">
+        <p className="text-muted-foreground font-medium">Henüz veri kaydı bulunmuyor. İlk periyot verilerini girerek grafik analizini başlatın.</p>
       </LaunchPanel>
     );
   }

@@ -18,6 +18,14 @@ export function GrowthDataTable({ data, config }: GrowthDataTableProps) {
     return `${num.toFixed(1)}%`;
   };
 
+  if (data.length === 0) {
+    return (
+      <div className="rounded-[1.25rem] border-2 border-dashed border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.4)] p-12 text-center">
+        <p className="text-muted-foreground font-medium text-xs uppercase tracking-widest">Geçmiş kayıt bulunmuyor</p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-[1.25rem] border border-[hsl(var(--border)/0.55)] bg-[hsl(var(--card)/0.85)] overflow-hidden">
       {/* Scrollable area with max height to save space */}
