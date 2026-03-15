@@ -3,7 +3,9 @@ import Link from "next/link";
 import { AppList } from "@/components/dashboard/AppList";
 import { launchButtonStyles } from "@/components/ui/LaunchKit";
 import { requireSessionContext } from "@/lib/auth/session";
-import type { App } from "@/types";
+import { getProductSnapshot } from "@/lib/products/service";
+import { createClient } from "@/lib/supabase/server";
+import type { App, Product } from "@/types";
 
 // ── Inline SVG Sparkline ─────────────────────────────────────────────────────
 function Sparkline({
@@ -222,10 +224,19 @@ function KpiCard({
 }
 
 // ── Page ─────────────────────────────────────────────────────────────────────
+const PLATFORM_LABELS: Record<string, string> = { ios: "iOS", android: "Android", web: "Web" };
+
 export default async function DashboardPage() {
-  const { supabase, user } = await requireSessionContext();
+  const { user } = await requireSessionContext();
+  const supabase = createClient();
   let apps: App[] = [];
-  let canCreate = true;
+
+  // Fetch real products
+  let products: Product[] = [];
+  try {
+    const snapshot = await getProductSnapshot(supabase, user.id);
+    products = snapshot.products;
+  } catch { /* fall back */ }
 
   try {
     const { data } = await supabase
@@ -234,22 +245,27 @@ export default async function DashboardPage() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
     apps = (data as App[]) ?? [];
-  } catch {
-    /* silently fall back to sample UI */
-  }
+  } catch { /* silently fall back */ }
 
-  // Pick primary app (first or synthetic)
+  // Pick primary: first product, else first app, else synthetic
+  const primaryProduct = products[0] ?? null;
   const primaryApp: App | null = apps[0] ?? {
     id: "demo",
     user_id: user.id,
-    name: "FocusFlow",
-    platform: "ios" as const,
-    launch_date: "2026-04-14",
+    name: primaryProduct?.product_name ?? "FocusFlow",
+    platform: (primaryProduct?.primary_platform?.[0] ?? "ios") as "ios" | "android" | "web",
+    launch_date: primaryProduct?.launch_date ?? "2026-04-14",
     created_at: new Date().toISOString()
   };
 
+  const primaryName = primaryProduct?.product_name ?? primaryApp.name;
+  const primaryPlatformLabel = primaryProduct
+    ? (primaryProduct.primary_platform ?? []).map(p => PLATFORM_LABELS[p] ?? p).join(" · ")
+    : primaryApp.platform.toUpperCase();
+  const primaryLaunchDate = primaryProduct?.launch_date ?? primaryApp.launch_date;
+
   const daysLeft = Math.ceil(
-    (new Date(primaryApp.launch_date).getTime() - Date.now()) / 86400000
+    (new Date(primaryLaunchDate).getTime() - Date.now()) / 86400000
   );
 
   return (
@@ -260,15 +276,15 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-[0.9375rem] font-semibold tracking-[-0.025em] text-foreground">Dashboard</h1>
           <p className="mt-0.5 text-[11.5px] text-[hsl(var(--muted-foreground))]">
-            {primaryApp.name} · {primaryApp.platform.toUpperCase()} · {daysLeft > 0 ? `${daysLeft} gün kaldı` : "Yayında 🚀"}
+            {primaryName} · {primaryPlatformLabel} · {daysLeft > 0 ? `${daysLeft} gün kaldı` : "Yayında 🚀"}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href={`/app/${primaryApp.id}`} className="rounded-[0.55rem] border border-[hsl(var(--border)/0.7)] bg-[hsl(var(--card)/0.8)] px-3.5 py-1.5 text-[0.8rem] font-medium text-foreground transition hover:bg-[hsl(var(--muted)/0.7)]">
-            Checklist
+          <Link href={primaryProduct ? `/products/${primaryProduct.id}/pre-launch` : `/app/${primaryApp.id}`} className="rounded-[0.55rem] border border-[hsl(var(--border)/0.7)] bg-[hsl(var(--card)/0.8)] px-3.5 py-1.5 text-[0.8rem] font-medium text-foreground transition hover:bg-[hsl(var(--muted)/0.7)]">
+            Pre-Launch
           </Link>
-          <Link href="/app/new" className="flex items-center gap-1.5 rounded-[0.55rem] bg-[hsl(var(--primary))] px-3.5 py-1.5 text-[0.8rem] font-semibold text-white transition hover:bg-[hsl(var(--primary-strong))]">
-            + Yeni Board
+          <Link href="/products/new" className="flex items-center gap-1.5 rounded-[0.55rem] bg-[hsl(var(--primary))] px-3.5 py-1.5 text-[0.8rem] font-semibold text-white transition hover:bg-[hsl(var(--primary-strong))]">
+            + Yeni Ürün
           </Link>
         </div>
       </div>
@@ -567,13 +583,13 @@ export default async function DashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-[9.5px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--surface-dark-muted))]">
-                    {primaryApp.name}
+                    {primaryName}
                   </p>
                   <p className="mt-1 text-[1.4rem] font-black tracking-[-0.06em] text-white">
                     {daysLeft > 0 ? `${daysLeft} gün` : "Yayında!"}
                   </p>
                   <p className="text-[10px] text-[hsl(var(--surface-dark-muted))]">
-                    Launch: {new Date(primaryApp.launch_date).toLocaleDateString("tr-TR")}
+                    Launch: {new Date(primaryLaunchDate).toLocaleDateString("tr-TR")}
                   </p>
                 </div>
                 <div
@@ -627,8 +643,8 @@ export default async function DashboardPage() {
               ))}
             </div>
 
-            <Link href={`/app/${primaryApp.id}`} className={launchButtonStyles.primary + " mt-4 w-full justify-center text-xs"}>
-              Tam checklist&apos;e git
+            <Link href={primaryProduct ? `/products/${primaryProduct.id}/pre-launch` : `/app/${primaryApp.id}`} className={launchButtonStyles.primary + " mt-4 w-full justify-center text-xs"}>
+              Pre-Launch&apos;a git
             </Link>
           </div>
         </section>
@@ -703,10 +719,46 @@ export default async function DashboardPage() {
             </div>
 
             <div className="mt-5 space-y-2 border-t border-[hsl(var(--border)/0.4)] pt-4">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--muted-foreground))]">
-                Tüm Boardlar
-              </p>
-              <AppList apps={apps.length > 0 ? apps : [primaryApp as App]} canCreateApp />
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--muted-foreground))]">
+                  Ürünlerim
+                </p>
+                <Link href="/products/new" className="text-[10px] font-semibold text-[hsl(var(--primary))] hover:underline">
+                  + Ekle
+                </Link>
+              </div>
+              {products.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-[hsl(var(--border)/0.5)] px-3 py-4 text-center">
+                  <p className="text-[11px] text-muted-foreground">Henüz ürün yok</p>
+                  <Link href="/products/new" className="mt-1 block text-[11px] font-semibold text-[hsl(var(--primary))] hover:underline">
+                    İlk ürünü oluştur →
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {products.map(p => {
+                    const days = Math.ceil((new Date(p.launch_date).getTime() - Date.now()) / 86400000);
+                    return (
+                      <Link
+                        key={p.id}
+                        href={`/products/${p.id}`}
+                        className="flex items-center justify-between rounded-xl border border-[hsl(var(--border)/0.4)] bg-background px-3 py-2.5 transition-colors hover:border-[hsl(var(--border)/0.8)] hover:bg-[hsl(var(--muted)/0.2)]"
+                      >
+                        <div>
+                          <p className="text-[12px] font-semibold text-foreground">{p.product_name}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {(p.primary_platform ?? []).map(pl => PLATFORM_LABELS[pl] ?? pl).join(" · ")}
+                            {p.industry && ` · ${p.industry}`}
+                          </p>
+                        </div>
+                        <span className={`text-[10px] font-semibold ${days > 0 ? "text-[hsl(var(--primary))]" : "text-[hsl(152,58%,42%)]"}`}>
+                          {days > 0 ? `${days}g` : "🚀"}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </section>

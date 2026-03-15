@@ -141,7 +141,7 @@ export async function POST(request: Request) {
         message: appMessages.appCreated,
         app: result.app,
         limit: result.limit,
-        redirectTo: `/app/${result.app.id}`
+        redirectTo: `/products/${result.app.id}/pre-launch`
       },
       201
     );

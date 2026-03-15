@@ -8,7 +8,6 @@ import {
   LaunchMiniStat,
   LaunchNotice,
   LaunchPanel,
-  LaunchSectionHeader,
   launchButtonStyles
 } from "@/components/ui/LaunchKit";
 import {
@@ -139,11 +138,10 @@ export function AppearanceSettings() {
       </LaunchNotice>
 
       <section className="space-y-3">
-        <LaunchSectionHeader
-          eyebrow="Tema"
-          title="Gorunum paketi"
-          description="Iki farkli gorsel dili sec."
-        />
+        <div>
+          <p className="text-sm font-semibold text-foreground">Görünüm paketi</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">İki farklı görsel dil arasından seç.</p>
+        </div>
         <div className="grid gap-3 lg:grid-cols-2">
           {VISUAL_THEME_OPTIONS.map((option) => (
             <CompactChoiceCard
@@ -158,11 +156,10 @@ export function AppearanceSettings() {
       </section>
 
       <section className="space-y-3">
-        <LaunchSectionHeader
-          eyebrow="Mod"
-          title="Renk modu"
-          description="Acik veya koyu gorunumu sec."
-        />
+        <div>
+          <p className="text-sm font-semibold text-foreground">Renk modu</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">Açık veya koyu görünümü seç.</p>
+        </div>
         <div className="grid gap-3 lg:grid-cols-2">
           {COLOR_MODE_OPTIONS.map((option) => (
             <CompactChoiceCard

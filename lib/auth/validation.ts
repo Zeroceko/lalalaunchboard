@@ -21,7 +21,7 @@ export function getRegisterSchema(locale: Locale = DEFAULT_LOCALE) {
   return getLoginSchema(locale)
     .extend({
       confirmPassword: z.string().min(8, authMessages.passwordTooShort),
-      captchaToken: z.string().min(1, authMessages.captchaRequired)
+      captchaToken: z.string().optional().default("")
     })
     .superRefine(({ password, confirmPassword }, ctx) => {
       if (password !== confirmPassword) {

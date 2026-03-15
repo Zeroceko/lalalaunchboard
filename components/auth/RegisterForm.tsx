@@ -48,7 +48,8 @@ export function RegisterForm({ locale }: RegisterFormProps) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
   );
   const hcaptchaSiteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ?? null;
-  const signupEnabled = authConfigured && Boolean(hcaptchaSiteKey);
+  const captchaEnabled = Boolean(hcaptchaSiteKey);
+  const signupEnabled = authConfigured;
 
   function updateField<K extends keyof typeof initialState>(
     key: K,
@@ -165,18 +166,20 @@ export function RegisterForm({ locale }: RegisterFormProps) {
         </LaunchFieldShell>
       </div>
 
-      <LaunchFieldShell
-        label={dictionary.authForm.captchaLabel}
-        hint={dictionary.authForm.captchaHint}
-        error={fieldErrors?.captchaToken}
-      >
-        <HCaptchaField
-          disabled={isSubmitting}
-          siteKey={hcaptchaSiteKey}
-          value={form.captchaToken}
-          onChange={(token) => updateField("captchaToken", token)}
-        />
-      </LaunchFieldShell>
+      {captchaEnabled && (
+        <LaunchFieldShell
+          label={dictionary.authForm.captchaLabel}
+          hint={dictionary.authForm.captchaHint}
+          error={fieldErrors?.captchaToken}
+        >
+          <HCaptchaField
+            disabled={isSubmitting}
+            siteKey={hcaptchaSiteKey}
+            value={form.captchaToken}
+            onChange={(token) => updateField("captchaToken", token)}
+          />
+        </LaunchFieldShell>
+      )}
 
       {!authConfigured ? (
         <LaunchNotice tone="warning">

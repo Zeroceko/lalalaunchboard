@@ -13,6 +13,7 @@ export const config = {
     "/settings/:path*",
     "/admin/:path*",
     "/ops/:path*",
+    "/onboarding/:path*",
     "/auth/:path*"
   ]
 };
