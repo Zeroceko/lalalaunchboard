@@ -185,6 +185,22 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
                     className="max-w-md"
                   />
                 </FieldRow>
+                <FieldRow label="Referral" hint="Are they inviting others?">
+                  <LaunchInput 
+                    placeholder="e.g. Invites Sent"
+                    value={config.metricNames.referral} 
+                    onChange={(e) => handleMetricNameChange("referral", e.target.value)}
+                    className="max-w-md"
+                  />
+                </FieldRow>
+                <FieldRow label="Revenue" hint="What is the financial metric?">
+                  <LaunchInput 
+                    placeholder="e.g. Monthly Recurring Revenue ($)"
+                    value={config.metricNames.revenue} 
+                    onChange={(e) => handleMetricNameChange("revenue", e.target.value)}
+                    className="max-w-md"
+                  />
+                </FieldRow>
               </div>
 
               <div className="pt-10 flex items-center justify-between">
