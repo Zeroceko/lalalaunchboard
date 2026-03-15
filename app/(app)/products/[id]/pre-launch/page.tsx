@@ -63,7 +63,7 @@ export default async function ProductPreLaunchPage({ params }: { params: { id: s
 
             {daysLeft > 0 && (
               <div className="shrink-0 rounded-2xl border border-[hsl(var(--border)/0.5)] bg-background px-5 py-3 text-center">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">Launch'a kalan</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">Launch&apos;a kalan</p>
                 <p className="text-[1.8rem] font-black tracking-[-0.05em] text-foreground">{daysLeft}</p>
                 <p className="text-[10.5px] text-muted-foreground">gün</p>
               </div>

@@ -130,7 +130,7 @@ export default async function ProductsPage() {
           <div className="mt-6 rounded-xl border border-[hsl(38,92%,52%/0.25)] bg-[hsl(38,92%,52%/0.06)] px-4 py-3 flex items-center justify-between">
             <p className="text-[12px] text-muted-foreground">Free planda 1 ürün limiti doldu.</p>
             <Link href="/pricing" className="text-[12px] font-semibold text-[hsl(var(--primary))] hover:underline">
-              Pro'ya geç →
+              Pro&apos;ya geç →
             </Link>
           </div>
         )}

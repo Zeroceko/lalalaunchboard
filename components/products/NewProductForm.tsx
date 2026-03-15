@@ -106,7 +106,7 @@ export function NewProductForm({ limit }: Props) {
         </span>
         {isBlocked && (
           <Link href="/pricing" className="rounded-full border border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.08)] px-3 py-1 text-[11px] font-semibold text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.15)]">
-            Pro'ya geç →
+            Pro&apos;ya geç →
           </Link>
         )}
       </div>
@@ -115,7 +115,7 @@ export function NewProductForm({ limit }: Props) {
         <div className="rounded-2xl border border-[hsl(38,92%,52%/0.3)] bg-[hsl(38,92%,52%/0.06)] p-6 text-center space-y-3">
           <p className="text-[15px] font-bold text-foreground">Ürün limitine ulaştın</p>
           <p className="text-[13px] text-muted-foreground">
-            Free planda 1 ürün oluşturabilirsin. Daha fazlası için Pro'ya geç.
+            Free planda 1 ürün oluşturabilirsin. Daha fazlası için Pro&apos;ya geç.
           </p>
           <Link
             href="/pricing"

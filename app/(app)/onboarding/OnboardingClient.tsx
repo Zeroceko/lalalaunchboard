@@ -969,7 +969,7 @@ export default function OnboardingClient({ initial }: { initial: InitialData }) 
                       Opsiyonel
                     </span>
                   </div>
-                  <h1 className="text-3xl font-bold text-foreground tracking-tight">AI'ı Eğit</h1>
+                  <h1 className="text-3xl font-bold text-foreground tracking-tight">AI&apos;ı Eğit</h1>
                   <p className="text-sm text-muted-foreground mt-1.5">
                     İstersen atlayabilirsin — her zaman ayarlardan tamamlayabilirsin.
                   </p>
