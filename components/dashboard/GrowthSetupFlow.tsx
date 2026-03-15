@@ -149,7 +149,7 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
               <SectionHeader 
                 icon={Settings2} 
                 title="Metric Definitions" 
-                description="Customize the names of each AARRR stage to match your product's specific goals."
+                description="Customize the names of each AARRR stage to match your product&apos;s specific goals."
               />
 
               <div className="divide-y divide-[hsl(var(--border)/0.4)]">
