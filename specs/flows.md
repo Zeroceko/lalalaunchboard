@@ -427,6 +427,13 @@ Her flow release oncesi su kontrollerden gecmeli:
 - mobile viability: `390px` genislikte temel gorev tamamlanabiliyor
 - consistency: ayni niyet ayni buton diliyle temsil ediliyor
 
+## Git & Push Policy
+
+Tüm teknik geliştirmeler için geçerli kural:
+
+- **Özet Onayı**: GitHub'a herhangi bir push işlemi yapmadan önce, yapılan değişikliklerin kısa bir özeti (summary) sunulmalıdır.
+- **Kullanıcı Onayı**: Push işlemi ancak kullanıcının açık onayı alındıktan sonra gerçekleştirilebilir.
+
 ## Product Ritual (Weekly)
 
 Her hafta sabit ritim:

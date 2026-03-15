@@ -117,7 +117,7 @@ export default function GrowthDashboardPage() {
         ════════════════════════════════════════════ */}
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           {latestData ? (
-             <GrowthFunnelCards latestData={latestData} config={config} />
+             <GrowthFunnelCards latestData={latestData} allData={activeData} config={config} />
           ) : (
             <div className="p-20 text-center border-2 border-dashed rounded-[2.5rem] bg-muted/20">
               <Plus className="w-12 h-12 mx-auto text-muted-foreground mb-4 opacity-20" />

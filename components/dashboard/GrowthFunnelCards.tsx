@@ -9,11 +9,13 @@ import {
   Download, 
   Zap, 
   RotateCcw, 
-  Share2 
+  Share2,
+  TrendingUp 
 } from "lucide-react";
 
 interface GrowthFunnelCardsProps {
   latestData: GrowthMetric;
+  allData: GrowthMetric[];
   config: GrowthConfig;
   className?: string;
 }
@@ -26,19 +28,60 @@ const funnelStages = [
   { id: "referral", label: "Referral", icon: Share2, color: "hsl(350,78%,56%)", convKey: "toReferral" },
 ];
 
-export function GrowthFunnelCards({ latestData, config, className }: GrowthFunnelCardsProps) {
+export function GrowthFunnelCards({ latestData, allData, config, className }: GrowthFunnelCardsProps) {
   const formatNumber = (num: number) => new Intl.NumberFormat("tr-TR").format(num);
   const formatPercent = (num: number | undefined) => (num === undefined || isNaN(num) ? "0%" : `${num.toFixed(1)}%`);
 
+  // Calculate actual growth (Acquisition) vs previous period
+  const getGrowthStats = () => {
+    const currentIndex = allData.findIndex(d => d.week === latestData.week);
+    if (currentIndex <= 0) return null;
+    
+    const currentVal = latestData.acquisition;
+    const previousVal = allData[currentIndex - 1].acquisition;
+    
+    if (previousVal === 0) return null;
+    
+    const actualGrowth = ((currentVal - previousVal) / previousVal) * 100;
+    const isTargetMet = actualGrowth >= config.targetGrowth;
+    
+    return { actualGrowth, isTargetMet };
+  };
+
+  const growthStats = getGrowthStats();
+
   return (
     <div className={cn("space-y-6", className)}>
-      <div className="flex flex-col gap-1">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--muted-foreground))]">
-          Büyüme Kanalları & Dönüşüm
-        </p>
-        <h2 className="text-[0.9375rem] font-semibold tracking-[-0.025em] text-foreground">
-          Haftalık {config.interval === "weekly" ? "Hafta" : "Ay"} {latestData.week} Özeti
-        </h2>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--muted-foreground))]">
+            Büyüme Kanalları & Dönüşüm
+          </p>
+          <h2 className="text-[0.9375rem] font-semibold tracking-[-0.025em] text-foreground">
+            {config.interval === "weekly" ? "Haftalık" : "Aylık"} {latestData.week} Özeti
+          </h2>
+        </div>
+
+        {growthStats && (
+          <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-2 duration-700">
+            <div className="flex flex-col items-end">
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Hedef Büyüme</span>
+              <span className="text-[11px] font-black text-primary">%{config.targetGrowth}</span>
+            </div>
+            <div className={cn(
+              "flex flex-col items-center justify-center rounded-xl border px-3 py-1.5 backdrop-blur-sm",
+              growthStats.isTargetMet 
+                ? "border-success/30 bg-success/5 text-success shadow-[0_4px_12px_hsl(var(--success)/0.1)]" 
+                : "border-[hsl(var(--border)/0.5)] bg-muted/20 text-muted-foreground"
+            )}>
+              <span className="text-[9px] font-bold uppercase tracking-wider">Gerçekleşen</span>
+              <div className="flex items-center gap-1">
+                <TrendingUp className={cn("w-3 h-3", growthStats.actualGrowth < 0 && "rotate-180")} />
+                <span className="text-xs font-black">%{growthStats.actualGrowth.toFixed(1)}</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-5">

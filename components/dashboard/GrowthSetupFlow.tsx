@@ -31,6 +31,7 @@ export type GrowthConfig = {
     referral: string;
     revenue: string;
   };
+  targetGrowth: number;
 };
 
 /* ── Internal Field Row (Settings Style) ── */
@@ -79,7 +80,8 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
       retention: "Retention",
       referral: "Referral",
       revenue: "Revenue",
-    }
+    },
+    targetGrowth: 5
   });
 
   const nextStep = () => setStep(s => s + 1);
@@ -200,6 +202,18 @@ export function GrowthSetupFlow({ onComplete }: GrowthSetupFlowProps) {
                     onChange={(e) => handleMetricNameChange("revenue", e.target.value)}
                     className="max-w-md"
                   />
+                </FieldRow>
+                <FieldRow label="Target Growth (%)" hint="What is your desired week-over-week growth goal?">
+                  <div className="flex items-center gap-4">
+                    <LaunchInput 
+                      type="number"
+                      placeholder="e.g. 5"
+                      value={config.targetGrowth} 
+                      onChange={(e) => setConfig(prev => ({ ...prev, targetGrowth: Number(e.target.value) }))}
+                      className="max-w-[120px]"
+                    />
+                    <span className="text-sm font-bold text-primary">%</span>
+                  </div>
                 </FieldRow>
               </div>
 
