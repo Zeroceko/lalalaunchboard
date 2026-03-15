@@ -43,7 +43,7 @@ export function GrowthTrendChart({ data, config }: GrowthTrendChartProps) {
   if (chartData.length === 0) {
     return (
       <LaunchPanel tone="subtle" className="flex items-center justify-center h-[400px]">
-        <p className="text-muted-foreground">No data logged yet. Start by logging your first week's metrics.</p>
+        <p className="text-muted-foreground">No data logged yet. Start by logging your first week&apos;s metrics.</p>
       </LaunchPanel>
     );
   }
