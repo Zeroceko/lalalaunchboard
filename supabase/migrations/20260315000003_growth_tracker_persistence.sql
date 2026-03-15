@@ -57,6 +57,14 @@ using (
     where products.id = growth_configs.product_id
       and workspaces.user_id = auth.uid()
   )
+)
+with check (
+  exists (
+    select 1 from public.products
+    join public.workspaces on workspaces.id = products.workspace_id
+    where products.id = growth_configs.product_id
+      and workspaces.user_id = auth.uid()
+  )
 );
 
 -- Policy: Users can only manage growth metrics for products they own (via workspace)
@@ -65,6 +73,14 @@ on public.growth_metrics
 for all
 to authenticated
 using (
+  exists (
+    select 1 from public.products
+    join public.workspaces on workspaces.id = products.workspace_id
+    where products.id = growth_metrics.product_id
+      and workspaces.user_id = auth.uid()
+  )
+)
+with check (
   exists (
     select 1 from public.products
     join public.workspaces on workspaces.id = products.workspace_id
