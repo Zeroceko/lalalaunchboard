@@ -44,6 +44,17 @@ const navGroups: { label: string; items: NavItem[] }[] = [
           </svg>
         )
       },
+      {
+        href: "/dashboard/growth",
+        label: "Growth Tracker",
+        matches: (p) => p === "/dashboard/growth",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden>
+            <path d="M3 13.5l4.5-4.5 3.5 3.5 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M11 6h6v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )
+      },
     ]
   },
   {

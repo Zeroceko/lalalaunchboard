@@ -33,6 +33,7 @@ function useBreadcrumb() {
     admin: "Portföy",
     ops: "Control Tower",
     onboarding: "Onboarding",
+    growth: "Growth Tracker",
   };
 
   return segments.map((seg, i) => ({
