@@ -101,7 +101,7 @@ Sektör, platform, iş modeli, compliance, UVP, rakipler → **her ürünün ken
 
 ### 3. Pre-Launch Checklist — dinamik üretim
 `lib/prelaunch/items.ts` → `generatePreLaunchItems({ industry, platforms, compliance, company_stage })` fonksiyonu ürünün profiline göre checklist üretiyor.
-State: `localStorage`'da `prelaunch_v1_{productId}` key'iyle persist ediliyor.
+State: Supabase (`checklist_item_statuses` tablosu) üzerinden persist ediliyor.
 Hydration hatası önlemi: `useState(new Set())` + `useEffect` ile yükleme.
 
 ### 4. Sidebar dinamik ürün listesi

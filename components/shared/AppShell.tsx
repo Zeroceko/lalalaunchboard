@@ -276,6 +276,8 @@ function UserDropdown({
   );
 }
 
+import { applyThemeState, getStoredThemeState, type ThemeState } from "@/components/ui/theme/theme";
+
 // ── Main shell ────────────────────────────────────────────────────────────────
 interface AppShellProps {
   children: ReactNode;
@@ -285,12 +287,40 @@ interface AppShellProps {
   role: string;
   setupSteps: import("@/components/shared/SetupProgress").SetupStep[];
   products?: { id: string; name: string }[];
+  preferences?: Record<string, any>;
 }
 
-export function AppShell({ children, displayName, initials, email, role, setupSteps, products = [] }: AppShellProps) {
+export function AppShell({ 
+  children, 
+  displayName, 
+  initials, 
+  email, 
+  role, 
+  setupSteps, 
+  products = [],
+  preferences = {}
+}: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const breadcrumbs = useBreadcrumb();
+
+  // Sync theme from database preferences to local state and document
+  useEffect(() => {
+    const dbTheme = preferences.visualTheme;
+    const dbMode = preferences.colorMode;
+
+    if (dbTheme || dbMode) {
+      const stored = getStoredThemeState();
+      const nextState: ThemeState = {
+        visualTheme: (dbTheme as any) || stored.visualTheme,
+        colorMode: (dbMode as any) || stored.colorMode
+      };
+
+      if (nextState.visualTheme !== stored.visualTheme || nextState.colorMode !== stored.colorMode) {
+        applyThemeState(nextState);
+      }
+    }
+  }, [preferences]);
 
   const sidebarW = collapsed ? 72 : 260;
 

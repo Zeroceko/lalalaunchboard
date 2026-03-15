@@ -17,8 +17,33 @@ const updateProfileSchema = z.object({
     .enum(["Founder", "Growth", "Product", "Marketing"], {
       message: "Geçerli bir rol seçiniz"
     })
-    .optional()
+    .optional(),
+  preferences: z.record(z.any()).optional()
 });
+
+export async function GET() {
+  if (!hasSupabaseEnv()) {
+    return json({ ok: false, message: "Supabase yapılandırması gerekiyor" }, 503);
+  }
+
+  const { supabase, user } = await getSessionContext();
+
+  if (!user) {
+    return json({ ok: false, message: "Giriş yapman gerekiyor" }, 401);
+  }
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, email, full_name, role_in_company, preferences")
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    return json({ ok: false, message: error.message }, 500);
+  }
+
+  return NextResponse.json({ ok: true, profile: data }, { status: 200 });
+}
 
 export async function PATCH(request: Request) {
   const body = await readJsonBody(request);
@@ -53,6 +78,7 @@ export async function PATCH(request: Request) {
   const updatePayload: Record<string, unknown> = {};
   if (parsed.data.full_name !== undefined) updatePayload.full_name = parsed.data.full_name;
   if (parsed.data.role_in_company !== undefined) updatePayload.role_in_company = parsed.data.role_in_company;
+  if (parsed.data.preferences !== undefined) updatePayload.preferences = parsed.data.preferences;
 
   const { error } = await supabase
     .from("users")

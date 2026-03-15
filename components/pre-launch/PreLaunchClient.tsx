@@ -327,31 +327,75 @@ export function PreLaunchClient({
 
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [priorityFilter, setPriorityFilter] = useState<FilterPriority>("all");
   const [categoryFilter, setCategoryFilter] = useState<PreLaunchCategory | "all">("all");
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) setCompletedIds(new Set(JSON.parse(saved) as string[]));
-    } catch { /* ignore */ }
-    setHydrated(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    async function loadPersistence() {
+      // LocalStorage fallback for non-product views
+      if (!productId || productId.startsWith("workspace_")) {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) setCompletedIds(new Set(JSON.parse(saved) as string[]));
+        } catch { /* ignore */ }
+        setHydrated(true);
+        return;
+      }
 
-  useEffect(() => {
-    if (!hydrated) return;
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(Array.from(completedIds)));
-    } catch { /* ignore */ }
-  }, [completedIds, storageKey, hydrated]);
+      // Supabase fetch for product-specific views
+      try {
+        const res = await fetch(`/api/apps/${productId}/checklist`);
+        if (res.ok) {
+          const data = await res.json();
+          const completed = (data as any[])
+            .filter((item) => item.status?.completed)
+            .map((item) => item.cms_item_id || item.id);
+          setCompletedIds(new Set(completed));
+        }
+      } catch (error) {
+        console.error("Failed to sync pre-launch state:", error);
+      } finally {
+        setHydrated(true);
+      }
+    }
 
-  const toggleItem = (id: string) => {
+    loadPersistence();
+  }, [productId, storageKey]);
+
+  const toggleItem = async (id: string) => {
+    const nextCompleted = !completedIds.has(id);
+    
+    // Optimistic update
     setCompletedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
+
+    // LocalStorage sync
+    if (!productId || productId.startsWith("workspace_")) {
+      try {
+        const current = Array.from(completedIds);
+        const next = nextCompleted ? [...current, id] : current.filter(x => x !== id);
+        localStorage.setItem(storageKey, JSON.stringify(next));
+      } catch { /* ignore */ }
+      return;
+    }
+
+    // Supabase sync
+    setSyncing(true);
+    try {
+      await fetch(`/api/apps/${productId}/checklist/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed: nextCompleted })
+      });
+    } catch (error) {
+      console.error("Failed to sync toggle:", error);
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const totalCount = items.length;

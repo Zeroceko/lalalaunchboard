@@ -30,7 +30,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const supabase = createClient();
 
   const [{ data: profile }, { data: workspace }, productSnapshot] = await Promise.all([
-    supabase.from("users").select("full_name, role_in_company").eq("id", user.id).maybeSingle(),
+    supabase.from("users").select("full_name, role_in_company, preferences").eq("id", user.id).maybeSingle(),
     supabase
       .from("workspaces")
       .select("company_name, industry, business_model, company_stage, uvp, competitors, growth_channel")
@@ -66,6 +66,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         role={profile?.role_in_company ?? ""}
         setupSteps={setupSteps}
         products={navProducts}
+        preferences={profile?.preferences ?? {}}
       >
         {children}
       </AppShell>

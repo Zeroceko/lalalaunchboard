@@ -96,13 +96,29 @@ export function AppearanceSettings() {
 
       applyThemeState(nextState);
 
+      // Push to Supabase for cross-device sync
+      fetch("/api/users/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preferences: nextState })
+      }).catch(() => {});
+
       return nextState;
     });
   };
 
   const handleReset = () => {
-    setThemeState(DEFAULT_THEME_STATE);
-    applyThemeState(DEFAULT_THEME_STATE);
+    const nextState = DEFAULT_THEME_STATE;
+    setThemeState(nextState);
+    applyThemeState(nextState);
+
+    // Push reset to Supabase
+    fetch("/api/users/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ preferences: nextState })
+    }).catch(() => {});
+
     pushToast({
       title: "Gorunum varsayilanlara dondu",
       description: "Warm Premium ve Acik mod yeniden aktif edildi.",
